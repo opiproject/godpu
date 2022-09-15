@@ -1,5 +1,7 @@
 # goopicsi
 
+[![Linters](https://github.com/opiproject/opi-poc/actions/workflows/linters.yml/badge.svg)](https://github.com/opiproject/opi-poc/actions/workflows/linters.yml)
+
 A Container Storage Interface (CSI) library, client, and other helpful utilities created with Go for OPI
 
 ## I Want To Contribute
