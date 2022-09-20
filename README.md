@@ -16,8 +16,10 @@ See [CONTRIBUTING](https://github.com/opiproject/opi/blob/main/CONTRIBUTING.md)
 and [GitHub Basic Process](https://github.com/opiproject/opi/blob/main/doc-github-rules.md)
 for more details.
 
-## Current PoCs
+## Getting started
 
-* [Developer Platform / Integration Platform](integration/README.md)
-* [Pure software networking](networking/README.md)
-* [Storage](storage/README.md)
+```go
+import (
+        "github.com/opiproject/goopicsi"
+)
+```
