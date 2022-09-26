@@ -1,6 +1,9 @@
 # goopicsi
 
 [![Linters](https://github.com/opiproject/goopicsi/actions/workflows/linters.yml/badge.svg)](https://github.com/opiproject/goopicsi/actions/workflows/linters.yml)
+[![License](https://img.shields.io/github/license/opiproject/goopicsi?style=flat-square&color=blue&label=License)](https://github.com/opiproject/goopicsi/blob/master/LICENSE)
+[![Last Release](https://img.shields.io/github/v/release/opiproject/goopicsi?label=Latest&style=flat-square&logo=go)](https://github.com/opiproject/csi-powerstore/goopicsi)
+
 
 A Container Storage Interface (CSI) library, client, and other helpful utilities created with Go for OPI
 
