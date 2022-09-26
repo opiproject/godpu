@@ -4,8 +4,6 @@
 package goopicsi
 
 import (
-	"errors"
-	"strings"
 	"testing"
 )
 
