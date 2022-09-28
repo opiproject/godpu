@@ -1,6 +1,6 @@
 module github.com/opiproject/goopicsi
 
-go 1.18
+go 1.19
 
 require (
 	github.com/opiproject/opi-api v0.0.0-20220915151511-9e129b0e199f
