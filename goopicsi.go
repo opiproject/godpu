@@ -9,7 +9,7 @@ import (
 	"log"
 	"time"
 
-	pb "github.com/opiproject/opi-api/storage/proto"
+	pb "github.com/opiproject/opi-api/storage/v1/gen/go"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
