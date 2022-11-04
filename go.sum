@@ -33,6 +33,8 @@ github.com/opiproject/opi-api v0.0.0-20221102195714-805c63e06611 h1:PvBuobh2upqc
 github.com/opiproject/opi-api v0.0.0-20221102195714-805c63e06611/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
 github.com/opiproject/opi-api v0.0.0-20221103150802-0d8816b9043a h1:yMMWNyyrRFhzf/MzJ5EyLjc8her0evWwXqe6a0Yt/SY=
 github.com/opiproject/opi-api v0.0.0-20221103150802-0d8816b9043a/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
+github.com/opiproject/opi-api v0.0.0-20221104121526-bb436edcc035 h1:R+06hhbGxAg3qKg66mGxcBLiYhCxhVHH34jjMdeVNPU=
+github.com/opiproject/opi-api v0.0.0-20221104121526-bb436edcc035/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
 golang.org/x/net v0.0.0-20221002022538-bcab6841153b h1:6e93nYa3hNqAvLr0pD4PN1fFS+gKzp2zAXqrnTCstqU=
 golang.org/x/net v0.0.0-20221002022538-bcab6841153b/go.mod h1:YDH+HFinaLZZlnHAfSS6ZXJJ9M9t4Dl22yv3iI2vPwk=
 golang.org/x/sys v0.0.0-20220928140112-f11e5e49a4ec h1:BkDtF2Ih9xZ7le9ndzTA7KJow28VbQW3odyk/8drmuI=
