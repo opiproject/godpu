@@ -3,6 +3,7 @@
 [![Linters](https://github.com/opiproject/goopicsi/actions/workflows/linters.yml/badge.svg)](https://github.com/opiproject/goopicsi/actions/workflows/linters.yml)
 [![Go](https://github.com/opiproject/goopicsi/actions/workflows/go.yml/badge.svg)](https://github.com/opiproject/goopicsi/actions/workflows/go.yml)
 [![License](https://img.shields.io/github/license/opiproject/goopicsi?style=flat-square&color=blue&label=License)](https://github.com/opiproject/goopicsi/blob/master/LICENSE)
+[![codecov](https://codecov.io/gh/opiproject/goopicsi/branch/main/graph/badge.svg)](https://codecov.io/gh/opiproject/goopicsi)
 [![Last Release](https://img.shields.io/github/v/release/opiproject/goopicsi?label=Latest&style=flat-square&logo=go)](https://github.com/opiproject/goopicsi/releases)
 
 A Container Storage Interface (CSI) library, client, and other helpful utilities created with Go for OPI
