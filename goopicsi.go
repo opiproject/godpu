@@ -45,7 +45,7 @@ func ConnectToRemoteAndExpose(addr string) error {
 	log.Printf("Connected: %v", rr0)
 
 	// Expose emulated NVMe device to the Host (Step 1: Subsystem)
-	c1 := pb.NewNVMeSubsystemServiceClient(conn)
+	c1 := pb.NewFrontendNvmeServiceClient(conn)
 	rs1, err := c1.NVMeSubsystemCreate(ctx, &pb.NVMeSubsystemCreateRequest{Subsystem: &pb.NVMeSubsystem{Nqn: "OpiMalloc7"}})
 	if err != nil {
 		log.Printf("could not create NVMe subsystem: %v", err)
@@ -53,8 +53,7 @@ func ConnectToRemoteAndExpose(addr string) error {
 	}
 	log.Printf("Added: %v", rs1)
 	// Step2: NVMeController
-	c2 := pb.NewNVMeControllerServiceClient(conn)
-	rc1, err := c2.NVMeControllerCreate(ctx, &pb.NVMeControllerCreateRequest{Controller: &pb.NVMeController{NvmeControllerId: 13}})
+	rc1, err := c1.NVMeControllerCreate(ctx, &pb.NVMeControllerCreateRequest{Controller: &pb.NVMeController{NvmeControllerId: 13}})
 	if err != nil {
 		log.Printf("could not create NVMe subsystem: %v", err)
 		return err
@@ -62,8 +61,7 @@ func ConnectToRemoteAndExpose(addr string) error {
 	log.Printf("Added: %v", rc1)
 
 	// NVMeNamespace
-	c3 := pb.NewNVMeNamespaceServiceClient(conn)
-	rn1, err := c3.NVMeNamespaceCreate(ctx, &pb.NVMeNamespaceCreateRequest{Namespace: &pb.NVMeNamespace{HostNsid: 123}})
+	rn1, err := c1.NVMeNamespaceCreate(ctx, &pb.NVMeNamespaceCreateRequest{Namespace: &pb.NVMeNamespace{HostNsid: 123}})
 	if err != nil {
 		log.Printf("could not create NVMe subsystem: %v", err)
 		return err
