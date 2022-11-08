@@ -3,7 +3,7 @@ module github.com/opiproject/goopicsi
 go 1.19
 
 require (
-	github.com/opiproject/opi-api v0.0.0-20221108164256-2a9284753fa3
+	github.com/opiproject/opi-api v0.0.0-20221108172248-8bc7b1116f8a
 	google.golang.org/grpc v1.50.1
 )
 
