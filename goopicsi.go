@@ -15,6 +15,11 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+var (
+	conn    *grpc.ClientConn
+	address = "localhost:50051"
+)
+
 // ConnectToRemoteAndExpose connects to the remote storage over NVMe/TCP and exposes it as a local NVMe/PCIe device
 func ConnectToRemoteAndExpose(addr string) error {
 	flag.Parse()
@@ -68,4 +73,92 @@ func ConnectToRemoteAndExpose(addr string) error {
 	}
 	log.Printf("Added: %v", rn1)
 	return nil
+}
+
+// NVMeControllerConnect Connects to remote NVMf controller
+func NVMeControllerConnect(request *pb.NVMfRemoteController) (*pb.NVMfRemoteControllerConnectResponse, error) {
+	if conn == nil {
+		err := dialConnection()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	client := pb.NewNVMfRemoteControllerServiceClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	data, err := client.NVMfRemoteControllerGet(ctx, &pb.NVMfRemoteControllerGetRequest{Id: request.Id})
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println(data)
+
+	// we will connect if there is no connection established
+	if data == nil { // This means we are unable to get a connection with this ID
+		response, err := client.NVMfRemoteControllerConnect(ctx, &pb.NVMfRemoteControllerConnectRequest{Ctrl: request})
+		if err != nil {
+			log.Printf("could not connect to Remote NVMf controller: %v", err)
+			return nil, err
+		}
+		log.Printf("Connected: %v", response)
+		return response, nil
+	}
+	log.Printf("Remote NVMf controller is already connected with SubNQN: %v", data.GetCtrl().Subnqn)
+	defer disconnectConnection()
+	return &pb.NVMfRemoteControllerConnectResponse{}, nil
+}
+
+// NVMeControllerDisconnect disconnects remote NVMf controller connection
+func NVMeControllerDisconnect(request *pb.NVMfRemoteControllerDisconnectRequest) (*pb.NVMfRemoteControllerDisconnectResponse, error) {
+	if conn == nil {
+		err := dialConnection()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	client := pb.NewNVMfRemoteControllerServiceClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	data, err := client.NVMfRemoteControllerGet(ctx, &pb.NVMfRemoteControllerGetRequest{Id: request.Id})
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	log.Println(data)
+
+	// we will disconnect if there is a connection
+	if data != nil {
+		response, err := client.NVMfRemoteControllerDisconnect(ctx, &pb.NVMfRemoteControllerDisconnectRequest{Id: request.Id})
+		if err != nil {
+			log.Printf("could not disconnect Remote NVMf controller: %v", err)
+			return nil, err
+		}
+		log.Printf("disconnected: %v", response)
+		return response, nil
+	}
+	log.Printf("Remote NVMf controller disconnected successfully: %v", data.GetCtrl().Subnqn)
+	defer disconnectConnection()
+	return &pb.NVMfRemoteControllerDisconnectResponse{}, nil
+}
+
+func dialConnection() error {
+	var err error
+	conn, err = grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Printf("Failed to connect: %v", err)
+		return err
+	}
+	return nil
+}
+
+func disconnectConnection() {
+	err := conn.Close()
+	if err != nil {
+		log.Fatalf("Failed to close connection: %v", err)
+	} else {
+		log.Println("GRPC connection closed successfully")
+	}
 }
