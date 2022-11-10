@@ -10,6 +10,7 @@ import (
 	"log"
 	"time"
 
+	pbc "github.com/opiproject/opi-api/common/v1/gen/go"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -51,14 +52,23 @@ func ConnectToRemoteAndExpose(addr string) error {
 
 	// Expose emulated NVMe device to the Host (Step 1: Subsystem)
 	c1 := pb.NewFrontendNvmeServiceClient(conn)
-	rs1, err := c1.NVMeSubsystemCreate(ctx, &pb.NVMeSubsystemCreateRequest{Subsystem: &pb.NVMeSubsystem{Nqn: "OpiMalloc7"}})
+	rs1, err := c1.NVMeSubsystemCreate(ctx, &pb.NVMeSubsystemCreateRequest{
+		Subsystem: &pb.NVMeSubsystem{
+			Spec: &pb.NVMeSubsystemSpec{
+				Id:  &pbc.ObjectKey{Value: "controller-test-ss"},
+				Nqn: "nqn.2022-09.io.spdk:opi2"}}})
 	if err != nil {
 		log.Printf("could not create NVMe subsystem: %v", err)
 		return err
 	}
 	log.Printf("Added: %v", rs1)
 	// Step2: NVMeController
-	rc1, err := c1.NVMeControllerCreate(ctx, &pb.NVMeControllerCreateRequest{Controller: &pb.NVMeController{NvmeControllerId: 13}})
+	rc1, err := c1.NVMeControllerCreate(ctx, &pb.NVMeControllerCreateRequest{
+		Controller: &pb.NVMeController{
+			Spec: &pb.NVMeControllerSpec{
+				Id:               &pbc.ObjectKey{Value: "controller-test"},
+				SubsystemId:      &pbc.ObjectKey{Value: "controller-test-ss"},
+				NvmeControllerId: 13}}})
 	if err != nil {
 		log.Printf("could not create NVMe subsystem: %v", err)
 		return err
@@ -66,7 +76,14 @@ func ConnectToRemoteAndExpose(addr string) error {
 	log.Printf("Added: %v", rc1)
 
 	// NVMeNamespace
-	rn1, err := c1.NVMeNamespaceCreate(ctx, &pb.NVMeNamespaceCreateRequest{Namespace: &pb.NVMeNamespace{HostNsid: 123}})
+	rn1, err := c1.NVMeNamespaceCreate(ctx, &pb.NVMeNamespaceCreateRequest{
+		Namespace: &pb.NVMeNamespace{
+			Spec: &pb.NVMeNamespaceSpec{
+				Id:           &pbc.ObjectKey{Value: "namespace-test"},
+				SubsystemId:  &pbc.ObjectKey{Value: "namespace-test-ss"},
+				ControllerId: &pbc.ObjectKey{Value: "namespace-test-ctrler"},
+				VolumeId:     &pbc.ObjectKey{Value: "Malloc1"},
+				HostNsid:     123}}})
 	if err != nil {
 		log.Printf("could not create NVMe subsystem: %v", err)
 		return err
