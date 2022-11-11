@@ -7,22 +7,29 @@ import (
 	"log"
 	"testing"
 
-	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNVMeControllerConnect(t *testing.T) {
-	resp, err := NVMeControllerConnect(&pb.NVMfRemoteController{
-		Id:      12,
-		Traddr:  "0.0.0.0", // Add a valid target address
-		Subnqn:  "nqn",     // Add a valid NQN
-		Trsvcid: 4420,
-	})
+	err := NVMeControllerConnect(12, "", "", 44565)
 	if err != nil {
 		log.Println(err)
 	}
-	log.Println(resp)
-	assert.Error(t, err, "connection failed")
+	assert.Error(t, err)
+}
+
+func TestNVMeControllerList(t *testing.T) {
+	err := NVMeControllerList()
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+func TestNVMeControllerGet(t *testing.T) {
+	err := NVMeControllerGet(12)
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 func TestNVMeControllerList(t *testing.T) {
@@ -40,10 +47,16 @@ func TestNVMeControllerGet(t *testing.T) {
 }
 
 func TestNVMeControllerDisconnect(t *testing.T) {
-	resp, err := NVMeControllerDisconnect(&pb.NVMfRemoteControllerDisconnectRequest{Id: 12})
+	err := NVMeControllerDisconnect(12)
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+func TestCreateNVMeNamespace(t *testing.T) {
+	resp, err := CreateNVMeNamespace("1", "nqn", "opi", 1)
 	if err != nil {
 		log.Println(err)
 	}
 	log.Println(resp)
-	assert.Error(t, err, "disconnect failed")
 }
