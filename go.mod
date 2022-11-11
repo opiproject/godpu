@@ -3,7 +3,7 @@ module github.com/opiproject/goopicsi
 go 1.19
 
 require (
-	github.com/opiproject/opi-api v0.0.0-20221109134843-76522ac45e89
+	github.com/opiproject/opi-api v0.0.0-20221111230258-34e208409ec2
 	github.com/stretchr/testify v1.8.1
 	google.golang.org/grpc v1.50.1
 )
