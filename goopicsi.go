@@ -52,7 +52,7 @@ func ConnectToRemoteAndExpose(addr string) error {
 
 	// Expose emulated NVMe device to the Host (Step 1: Subsystem)
 	c1 := pb.NewFrontendNvmeServiceClient(conn)
-	rs1, err := c1.NVMeSubsystemCreate(ctx, &pb.NVMeSubsystemCreateRequest{
+	rs1, err := c1.CreateNVMeSubsystem(ctx, &pb.CreateNVMeSubsystemRequest{
 		Subsystem: &pb.NVMeSubsystem{
 			Spec: &pb.NVMeSubsystemSpec{
 				Id:  &pbc.ObjectKey{Value: "controller-test-ss"},
@@ -63,7 +63,7 @@ func ConnectToRemoteAndExpose(addr string) error {
 	}
 	log.Printf("Added: %v", rs1)
 	// Step2: NVMeController
-	rc1, err := c1.NVMeControllerCreate(ctx, &pb.NVMeControllerCreateRequest{
+	rc1, err := c1.CreateNVMeController(ctx, &pb.CreateNVMeControllerRequest{
 		Controller: &pb.NVMeController{
 			Spec: &pb.NVMeControllerSpec{
 				Id:               &pbc.ObjectKey{Value: "controller-test"},
@@ -76,7 +76,7 @@ func ConnectToRemoteAndExpose(addr string) error {
 	log.Printf("Added: %v", rc1)
 
 	// NVMeNamespace
-	rn1, err := c1.NVMeNamespaceCreate(ctx, &pb.NVMeNamespaceCreateRequest{
+	rn1, err := c1.CreateNVMeNamespace(ctx, &pb.CreateNVMeNamespaceRequest{
 		Namespace: &pb.NVMeNamespace{
 			Spec: &pb.NVMeNamespaceSpec{
 				Id:           &pbc.ObjectKey{Value: "namespace-test"},
