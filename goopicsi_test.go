@@ -32,6 +32,20 @@ func TestNVMeControllerGet(t *testing.T) {
 	}
 }
 
+func TestNVMeControllerList(t *testing.T) {
+	err := NVMeControllerList()
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+func TestNVMeControllerGet(t *testing.T) {
+	err := NVMeControllerGet(12)
+	if err != nil {
+		log.Println(err)
+	}
+}
+
 func TestNVMeControllerDisconnect(t *testing.T) {
 	err := NVMeControllerDisconnect(12)
 	if err != nil {
