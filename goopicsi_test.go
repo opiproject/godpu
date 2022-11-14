@@ -46,3 +46,10 @@ func TestCreateNVMeNamespace(t *testing.T) {
 	}
 	log.Println(resp)
 }
+
+func TestDeleteNVMeNamespace(t *testing.T) {
+	err := DeleteNVMeNamespace("1")
+	if err != nil {
+		log.Println(err)
+	}
+}

@@ -242,6 +242,28 @@ func CreateNVMeNamespace(id string, subSystemID string, volumeID string, hostID 
 	return resp.Spec.Id.Value, nil
 }
 
+// DeleteNVMeNamespace deletes the NVMe namespace
+func DeleteNVMeNamespace(id string) error {
+	if conn == nil {
+		err := dialConnection()
+		if err != nil {
+			return err
+		}
+	}
+
+	client := pb.NewFrontendNvmeServiceClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	resp, err := client.DeleteNVMeNamespace(ctx, &pb.DeleteNVMeNamespaceRequest{NamespaceId: &pbc.ObjectKey{Value: id}})
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	log.Println(resp)
+	return nil
+}
+
 func dialConnection() error {
 	var err error
 	conn, err = grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
