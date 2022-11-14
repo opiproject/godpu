@@ -25,6 +25,20 @@ func TestNVMeControllerConnect(t *testing.T) {
 	assert.Error(t, err, "connection failed")
 }
 
+func TestNVMeControllerList(t *testing.T) {
+	err := NVMeControllerList()
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+func TestNVMeControllerGet(t *testing.T) {
+	err := NVMeControllerGet(12)
+	if err != nil {
+		log.Println(err)
+	}
+}
+
 func TestNVMeControllerDisconnect(t *testing.T) {
 	resp, err := NVMeControllerDisconnect(&pb.NVMfRemoteControllerDisconnectRequest{Id: 12})
 	if err != nil {

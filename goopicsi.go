@@ -126,6 +126,50 @@ func NVMeControllerConnect(request *pb.NVMfRemoteController) (*pb.NVMfRemoteCont
 	return &pb.NVMfRemoteControllerConnectResponse{}, nil
 }
 
+// NVMeControllerList lists all the connections to the remote NVMf controller
+func NVMeControllerList() error {
+	if conn == nil {
+		err := dialConnection()
+		if err != nil {
+			return err
+		}
+	}
+
+	client := pb.NewNVMfRemoteControllerServiceClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	response, err := client.NVMfRemoteControllerList(ctx, &pb.NVMfRemoteControllerListRequest{})
+	if err != nil {
+		log.Printf("could not list the connections to Remote NVMf controller: %v", err)
+		return err
+	}
+	log.Printf("Connections: %v", response)
+	return nil
+}
+
+// NVMeControllerGet lists the connection to the remote NVMf controller corresponding to the given ID
+func NVMeControllerGet(id int64) error {
+	if conn == nil {
+		err := dialConnection()
+		if err != nil {
+			return err
+		}
+	}
+
+	client := pb.NewNVMfRemoteControllerServiceClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	response, err := client.NVMfRemoteControllerGet(ctx, &pb.NVMfRemoteControllerGetRequest{Id: id})
+	if err != nil {
+		log.Printf("could not list the connection to Remote NVMf controller corresponding to the given ID: %v", err)
+		return err
+	}
+	log.Printf("Connection corresponding to the given ID: %v", response)
+	return nil
+}
+
 // NVMeControllerDisconnect disconnects remote NVMf controller connection
 func NVMeControllerDisconnect(request *pb.NVMfRemoteControllerDisconnectRequest) (*pb.NVMfRemoteControllerDisconnectResponse, error) {
 	if conn == nil {
