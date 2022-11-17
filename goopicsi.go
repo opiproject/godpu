@@ -79,11 +79,10 @@ func ConnectToRemoteAndExpose(addr string) error {
 	rn1, err := c1.CreateNVMeNamespace(ctx, &pb.CreateNVMeNamespaceRequest{
 		Namespace: &pb.NVMeNamespace{
 			Spec: &pb.NVMeNamespaceSpec{
-				Id:           &pbc.ObjectKey{Value: "namespace-test"},
-				SubsystemId:  &pbc.ObjectKey{Value: "namespace-test-ss"},
-				ControllerId: &pbc.ObjectKey{Value: "namespace-test-ctrler"},
-				VolumeId:     &pbc.ObjectKey{Value: "Malloc1"},
-				HostNsid:     123}}})
+				Id:          &pbc.ObjectKey{Value: "namespace-test"},
+				SubsystemId: &pbc.ObjectKey{Value: "namespace-test-ss"},
+				VolumeId:    &pbc.ObjectKey{Value: "Malloc1"},
+				HostNsid:    123}}})
 	if err != nil {
 		log.Printf("could not create NVMe subsystem: %v", err)
 		return err
