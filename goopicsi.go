@@ -6,8 +6,10 @@ package goopicsi
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"log"
+	"strings"
 	"time"
 
 	pbc "github.com/opiproject/opi-api/common/v1/gen/go"
@@ -20,6 +22,13 @@ var (
 	conn    *grpc.ClientConn
 	address = "localhost:50051"
 )
+
+// NVMeConnection defines remote NVMf connection
+type NVMeConnection struct {
+	id     string
+	subnqn string
+	traddr string
+}
 
 // ConnectToRemoteAndExpose connects to the remote storage over NVMe/TCP and exposes it as a local NVMe/PCIe device
 func ConnectToRemoteAndExpose(addr string) error {
@@ -132,11 +141,11 @@ func NVMeControllerConnect(id int64, trAddr string, subnqn string, trSvcID int64
 }
 
 // NVMeControllerList lists all the connections to the remote NVMf controller
-func NVMeControllerList() error {
+func NVMeControllerList() ([]NVMeConnection, error) {
 	if conn == nil {
 		err := dialConnection()
 		if err != nil {
-			return err
+			return []NVMeConnection{}, err
 		}
 	}
 
@@ -147,18 +156,25 @@ func NVMeControllerList() error {
 	response, err := client.NVMfRemoteControllerList(ctx, &pb.NVMfRemoteControllerListRequest{})
 	if err != nil {
 		log.Printf("could not list the connections to Remote NVMf controller: %v", err)
-		return err
+		return []NVMeConnection{}, err
 	}
-	log.Printf("Connections: %v", response)
-	return nil
+	nvmeConnections := make([]NVMeConnection, 0)
+	for _, connection := range response.Ctrl {
+		nvmeConnections = append(nvmeConnections, NVMeConnection{
+			id:     "",
+			subnqn: connection.Subnqn,
+			traddr: "",
+		})
+	}
+	return nvmeConnections, nil
 }
 
 // NVMeControllerGet lists the connection to the remote NVMf controller corresponding to the given ID
-func NVMeControllerGet(id int64) error {
+func NVMeControllerGet(id int64) (string, error) {
 	if conn == nil {
 		err := dialConnection()
 		if err != nil {
-			return err
+			return "", err
 		}
 	}
 
@@ -169,10 +185,9 @@ func NVMeControllerGet(id int64) error {
 	response, err := client.NVMfRemoteControllerGet(ctx, &pb.NVMfRemoteControllerGetRequest{Id: id})
 	if err != nil {
 		log.Printf("could not list the connection to Remote NVMf controller corresponding to the given ID: %v", err)
-		return err
+		return "", err
 	}
-	log.Printf("Connection corresponding to the given ID: %v", response)
-	return nil
+	return response.Ctrl.Subnqn, nil
 }
 
 // NVMeControllerDisconnect disconnects remote NVMf controller connection
@@ -211,7 +226,7 @@ func NVMeControllerDisconnect(id int64) error {
 }
 
 // CreateNVMeNamespace Creates a new NVMe namespace
-func CreateNVMeNamespace(id string, subSystemID string, volumeID string, hostID int32) (string, error) {
+func CreateNVMeNamespace(id string, subSystemID string, nguid string, hostID int32) (string, error) {
 	if conn == nil {
 		err := dialConnection()
 		if err != nil {
@@ -219,11 +234,31 @@ func CreateNVMeNamespace(id string, subSystemID string, volumeID string, hostID 
 		}
 	}
 
-	client := pb.NewFrontendNvmeServiceClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	resp, err := client.CreateNVMeNamespace(ctx, &pb.CreateNVMeNamespaceRequest{
+	client1 := pb.NewNullDebugServiceClient(conn)
+	response, err := client1.NullDebugList(ctx, &pb.NullDebugListRequest{})
+
+	if err != nil {
+		log.Println(err)
+		return "", err
+	}
+
+	volumeData := response.Device
+	volumeID := ""
+	for _, data := range volumeData {
+		uuid := strings.ReplaceAll(data.Uuid.Value, "-", "")
+		if uuid == nguid {
+			volumeID = data.Handle.Value
+		}
+	}
+	if volumeID == "" {
+		return "", errors.New("volume ID not found")
+	}
+
+	client2 := pb.NewFrontendNvmeServiceClient(conn)
+	resp, err := client2.CreateNVMeNamespace(ctx, &pb.CreateNVMeNamespaceRequest{
 		Namespace: &pb.NVMeNamespace{
 			Spec: &pb.NVMeNamespaceSpec{
 				Id:          &pbc.ObjectKey{Value: id},
