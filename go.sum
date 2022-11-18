@@ -6,14 +6,6 @@ github.com/golang/protobuf v1.5.2 h1:ROPKBNFfQgOUMifHyP+KYbvpjbdoFNs+aK7DXlji0Tw
 github.com/golang/protobuf v1.5.2/go.mod h1:XVQd3VNwM+JqD3oG2Ue2ip4fOMUkwXdXDdiuN0vRsmY=
 github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/go-cmp v0.5.6 h1:BKbKCqvP6I+rmFHt06ZmyQtvB8xAkWdhFyr0ZUNZcxQ=
-github.com/opiproject/opi-api v0.0.0-20221111230258-34e208409ec2 h1:AAgyJQOtuN5+PFajjhLZIVDfaTWZQ8t5u3tqTnK3nzE=
-github.com/opiproject/opi-api v0.0.0-20221111230258-34e208409ec2/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
-github.com/opiproject/opi-api v0.0.0-20221114164938-b94e8f880124 h1:VYflLsXLNtMcNE4gpZJoME3Gu2bgWo9O6BbCtOhMajQ=
-github.com/opiproject/opi-api v0.0.0-20221114164938-b94e8f880124/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
-github.com/opiproject/opi-api v0.0.0-20221115122823-23fcac6de230 h1:tGhXrmh8v8hoOHsUxy0fnryFNHN2GTNuO44k+xQsFHI=
-github.com/opiproject/opi-api v0.0.0-20221115122823-23fcac6de230/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
-github.com/opiproject/opi-api v0.0.0-20221115234013-ffe4aadd66ca h1:vRYng2TL09Q/QAe3xn9gQS9KMdhSCLTzpTCenyRO/SY=
-github.com/opiproject/opi-api v0.0.0-20221115234013-ffe4aadd66ca/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
 github.com/opiproject/opi-api v0.0.0-20221117170559-ca2c25b808b3 h1:5NztGQz+dkljZD1737jOmmsUA3Hcl+7mZpdcmR5Kn8s=
 github.com/opiproject/opi-api v0.0.0-20221117170559-ca2c25b808b3/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=

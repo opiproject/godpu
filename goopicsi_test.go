@@ -19,17 +19,19 @@ func TestNVMeControllerConnect(t *testing.T) {
 }
 
 func TestNVMeControllerList(t *testing.T) {
-	err := NVMeControllerList()
+	resp, err := NVMeControllerList()
 	if err != nil {
 		log.Println(err)
 	}
+	log.Printf("NVMf Remote Connections: %v", resp)
 }
 
 func TestNVMeControllerGet(t *testing.T) {
-	err := NVMeControllerGet(12)
+	resp, err := NVMeControllerGet(12)
 	if err != nil {
 		log.Println(err)
 	}
+	log.Printf("NVMf remote connection corresponding to the ID: %v", resp)
 }
 
 func TestNVMeControllerDisconnect(t *testing.T) {
@@ -40,7 +42,7 @@ func TestNVMeControllerDisconnect(t *testing.T) {
 }
 
 func TestCreateNVMeNamespace(t *testing.T) {
-	resp, err := CreateNVMeNamespace("1", "nqn", "opi", 1)
+	resp, err := CreateNVMeNamespace("1", "nqn", "nguid", 1)
 	if err != nil {
 		log.Println(err)
 	}
