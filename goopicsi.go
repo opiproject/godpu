@@ -136,6 +136,7 @@ func NVMeControllerConnect(id int64, trAddr string, subnqn string, trSvcID int64
 		return nil
 	}
 	log.Printf("Remote NVMf controller is already connected with SubNQN: %v", data.GetCtrl().Subnqn)
+
 	defer disconnectConnection()
 	return nil
 }
@@ -222,6 +223,68 @@ func NVMeControllerDisconnect(id int64) error {
 	}
 	log.Printf("Remote NVMf controller disconnected successfully: %v", data.GetCtrl().Subnqn)
 	defer disconnectConnection()
+	return nil
+}
+
+// ExposeRemoteNVMe creates a new NVMe Subsystem and NVMe controller
+func ExposeRemoteNVMe(subsystemID string, subsystemNQN string, maxNamespaces int64, controllerID string) error {
+	if conn == nil {
+		err := dialConnection()
+		if err != nil {
+			return err
+		}
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	client := pb.NewFrontendNvmeServiceClient(conn)
+	data1, err := client.GetNVMeSubsystem(ctx, &pb.GetNVMeSubsystemRequest{SubsystemId: &pbc.ObjectKey{Value: subsystemID}})
+	if err != nil {
+		log.Printf("No existing NVMe Subsystem found with subsystemID: %v", subsystemID)
+	}
+
+	if data1 == nil {
+		response1, err := client.CreateNVMeSubsystem(ctx, &pb.CreateNVMeSubsystemRequest{
+			Subsystem: &pb.NVMeSubsystem{
+				Spec: &pb.NVMeSubsystemSpec{
+					Id:            &pbc.ObjectKey{Value: subsystemID},
+					Nqn:           subsystemNQN,
+					MaxNamespaces: maxNamespaces,
+				},
+			},
+		})
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+		log.Printf("NVMe Subsytem created: %v", response1)
+	} else {
+		log.Printf("NVMe Subsystem is already present with the subsytemID: %v", subsystemID)
+	}
+
+	data2, err := client.GetNVMeController(ctx, &pb.GetNVMeControllerRequest{ControllerId: &pbc.ObjectKey{Value: controllerID}})
+	if err != nil {
+		log.Printf("No existing NVMe Controller found with controllerID %v:", controllerID)
+	}
+	if data2 == nil {
+		response2, err := client.CreateNVMeController(ctx, &pb.CreateNVMeControllerRequest{
+			Controller: &pb.NVMeController{
+				Spec: &pb.NVMeControllerSpec{
+					Id:            &pbc.ObjectKey{Value: controllerID},
+					SubsystemId:   &pbc.ObjectKey{Value: subsystemID},
+					MaxNamespaces: int32(maxNamespaces),
+				},
+			},
+		})
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+		log.Printf("NVMe Controller created: %v", response2)
+		return nil
+	}
+	log.Printf("NVMe Controller is already present with the controllerID: %v", controllerID)
 	return nil
 }
 

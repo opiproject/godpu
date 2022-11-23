@@ -55,3 +55,10 @@ func TestDeleteNVMeNamespace(t *testing.T) {
 		log.Println(err)
 	}
 }
+
+func TestExposeRemoteNVMe(t *testing.T) {
+	err := ExposeRemoteNVMe("subsystem1", "nqn.2022-09.io.spdk:test", 10, "controller1")
+	if err != nil {
+		log.Println(err)
+	}
+}
