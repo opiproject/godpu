@@ -30,6 +30,15 @@ type NVMeConnection struct {
 	traddr string
 }
 
+// NVMeSubSystem defines NVMe sub-system
+type NVMeSubSystem struct {
+	id            string
+	nqn           string
+	serialNumber  string
+	modelNumber   string
+	maxNamespaces int64
+}
+
 // ConnectToRemoteAndExpose connects to the remote storage over NVMe/TCP and exposes it as a local NVMe/PCIe device
 func ConnectToRemoteAndExpose(addr string) error {
 	flag.Parse()
@@ -296,6 +305,34 @@ func DeleteNVMeNamespace(id string) error {
 	}
 	log.Println(resp)
 	return nil
+}
+
+// GetSubSystemByID returns a subsystem by its ID
+func GetSubSystemByID(id string) (*NVMeSubSystem, error) {
+	if conn == nil {
+		err := dialConnection()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	client := pb.NewFrontendNvmeServiceClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	resp, err := client.GetNVMeSubsystem(ctx, &pb.GetNVMeSubsystemRequest{SubsystemId: &pbc.ObjectKey{Value: id}})
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	log.Println(resp)
+	return &NVMeSubSystem{
+		id:            resp.Spec.Id.Value,
+		nqn:           resp.Spec.Nqn,
+		serialNumber:  resp.Spec.SerialNumber,
+		modelNumber:   resp.Spec.ModelNumber,
+		maxNamespaces: resp.Spec.MaxNamespaces,
+	}, nil
 }
 
 func dialConnection() error {

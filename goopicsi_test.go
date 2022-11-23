@@ -55,3 +55,11 @@ func TestDeleteNVMeNamespace(t *testing.T) {
 		log.Println(err)
 	}
 }
+
+func TestGetSubSystemByID(t *testing.T) {
+	resp, err := GetSubSystemByID("1")
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println(resp)
+}
