@@ -23,6 +23,21 @@ var (
 	address = "localhost:50051"
 )
 
+type goopicsiInterface interface {
+	ConnectToRemoteAndExpose(addr string) error
+	NVMeControllerConnect(id int64, trAddr string, subnqn string, trSvcID int64) error
+	NVMeControllerList() ([]NVMeConnection, error)
+	NVMeControllerGet(id int64) (string, error)
+	NVMeControllerDisconnect(id int64) error
+	ExposeRemoteNVMe(subsystemID string, subsystemNQN string, maxNamespaces int64, controllerID string) error
+	CreateNVMeNamespace(id string, subSystemID string, volumeID string, hostID int32) (string, error)
+	DeleteNVMeNamespace(id string) error
+}
+
+type goopicsi struct {
+	goopicsiInterface goopicsiInterface
+}
+
 // NVMeConnection defines remote NVMf connection
 type NVMeConnection struct {
 	id     string
@@ -31,7 +46,7 @@ type NVMeConnection struct {
 }
 
 // ConnectToRemoteAndExpose connects to the remote storage over NVMe/TCP and exposes it as a local NVMe/PCIe device
-func ConnectToRemoteAndExpose(addr string) error {
+func (t *goopicsi) ConnectToRemoteAndExpose(addr string) error {
 	flag.Parse()
 	// Set up a connection to the server.
 	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -101,7 +116,7 @@ func ConnectToRemoteAndExpose(addr string) error {
 }
 
 // NVMeControllerConnect Connects to remote NVMf controller
-func NVMeControllerConnect(id int64, trAddr string, subnqn string, trSvcID int64) error {
+func (t *goopicsi) NVMeControllerConnect(id int64, trAddr string, subnqn string, trSvcID int64) error {
 	if conn == nil {
 		err := dialConnection()
 		if err != nil {
@@ -142,7 +157,7 @@ func NVMeControllerConnect(id int64, trAddr string, subnqn string, trSvcID int64
 }
 
 // NVMeControllerList lists all the connections to the remote NVMf controller
-func NVMeControllerList() ([]NVMeConnection, error) {
+func (t *goopicsi) NVMeControllerList() ([]NVMeConnection, error) {
 	if conn == nil {
 		err := dialConnection()
 		if err != nil {
@@ -171,7 +186,7 @@ func NVMeControllerList() ([]NVMeConnection, error) {
 }
 
 // NVMeControllerGet lists the connection to the remote NVMf controller corresponding to the given ID
-func NVMeControllerGet(id int64) (string, error) {
+func (t *goopicsi) NVMeControllerGet(id int64) (string, error) {
 	if conn == nil {
 		err := dialConnection()
 		if err != nil {
@@ -192,7 +207,7 @@ func NVMeControllerGet(id int64) (string, error) {
 }
 
 // NVMeControllerDisconnect disconnects remote NVMf controller connection
-func NVMeControllerDisconnect(id int64) error {
+func (t *goopicsi) NVMeControllerDisconnect(id int64) error {
 	if conn == nil {
 		err := dialConnection()
 		if err != nil {
@@ -227,7 +242,7 @@ func NVMeControllerDisconnect(id int64) error {
 }
 
 // ExposeRemoteNVMe creates a new NVMe Subsystem and NVMe controller
-func ExposeRemoteNVMe(subsystemID string, subsystemNQN string, maxNamespaces int64, controllerID string) error {
+func (t *goopicsi) ExposeRemoteNVMe(subsystemID string, subsystemNQN string, maxNamespaces int64, controllerID string) error {
 	if conn == nil {
 		err := dialConnection()
 		if err != nil {
@@ -289,7 +304,7 @@ func ExposeRemoteNVMe(subsystemID string, subsystemNQN string, maxNamespaces int
 }
 
 // CreateNVMeNamespace Creates a new NVMe namespace
-func CreateNVMeNamespace(id string, subSystemID string, nguid string, hostID int32) (string, error) {
+func (t *goopicsi) CreateNVMeNamespace(id string, subSystemID string, nguid string, hostID int32) (string, error) {
 	if conn == nil {
 		err := dialConnection()
 		if err != nil {
@@ -340,7 +355,7 @@ func CreateNVMeNamespace(id string, subSystemID string, nguid string, hostID int
 }
 
 // DeleteNVMeNamespace deletes the NVMe namespace
-func DeleteNVMeNamespace(id string) error {
+func (t *goopicsi) DeleteNVMeNamespace(id string) error {
 	if conn == nil {
 		err := dialConnection()
 		if err != nil {
