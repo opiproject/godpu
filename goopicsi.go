@@ -8,9 +8,12 @@ import (
 	"context"
 	"errors"
 	"flag"
+	"fmt"
 	"log"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
 
 	pbc "github.com/opiproject/opi-api/common/v1/gen/go"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
@@ -101,7 +104,7 @@ func ConnectToRemoteAndExpose(addr string) error {
 }
 
 // NVMeControllerConnect Connects to remote NVMf controller
-func NVMeControllerConnect(id int64, trAddr string, subnqn string, trSvcID int64) error {
+func NVMeControllerConnect(id int64, trAddr string, subnqn string, trSvcID int64, hostnqn string) error {
 	if conn == nil {
 		err := dialConnection()
 		if err != nil {
@@ -126,6 +129,7 @@ func NVMeControllerConnect(id int64, trAddr string, subnqn string, trSvcID int64
 			Traddr:  trAddr,
 			Subnqn:  subnqn,
 			Trsvcid: trSvcID,
+			Hostnqn: hostnqn,
 		}}
 		response, err := client.NVMfRemoteControllerConnect(ctx, request)
 		if err != nil {
@@ -137,7 +141,6 @@ func NVMeControllerConnect(id int64, trAddr string, subnqn string, trSvcID int64
 	}
 	log.Printf("Remote NVMf controller is already connected with SubNQN: %v", data.GetCtrl().Subnqn)
 
-	defer disconnectConnection()
 	return nil
 }
 
@@ -227,11 +230,11 @@ func NVMeControllerDisconnect(id int64) error {
 }
 
 // ExposeRemoteNVMe creates a new NVMe Subsystem and NVMe controller
-func ExposeRemoteNVMe(subsystemID string, subsystemNQN string, maxNamespaces int64, controllerID string) error {
+func ExposeRemoteNVMe(subsystemNQN string, maxNamespaces int64) (string, string, error) {
 	if conn == nil {
 		err := dialConnection()
 		if err != nil {
-			return err
+			return "", "", err
 		}
 	}
 
@@ -239,6 +242,7 @@ func ExposeRemoteNVMe(subsystemID string, subsystemNQN string, maxNamespaces int
 	defer cancel()
 
 	client := pb.NewFrontendNvmeServiceClient(conn)
+	subsystemID := uuid.New().String()
 	data1, err := client.GetNVMeSubsystem(ctx, &pb.GetNVMeSubsystemRequest{SubsystemId: &pbc.ObjectKey{Value: subsystemID}})
 	if err != nil {
 		log.Printf("No existing NVMe Subsystem found with subsystemID: %v", subsystemID)
@@ -256,16 +260,17 @@ func ExposeRemoteNVMe(subsystemID string, subsystemNQN string, maxNamespaces int
 		})
 		if err != nil {
 			log.Println(err)
-			return err
+			return "", "", err
 		}
 		log.Printf("NVMe Subsytem created: %v", response1)
 	} else {
 		log.Printf("NVMe Subsystem is already present with the subsytemID: %v", subsystemID)
 	}
 
+	controllerID := uuid.New().String()
 	data2, err := client.GetNVMeController(ctx, &pb.GetNVMeControllerRequest{ControllerId: &pbc.ObjectKey{Value: controllerID}})
 	if err != nil {
-		log.Printf("No existing NVMe Controller found with controllerID %v:", controllerID)
+		log.Printf("No existing NVMe Controller found with controllerID: %v", controllerID)
 	}
 	if data2 == nil {
 		response2, err := client.CreateNVMeController(ctx, &pb.CreateNVMeControllerRequest{
@@ -279,13 +284,13 @@ func ExposeRemoteNVMe(subsystemID string, subsystemNQN string, maxNamespaces int
 		})
 		if err != nil {
 			log.Println(err)
-			return err
+			return subsystemID, "", err
 		}
 		log.Printf("NVMe Controller created: %v", response2)
-		return nil
+		return subsystemID, controllerID, nil
 	}
 	log.Printf("NVMe Controller is already present with the controllerID: %v", controllerID)
-	return nil
+	return subsystemID, controllerID, nil
 }
 
 // CreateNVMeNamespace Creates a new NVMe namespace
@@ -359,6 +364,16 @@ func DeleteNVMeNamespace(id string) error {
 	}
 	log.Println(resp)
 	return nil
+}
+
+// GenerateHostNQN generates a new hostNQN
+func GenerateHostNQN() string {
+	// Sample of NVMe Qualified Name in UUID-based format - nqn.2014-08.org.nvmexpress:uuid:a11a1111-11a1-111a-a111-1a111aaa1a11
+	nqnConst := "nqn.2014-08.org.nvmexpress:uuid:"
+	nqnUUID := uuid.New().String()
+
+	hostNQN := fmt.Sprintf("%s%s", nqnConst, nqnUUID)
+	return hostNQN
 }
 
 func dialConnection() error {
