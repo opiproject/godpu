@@ -130,6 +130,8 @@ func NVMeControllerConnect(id int64, trAddr string, subnqn string, trSvcID int64
 			Subnqn:  subnqn,
 			Trsvcid: trSvcID,
 			Hostnqn: hostnqn,
+			Trtype:  pb.NvmeTransportType_NVME_TRANSPORT_TCP,
+			Adrfam:  pb.NvmeAddressFamily_NVMF_ADRFAM_IPV4,
 		}}
 		response, err := client.NVMfRemoteControllerConnect(ctx, request)
 		if err != nil {
