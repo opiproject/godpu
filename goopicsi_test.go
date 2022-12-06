@@ -11,7 +11,7 @@ import (
 )
 
 func TestNVMeControllerConnect(t *testing.T) {
-	err := NVMeControllerConnect(12, "", "", 44565)
+	err := NVMeControllerConnect(12, "", "", 44565, "")
 	if err != nil {
 		log.Println(err)
 	}
@@ -57,8 +57,15 @@ func TestDeleteNVMeNamespace(t *testing.T) {
 }
 
 func TestExposeRemoteNVMe(t *testing.T) {
-	err := ExposeRemoteNVMe("subsystem1", "nqn.2022-09.io.spdk:test", 10, "controller1")
+	subsystemID, controllerID, err := ExposeRemoteNVMe("nqn.2022-09.io.spdk:test", 10)
 	if err != nil {
 		log.Println(err)
 	}
+	log.Printf("Subsystem ID: %s", subsystemID)
+	log.Printf("Controller Id: %s", controllerID)
+}
+
+func TestGenerateHostNQN(t *testing.T) {
+	hostNQN := GenerateHostNQN()
+	log.Println(hostNQN)
 }
