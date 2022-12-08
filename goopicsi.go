@@ -105,7 +105,7 @@ func ConnectToRemoteAndExpose(addr string) error {
 }
 
 // NVMeControllerConnect Connects to remote NVMf controller
-func NVMeControllerConnect(id int64, trAddr string, subnqn string, trSvcID int64, hostnqn string) error {
+func NVMeControllerConnect(id string, trAddr string, subnqn string, trSvcID int64, hostnqn string) error {
 	if conn == nil {
 		err := dialConnection()
 		if err != nil {
@@ -178,7 +178,7 @@ func NVMeControllerList() ([]NVMeConnection, error) {
 }
 
 // NVMeControllerGet lists the connection to the remote NVMf controller corresponding to the given ID
-func NVMeControllerGet(id int64) (string, error) {
+func NVMeControllerGet(id string) (string, error) {
 	if conn == nil {
 		err := dialConnection()
 		if err != nil {
@@ -200,7 +200,7 @@ func NVMeControllerGet(id int64) (string, error) {
 }
 
 // NVMeControllerDisconnect disconnects remote NVMf controller connection
-func NVMeControllerDisconnect(id int64) error {
+func NVMeControllerDisconnect(id string) error {
 	if conn == nil {
 		err := dialConnection()
 		if err != nil {

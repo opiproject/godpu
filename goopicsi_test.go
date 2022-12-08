@@ -11,7 +11,7 @@ import (
 )
 
 func TestNVMeControllerConnect(t *testing.T) {
-	err := NVMeControllerConnect(12, "", "", 44565, "")
+	err := NVMeControllerConnect("12", "", "", 44565, "")
 	if err != nil {
 		log.Println(err)
 	}
@@ -27,7 +27,7 @@ func TestNVMeControllerList(t *testing.T) {
 }
 
 func TestNVMeControllerGet(t *testing.T) {
-	resp, err := NVMeControllerGet(12)
+	resp, err := NVMeControllerGet("12")
 	if err != nil {
 		log.Println(err)
 	}
@@ -35,7 +35,7 @@ func TestNVMeControllerGet(t *testing.T) {
 }
 
 func TestNVMeControllerDisconnect(t *testing.T) {
-	err := NVMeControllerDisconnect(12)
+	err := NVMeControllerDisconnect("12")
 	if err != nil {
 		log.Println(err)
 	}
