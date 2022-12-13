@@ -28,7 +28,7 @@ var (
 
 type goopicsiInterface interface {
 	ConnectToRemoteAndExpose(addr string) error
-	NVMeControllerConnect(id int64, trAddr string, subnqn string, trSvcID int64, hostnqn string) error
+	NVMeControllerConnect(id string, trAddr string, subnqn string, trSvcID int64, hostnqn string) error
 	NVMeControllerList() ([]NVMeConnection, error)
 	NVMeControllerGet(id string) (string, error)
 	NVMeControllerDisconnect(id string) error

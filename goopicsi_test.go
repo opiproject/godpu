@@ -80,7 +80,7 @@ func TestServer(t *testing.T) {
 
 func TestNVMeControllerConnect(t *testing.T) {
 	c := goopicsi{}
-	err := c.goopicsiInterface.NVMeControllerConnect(12, "", "", 44565, "")
+	err := c.goopicsiInterface.NVMeControllerConnect("12", "", "", 44565, "")
 	if err != nil {
 		log.Println(err)
 	}
