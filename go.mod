@@ -3,7 +3,8 @@ module github.com/opiproject/goopicsi
 go 1.19
 
 require (
-	github.com/opiproject/opi-api v0.0.0-20221121200811-5d2289de810a
+	github.com/google/uuid v1.3.0
+	github.com/opiproject/opi-api v0.0.0-20221212223617-4ab228a467f7
 	github.com/stretchr/testify v1.8.1
 	go.nhat.io/grpcmock v0.20.0
 	google.golang.org/grpc v1.51.0

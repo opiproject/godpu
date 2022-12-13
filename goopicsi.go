@@ -8,9 +8,12 @@ import (
 	"context"
 	"errors"
 	"flag"
+	"fmt"
 	"log"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
 
 	pbc "github.com/opiproject/opi-api/common/v1/gen/go"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
@@ -67,7 +70,8 @@ func (t *goopicsi) ConnectToRemoteAndExpose(addr string) error {
 
 	// Connect to remote NVMe target from xPU
 	c4 := pb.NewNVMfRemoteControllerServiceClient(conn)
-	rr0, err := c4.NVMfRemoteControllerConnect(ctx, &pb.NVMfRemoteControllerConnectRequest{Ctrl: &pb.NVMfRemoteController{Id: 1}})
+	rr0, err := c4.CreateNVMfRemoteController(ctx, &pb.CreateNVMfRemoteControllerRequest{NvMfRemoteController: &pb.NVMfRemoteController{
+		Id: &pbc.ObjectKey{Value: "nvme-remote-connect"}}})
 	if err != nil {
 		log.Printf("could not connect to Remote NVMf controller: %v", err)
 		return err
@@ -77,7 +81,7 @@ func (t *goopicsi) ConnectToRemoteAndExpose(addr string) error {
 	// Expose emulated NVMe device to the Host (Step 1: Subsystem)
 	c1 := pb.NewFrontendNvmeServiceClient(conn)
 	rs1, err := c1.CreateNVMeSubsystem(ctx, &pb.CreateNVMeSubsystemRequest{
-		Subsystem: &pb.NVMeSubsystem{
+		NvMeSubsystem: &pb.NVMeSubsystem{
 			Spec: &pb.NVMeSubsystemSpec{
 				Id:  &pbc.ObjectKey{Value: "controller-test-ss"},
 				Nqn: "nqn.2022-09.io.spdk:opi2"}}})
@@ -88,7 +92,7 @@ func (t *goopicsi) ConnectToRemoteAndExpose(addr string) error {
 	log.Printf("Added: %v", rs1)
 	// Step2: NVMeController
 	rc1, err := c1.CreateNVMeController(ctx, &pb.CreateNVMeControllerRequest{
-		Controller: &pb.NVMeController{
+		NvMeController: &pb.NVMeController{
 			Spec: &pb.NVMeControllerSpec{
 				Id:               &pbc.ObjectKey{Value: "controller-test"},
 				SubsystemId:      &pbc.ObjectKey{Value: "controller-test-ss"},
@@ -101,7 +105,7 @@ func (t *goopicsi) ConnectToRemoteAndExpose(addr string) error {
 
 	// NVMeNamespace
 	rn1, err := c1.CreateNVMeNamespace(ctx, &pb.CreateNVMeNamespaceRequest{
-		Namespace: &pb.NVMeNamespace{
+		NvMeNamespace: &pb.NVMeNamespace{
 			Spec: &pb.NVMeNamespaceSpec{
 				Id:          &pbc.ObjectKey{Value: "namespace-test"},
 				SubsystemId: &pbc.ObjectKey{Value: "namespace-test-ss"},
@@ -128,7 +132,7 @@ func (t *goopicsi) NVMeControllerConnect(id int64, trAddr string, subnqn string,
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	data, err := client.NVMfRemoteControllerGet(ctx, &pb.NVMfRemoteControllerGetRequest{Id: id})
+	data, err := client.GetNVMfRemoteController(ctx, &pb.GetNVMfRemoteControllerRequest{Name: id})
 	if err != nil {
 		log.Println(err)
 	}
@@ -136,13 +140,16 @@ func (t *goopicsi) NVMeControllerConnect(id int64, trAddr string, subnqn string,
 
 	// we will connect if there is no connection established
 	if data == nil { // This means we are unable to get a connection with this ID
-		request := &pb.NVMfRemoteControllerConnectRequest{Ctrl: &pb.NVMfRemoteController{
-			Id:      id,
+		request := &pb.CreateNVMfRemoteControllerRequest{NvMfRemoteController: &pb.NVMfRemoteController{
+			Id:      &pbc.ObjectKey{Value: id},
 			Traddr:  trAddr,
 			Subnqn:  subnqn,
 			Trsvcid: trSvcID,
+			Hostnqn: hostnqn,
+			Trtype:  pb.NvmeTransportType_NVME_TRANSPORT_TCP,
+			Adrfam:  pb.NvmeAddressFamily_NVMF_ADRFAM_IPV4,
 		}}
-		response, err := client.NVMfRemoteControllerConnect(ctx, request)
+		response, err := client.CreateNVMfRemoteController(ctx, request)
 		if err != nil {
 			log.Printf("could not connect to Remote NVMf controller: %v", err)
 			return err
@@ -150,9 +157,8 @@ func (t *goopicsi) NVMeControllerConnect(id int64, trAddr string, subnqn string,
 		log.Printf("Connected: %v", response)
 		return nil
 	}
-	log.Printf("Remote NVMf controller is already connected with SubNQN: %v", data.GetCtrl().Subnqn)
+	log.Printf("Remote NVMf controller is already connected with SubNQN: %v", data.Subnqn)
 
-	defer disconnectConnection()
 	return nil
 }
 
@@ -169,13 +175,13 @@ func (t *goopicsi) NVMeControllerList() ([]NVMeConnection, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	response, err := client.NVMfRemoteControllerList(ctx, &pb.NVMfRemoteControllerListRequest{})
+	response, err := client.ListNVMfRemoteControllers(ctx, &pb.ListNVMfRemoteControllersRequest{})
 	if err != nil {
 		log.Printf("could not list the connections to Remote NVMf controller: %v", err)
 		return []NVMeConnection{}, err
 	}
 	nvmeConnections := make([]NVMeConnection, 0)
-	for _, connection := range response.Ctrl {
+	for _, connection := range response.NvMfRemoteControllers {
 		nvmeConnections = append(nvmeConnections, NVMeConnection{
 			id:     "",
 			subnqn: connection.Subnqn,
@@ -198,12 +204,12 @@ func (t *goopicsi) NVMeControllerGet(id int64) (string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	response, err := client.NVMfRemoteControllerGet(ctx, &pb.NVMfRemoteControllerGetRequest{Id: id})
+	response, err := client.GetNVMfRemoteController(ctx, &pb.GetNVMfRemoteControllerRequest{Name: id})
 	if err != nil {
 		log.Printf("could not list the connection to Remote NVMf controller corresponding to the given ID: %v", err)
 		return "", err
 	}
-	return response.Ctrl.Subnqn, nil
+	return response.Subnqn, nil
 }
 
 // NVMeControllerDisconnect disconnects remote NVMf controller connection
@@ -219,7 +225,7 @@ func (t *goopicsi) NVMeControllerDisconnect(id int64) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	data, err := client.NVMfRemoteControllerGet(ctx, &pb.NVMfRemoteControllerGetRequest{Id: id})
+	data, err := client.GetNVMfRemoteController(ctx, &pb.GetNVMfRemoteControllerRequest{Name: id})
 	if err != nil {
 		log.Println(err)
 		return err
@@ -228,7 +234,7 @@ func (t *goopicsi) NVMeControllerDisconnect(id int64) error {
 
 	// we will disconnect if there is a connection
 	if data != nil {
-		response, err := client.NVMfRemoteControllerDisconnect(ctx, &pb.NVMfRemoteControllerDisconnectRequest{Id: id})
+		response, err := client.DeleteNVMfRemoteController(ctx, &pb.DeleteNVMfRemoteControllerRequest{Name: id})
 		if err != nil {
 			log.Printf("could not disconnect Remote NVMf controller: %v", err)
 			return err
@@ -236,7 +242,7 @@ func (t *goopicsi) NVMeControllerDisconnect(id int64) error {
 		log.Printf("disconnected: %v", response)
 		return nil
 	}
-	log.Printf("Remote NVMf controller disconnected successfully: %v", data.GetCtrl().Subnqn)
+	log.Printf("Remote NVMf controller disconnected successfully: %v", data.Subnqn)
 	defer disconnectConnection()
 	return nil
 }
@@ -246,7 +252,7 @@ func (t *goopicsi) ExposeRemoteNVMe(subsystemID string, subsystemNQN string, max
 	if conn == nil {
 		err := dialConnection()
 		if err != nil {
-			return err
+			return "", "", err
 		}
 	}
 
@@ -254,14 +260,15 @@ func (t *goopicsi) ExposeRemoteNVMe(subsystemID string, subsystemNQN string, max
 	defer cancel()
 
 	client := pb.NewFrontendNvmeServiceClient(conn)
-	data1, err := client.GetNVMeSubsystem(ctx, &pb.GetNVMeSubsystemRequest{SubsystemId: &pbc.ObjectKey{Value: subsystemID}})
+	subsystemID := uuid.New().String()
+	data1, err := client.GetNVMeSubsystem(ctx, &pb.GetNVMeSubsystemRequest{Name: subsystemID})
 	if err != nil {
 		log.Printf("No existing NVMe Subsystem found with subsystemID: %v", subsystemID)
 	}
 
 	if data1 == nil {
 		response1, err := client.CreateNVMeSubsystem(ctx, &pb.CreateNVMeSubsystemRequest{
-			Subsystem: &pb.NVMeSubsystem{
+			NvMeSubsystem: &pb.NVMeSubsystem{
 				Spec: &pb.NVMeSubsystemSpec{
 					Id:            &pbc.ObjectKey{Value: subsystemID},
 					Nqn:           subsystemNQN,
@@ -271,20 +278,21 @@ func (t *goopicsi) ExposeRemoteNVMe(subsystemID string, subsystemNQN string, max
 		})
 		if err != nil {
 			log.Println(err)
-			return err
+			return "", "", err
 		}
 		log.Printf("NVMe Subsytem created: %v", response1)
 	} else {
 		log.Printf("NVMe Subsystem is already present with the subsytemID: %v", subsystemID)
 	}
 
-	data2, err := client.GetNVMeController(ctx, &pb.GetNVMeControllerRequest{ControllerId: &pbc.ObjectKey{Value: controllerID}})
+	controllerID := uuid.New().String()
+	data2, err := client.GetNVMeController(ctx, &pb.GetNVMeControllerRequest{Name: controllerID})
 	if err != nil {
-		log.Printf("No existing NVMe Controller found with controllerID %v:", controllerID)
+		log.Printf("No existing NVMe Controller found with controllerID: %v", controllerID)
 	}
 	if data2 == nil {
 		response2, err := client.CreateNVMeController(ctx, &pb.CreateNVMeControllerRequest{
-			Controller: &pb.NVMeController{
+			NvMeController: &pb.NVMeController{
 				Spec: &pb.NVMeControllerSpec{
 					Id:            &pbc.ObjectKey{Value: controllerID},
 					SubsystemId:   &pbc.ObjectKey{Value: subsystemID},
@@ -294,13 +302,13 @@ func (t *goopicsi) ExposeRemoteNVMe(subsystemID string, subsystemNQN string, max
 		})
 		if err != nil {
 			log.Println(err)
-			return err
+			return subsystemID, "", err
 		}
 		log.Printf("NVMe Controller created: %v", response2)
-		return nil
+		return subsystemID, controllerID, nil
 	}
 	log.Printf("NVMe Controller is already present with the controllerID: %v", controllerID)
-	return nil
+	return subsystemID, controllerID, nil
 }
 
 // CreateNVMeNamespace Creates a new NVMe namespace
@@ -316,14 +324,14 @@ func (t *goopicsi) CreateNVMeNamespace(id string, subSystemID string, nguid stri
 	defer cancel()
 
 	client1 := pb.NewNullDebugServiceClient(conn)
-	response, err := client1.NullDebugList(ctx, &pb.NullDebugListRequest{})
+	response, err := client1.ListNullDebugs(ctx, &pb.ListNullDebugsRequest{})
 
 	if err != nil {
 		log.Println(err)
 		return "", err
 	}
 
-	volumeData := response.Device
+	volumeData := response.NullDebugs
 	volumeID := ""
 	for _, data := range volumeData {
 		uuid := strings.ReplaceAll(data.Uuid.Value, "-", "")
@@ -337,7 +345,7 @@ func (t *goopicsi) CreateNVMeNamespace(id string, subSystemID string, nguid stri
 
 	client2 := pb.NewFrontendNvmeServiceClient(conn)
 	resp, err := client2.CreateNVMeNamespace(ctx, &pb.CreateNVMeNamespaceRequest{
-		Namespace: &pb.NVMeNamespace{
+		NvMeNamespace: &pb.NVMeNamespace{
 			Spec: &pb.NVMeNamespaceSpec{
 				Id:          &pbc.ObjectKey{Value: id},
 				SubsystemId: &pbc.ObjectKey{Value: subSystemID},
@@ -367,13 +375,23 @@ func (t *goopicsi) DeleteNVMeNamespace(id string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	resp, err := client.DeleteNVMeNamespace(ctx, &pb.DeleteNVMeNamespaceRequest{NamespaceId: &pbc.ObjectKey{Value: id}})
+	resp, err := client.DeleteNVMeNamespace(ctx, &pb.DeleteNVMeNamespaceRequest{Name: id})
 	if err != nil {
 		log.Println(err)
 		return err
 	}
 	log.Println(resp)
 	return nil
+}
+
+// GenerateHostNQN generates a new hostNQN
+func GenerateHostNQN() string {
+	// Sample of NVMe Qualified Name in UUID-based format - nqn.2014-08.org.nvmexpress:uuid:a11a1111-11a1-111a-a111-1a111aaa1a11
+	nqnConst := "nqn.2014-08.org.nvmexpress:uuid:"
+	nqnUUID := uuid.New().String()
+
+	hostNQN := fmt.Sprintf("%s%s", nqnConst, nqnUUID)
+	return hostNQN
 }
 
 func dialConnection() error {

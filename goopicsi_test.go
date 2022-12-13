@@ -137,4 +137,11 @@ func TestExposeRemoteNVMe(t *testing.T) {
 	if err != nil {
 		log.Println(err)
 	}
+	log.Printf("Subsystem ID: %s", subsystemID)
+	log.Printf("Controller Id: %s", controllerID)
+}
+
+func TestGenerateHostNQN(t *testing.T) {
+	hostNQN := GenerateHostNQN()
+	log.Println(hostNQN)
 }
