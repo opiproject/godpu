@@ -61,27 +61,41 @@ func (_m *goopicsiInterface) DeleteNVMeNamespace(id string) error {
 	return r0
 }
 
-// ExposeRemoteNVMe provides a mock function with given fields: subsystemID, subsystemNQN, maxNamespaces, controllerID
-func (_m *goopicsiInterface) ExposeRemoteNVMe(subsystemID string, subsystemNQN string, maxNamespaces int64, controllerID string) error {
-	ret := _m.Called(subsystemID, subsystemNQN, maxNamespaces, controllerID)
+// ExposeRemoteNVMe provides a mock function with given fields: subsystemNQN, maxNamespaces
+func (_m *goopicsiInterface) ExposeRemoteNVMe(subsystemNQN string, maxNamespaces int64) (string, string, error) {
+	ret := _m.Called(subsystemNQN, maxNamespaces)
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(string, string, int64, string) error); ok {
-		r0 = rf(subsystemID, subsystemNQN, maxNamespaces, controllerID)
+	var r0 string
+	if rf, ok := ret.Get(0).(func(string, int64) string); ok {
+		r0 = rf(subsystemNQN, maxNamespaces)
 	} else {
-		r0 = ret.Error(0)
+		r0 = ret.Get(0).(string)
 	}
 
-	return r0
+	var r1 string
+	if rf, ok := ret.Get(1).(func(string, int64) string); ok {
+		r1 = rf(subsystemNQN, maxNamespaces)
+	} else {
+		r1 = ret.Get(1).(string)
+	}
+
+	var r2 error
+	if rf, ok := ret.Get(2).(func(string, int64) error); ok {
+		r2 = rf(subsystemNQN, maxNamespaces)
+	} else {
+		r2 = ret.Error(2)
+	}
+
+	return r0, r1, r2
 }
 
-// NVMeControllerConnect provides a mock function with given fields: id, trAddr, subnqn, trSvcID
-func (_m *goopicsiInterface) NVMeControllerConnect(id int64, trAddr string, subnqn string, trSvcID int64) error {
-	ret := _m.Called(id, trAddr, subnqn, trSvcID)
+// NVMeControllerConnect provides a mock function with given fields: id, trAddr, subnqn, trSvcID, hostnqn
+func (_m *goopicsiInterface) NVMeControllerConnect(id int64, trAddr string, subnqn string, trSvcID int64, hostnqn string) error {
+	ret := _m.Called(id, trAddr, subnqn, trSvcID, hostnqn)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(int64, string, string, int64) error); ok {
-		r0 = rf(id, trAddr, subnqn, trSvcID)
+	if rf, ok := ret.Get(0).(func(int64, string, string, int64, string) error); ok {
+		r0 = rf(id, trAddr, subnqn, trSvcID, hostnqn)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -90,11 +104,11 @@ func (_m *goopicsiInterface) NVMeControllerConnect(id int64, trAddr string, subn
 }
 
 // NVMeControllerDisconnect provides a mock function with given fields: id
-func (_m *goopicsiInterface) NVMeControllerDisconnect(id int64) error {
+func (_m *goopicsiInterface) NVMeControllerDisconnect(id string) error {
 	ret := _m.Called(id)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(int64) error); ok {
+	if rf, ok := ret.Get(0).(func(string) error); ok {
 		r0 = rf(id)
 	} else {
 		r0 = ret.Error(0)
@@ -104,18 +118,18 @@ func (_m *goopicsiInterface) NVMeControllerDisconnect(id int64) error {
 }
 
 // NVMeControllerGet provides a mock function with given fields: id
-func (_m *goopicsiInterface) NVMeControllerGet(id int64) (string, error) {
+func (_m *goopicsiInterface) NVMeControllerGet(id string) (string, error) {
 	ret := _m.Called(id)
 
 	var r0 string
-	if rf, ok := ret.Get(0).(func(int64) string); ok {
+	if rf, ok := ret.Get(0).(func(string) string); ok {
 		r0 = rf(id)
 	} else {
 		r0 = ret.Get(0).(string)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int64) error); ok {
+	if rf, ok := ret.Get(1).(func(string) error); ok {
 		r1 = rf(id)
 	} else {
 		r1 = ret.Error(1)

@@ -22,8 +22,8 @@ func mockNVMfRemoteControllerServiceServer(m ...grpcmock.ServerOption) grpcmock.
 		ServiceName: "opi_api.storage.v1.NVMfRemoteControllerService",
 		MethodName:  "NVMfRemoteControllerGet",
 		MethodType:  service.TypeUnary,
-		Input:       &pb.NVMfRemoteControllerGetRequest{},
-		Output:      &pb.NVMfRemoteControllerGetResponse{},
+		Input:       &pb.GetNVMfRemoteControllerRequest{},
+		Output:      &pb.NVMfRemoteController{},
 	})}
 	opts = append(opts, m...)
 
@@ -38,15 +38,15 @@ func TestServer(t *testing.T) {
 	testCases := []struct {
 		scenario   string
 		mockServer grpcmock.ServerMockerWithContextDialer
-		request    pb.NVMfRemoteControllerGetRequest
-		expected   pb.NVMfRemoteControllerGetResponse
+		request    pb.GetNVMfRemoteControllerRequest
+		expected   pb.NVMfRemoteController
 	}{
 		{
 			scenario: "success",
 			mockServer: mockNVMfRemoteControllerServiceServer(func(s *grpcmock.Server) {
 				s.ExpectUnary(getItem).
-					WithPayload(&pb.NVMfRemoteControllerGetRequest{Id: 12}).
-					Return(&pb.NVMfRemoteControllerGetResponse{Ctrl: &pb.NVMfRemoteController{Subnqn: "nqn1"}})
+					WithPayload(&pb.GetNVMfRemoteControllerRequest{Name: "12"}).
+					Return(&pb.NVMfRemoteController{Subnqn: "nqn1"})
 			}),
 		},
 	}
@@ -59,19 +59,18 @@ func TestServer(t *testing.T) {
 
 			// Use the dialer in your client, do the request and assertions.
 			// For example:
-			out := &pb.NVMfRemoteControllerGetResponse{}
+			out := &pb.NVMfRemoteController{}
 			err := grpcmock.InvokeUnary(context.Background(),
-				getItem, &pb.NVMfRemoteControllerGetRequest{Id: 12}, out,
+				getItem, &pb.GetNVMfRemoteControllerRequest{Name: "12"}, out,
 				grpcmock.WithInsecure(),
 				grpcmock.WithContextDialer(dialer),
 			)
 
 			require.NoError(t, err)
 
-			assert.Equal(t, "nqn1", out.Ctrl.Subnqn)
-			var c goopicsi
-
-			res, err := c.goopicsiInterface.NVMeControllerGet(int64(12))
+			assert.Equal(t, "nqn1", out.Subnqn)
+			c := goopicsi{}
+			res, err := c.goopicsiInterface.NVMeControllerGet("12")
 			println(res)
 
 			// Server is closed at the end, and the ExpectationsWereMet() is also called, automatically!
@@ -81,7 +80,7 @@ func TestServer(t *testing.T) {
 
 func TestNVMeControllerConnect(t *testing.T) {
 	c := goopicsi{}
-	err := c.goopicsiInterface.NVMeControllerConnect(12, "", "", 44565)
+	err := c.goopicsiInterface.NVMeControllerConnect(12, "", "", 44565, "")
 	if err != nil {
 		log.Println(err)
 	}
@@ -99,7 +98,7 @@ func TestNVMeControllerList(t *testing.T) {
 
 func TestNVMeControllerGet(t *testing.T) {
 	c := goopicsi{}
-	resp, err := c.goopicsiInterface.NVMeControllerGet(12)
+	resp, err := c.goopicsiInterface.NVMeControllerGet("12")
 	if err != nil {
 		log.Println(err)
 	}
@@ -108,7 +107,7 @@ func TestNVMeControllerGet(t *testing.T) {
 
 func TestNVMeControllerDisconnect(t *testing.T) {
 	c := goopicsi{}
-	err := c.goopicsiInterface.NVMeControllerDisconnect(12)
+	err := c.goopicsiInterface.NVMeControllerDisconnect("12")
 	if err != nil {
 		log.Println(err)
 	}
@@ -133,7 +132,7 @@ func TestDeleteNVMeNamespace(t *testing.T) {
 
 func TestExposeRemoteNVMe(t *testing.T) {
 	c := goopicsi{}
-	err := c.goopicsiInterface.ExposeRemoteNVMe("subsystem1", "nqn.2022-09.io.spdk:test", 10, "controller1")
+	subsystemID, controllerID, err := c.goopicsiInterface.ExposeRemoteNVMe("nqn.2022-09.io.spdk:test", 10)
 	if err != nil {
 		log.Println(err)
 	}
