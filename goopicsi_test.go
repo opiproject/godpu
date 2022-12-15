@@ -42,7 +42,7 @@ func TestNVMeControllerDisconnect(t *testing.T) {
 }
 
 func TestCreateNVMeNamespace(t *testing.T) {
-	resp, err := CreateNVMeNamespace("1", "nqn", "nguid", 1)
+	resp, err := CreateNVMeNamespace("1", "nqn", "nguid")
 	if err != nil {
 		log.Println(err)
 	}

@@ -10,6 +10,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 	"time"
 
@@ -297,7 +298,7 @@ func ExposeRemoteNVMe(subsystemNQN string, maxNamespaces int64) (string, string,
 }
 
 // CreateNVMeNamespace Creates a new NVMe namespace
-func CreateNVMeNamespace(id string, subSystemID string, nguid string, hostID int32) (string, error) {
+func CreateNVMeNamespace(id string, subSystemID string, nguid string) (string, error) {
 	if conn == nil {
 		err := dialConnection()
 		if err != nil {
@@ -319,8 +320,8 @@ func CreateNVMeNamespace(id string, subSystemID string, nguid string, hostID int
 	volumeData := response.NullDebugs
 	volumeID := ""
 	for _, data := range volumeData {
-		uuid := strings.ReplaceAll(data.Uuid.Value, "-", "")
-		if uuid == nguid {
+		volumeUUID := strings.ReplaceAll(data.Uuid.Value, "-", "")
+		if volumeUUID == nguid {
 			volumeID = data.Handle.Value
 		}
 	}
@@ -328,6 +329,17 @@ func CreateNVMeNamespace(id string, subSystemID string, nguid string, hostID int
 		return "", errors.New("volume ID not found")
 	}
 
+	var hostID int64
+	hostNSID := strings.Split(volumeID, "n")
+	if len(hostNSID) > 1 {
+		hostID, err = strconv.ParseInt(hostNSID[1], 10, 64)
+		if err != nil {
+			log.Printf("could not find the HostID %v", err)
+			return "", err
+		}
+	}
+
+	log.Printf("HostId Value: %d", int32(hostID))
 	client2 := pb.NewFrontendNvmeServiceClient(conn)
 	resp, err := client2.CreateNVMeNamespace(ctx, &pb.CreateNVMeNamespaceRequest{
 		NvMeNamespace: &pb.NVMeNamespace{
@@ -335,7 +347,7 @@ func CreateNVMeNamespace(id string, subSystemID string, nguid string, hostID int
 				Id:          &pbc.ObjectKey{Value: id},
 				SubsystemId: &pbc.ObjectKey{Value: subSystemID},
 				VolumeId:    &pbc.ObjectKey{Value: volumeID},
-				HostNsid:    hostID,
+				HostNsid:    int32(hostID),
 			},
 		},
 	})
