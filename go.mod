@@ -6,7 +6,7 @@ require (
 	github.com/go-chi/chi v1.5.4
 	github.com/google/uuid v1.3.0
 	github.com/lithammer/fuzzysearch v1.1.5
-	github.com/opiproject/opi-api v0.0.0-20221215155400-a49a4ea1d561
+	github.com/opiproject/opi-api v0.0.0-20221216134945-6078c7e2edf6
 	github.com/stretchr/testify v1.8.1
 	golang.org/x/net v0.4.0
 	golang.org/x/text v0.5.0
