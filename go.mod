@@ -9,7 +9,7 @@ require (
 	github.com/opiproject/opi-api v0.0.0-20221215155400-a49a4ea1d561
 	github.com/stretchr/testify v1.8.1
 	golang.org/x/net v0.0.0-20221002022538-bcab6841153b
-	golang.org/x/text v0.4.0
+	golang.org/x/text v0.5.0
 	google.golang.org/grpc v1.51.0
 	google.golang.org/protobuf v1.28.1
 )
