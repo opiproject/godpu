@@ -1,0 +1,28 @@
+{
+    "service": "FrontendNvmeServiceServer",
+    "method": "CreateNVMeNamespace",
+    "input": {
+        "contains": {
+            "NVMeNamespace": {
+                "NVMeNamespaceSpec": {
+                    "Id": { "Value": "1" },
+                    "SubsystemId": { "Value": "1" },
+                    "VolumeId": { "Value": "1" },
+                    "HostNsid": { "Value": "1" }
+                }
+            }
+        }
+    },
+    "output": {
+        "data": {
+            "NVMeNamespace": {
+                "NVMeNamespaceSpec": {
+                    "Id": { "Value": "1" },
+                    "SubsystemId": { "Value": "nqn" },
+                    "VolumeId": { "Value": "1" },
+                    "HostNsid": { "Value": 1 }
+                }
+            }
+        }
+    }
+}
