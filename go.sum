@@ -14,6 +14,8 @@ github.com/lithammer/fuzzysearch v1.1.5 h1:Ag7aKU08wp0R9QCfF4GoGST9HbmAIeLP7xwMr
 github.com/lithammer/fuzzysearch v1.1.5/go.mod h1:1R1LRNk7yKid1BaQkmuLQaHruxcC4HmAH30Dh61Ih1Q=
 github.com/opiproject/opi-api v0.0.0-20221220003855-844775ae0e14 h1:ZjzswIdvCpehv/QI86y5fdAf3YLrYEZGz13butIcYS0=
 github.com/opiproject/opi-api v0.0.0-20221220003855-844775ae0e14/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
+github.com/opiproject/opi-api v0.0.0-20230105195424-f410dd418885 h1:hjPymbqTQ68BHMpjZmEhpQer0R3hB+4XcjLw6rwzmyU=
+github.com/opiproject/opi-api v0.0.0-20230105195424-f410dd418885/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
