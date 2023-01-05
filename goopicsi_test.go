@@ -5,7 +5,6 @@ package goopicsi
 
 import (
 	"fmt"
-	"log"
 	"net"
 	"os"
 	"strings"
@@ -58,6 +57,8 @@ func RunServer() {
 	MockServer := grpc.NewServer()
 
 	pb.RegisterFrontendNvmeServiceServer(MockServer, &server.GoopCSI{})
+	pb.RegisterNVMfRemoteControllerServiceServer(MockServer, &server.GoopCSI{})
+	pb.RegisterNullDebugServiceServer(MockServer, &server.GoopCSI{})
 
 	fmt.Printf("Serving gRPC on %s\n", csiAddress)
 	errChan := make(chan error)
@@ -74,54 +75,50 @@ func (suite *GoopcsiTestSuite) TearDownTestSuite() {
 	suite.T().Log("Cleaning up resources..")
 }
 
-// TODO These test cases should be reverted with mock server implementation
-// func TestNVMeControllerConnect(t *testing.T) {
-// 	err := NVMeControllerConnect("12", "", "", 44565, "")
-// 	if err != nil {
-// 		log.Println(err)
-// 	}
-// 	assert.Error(t, err)
-// }
+func (suite *GoopcsiTestSuite) TestExposeRemoteNVMe() {
+	// Negative scenario
+	subsystemID, controllerID, err := ExposeRemoteNVMe("nqn.2022-09.io.spdk:test", 10)
+	assert.Error(suite.T(), err)
+	assert.Empty(suite.T(), subsystemID, "ExposeRemoteNVMe failed")
+	assert.Empty(suite.T(), controllerID, "ExposeRemoteNVMe failed")
+}
 
-// func TestNVMeControllerList(t *testing.T) {
-// 	resp, err := NVMeControllerList()
-// 	if err != nil {
-// 		log.Println(err)
-// 	}
-// 	log.Printf("NVMf Remote Connections: %v", resp)
-// }
+func (suite *GoopcsiTestSuite) TestCreateNVMeNamespace() {
+	// scenario: when volume ID not found
+	resp, err := CreateNVMeNamespace("1", "nqn", "nguid", 1)
+	assert.Error(suite.T(), err)
+	assert.Empty(suite.T(), resp, "CreateNVMeNamespace failed with invalid volume ID")
+}
 
-// func TestNVMeControllerGet(t *testing.T) {
-// 	resp, err := NVMeControllerGet("12")
-// 	if err != nil {
-// 		log.Println(err)
-// 	}
-// 	log.Printf("NVMf remote connection corresponding to the ID: %v", resp)
-// }
+func (suite *GoopcsiTestSuite) TestNVMeControllerDisconnect() {
+	// scenario: when connection already exists
+	err := NVMeControllerDisconnect("12")
+	assert.NoError(suite.T(), err)
+}
 
-// func TestNVMeControllerDisconnect(t *testing.T) {
-// 	err := NVMeControllerDisconnect("12")
-// 	if err != nil {
-// 		log.Println(err)
-// 	}
-// }
+func (suite *GoopcsiTestSuite) TestNVMeControllerConnect() {
+	// scenario: when connection already exists
+	err := NVMeControllerConnect("12", "", "", 44565, "")
+	assert.NoError(suite.T(), err)
+}
 
-// func TestCreateNVMeNamespace(t *testing.T) {
-// 	resp, err := CreateNVMeNamespace("1", "nqn", "nguid", 1)
-// 	if err != nil {
-// 		log.Println(err)
-// 	}
-// 	log.Println(resp)
-// }
+func (suite *GoopcsiTestSuite) TestNVMeControllerList() {
+	resp, err := NVMeControllerList()
+	assert.NoError(suite.T(), err)
+	assert.NotNil(suite.T(), resp, "ListControllers success")
+}
 
-// func TestExposeRemoteNVMe(t *testing.T) {
-// 	subsystemID, controllerID, err := ExposeRemoteNVMe("nqn.2022-09.io.spdk:test", 10)
-// 	if err != nil {
-// 		log.Println(err)
-// 	}
-// 	log.Printf("Subsystem ID: %s", subsystemID)
-// 	log.Printf("Controller Id: %s", controllerID)
-// }
+func (suite *GoopcsiTestSuite) TestNVMeControllerGet() {
+	// positive scenario
+	resp, err := NVMeControllerGet("12")
+	assert.NoError(suite.T(), err)
+	assert.NotNil(suite.T(), resp, "GetController success")
+
+	// negative scenario
+	resp, err = NVMeControllerGet("invalid")
+	assert.Error(suite.T(), err, "GetController failed")
+	assert.Empty(suite.T(), resp, "GetController failed")
+}
 
 func (suite *GoopcsiTestSuite) TestDeleteNVMeNamespace() {
 	// positive scenario
@@ -133,9 +130,9 @@ func (suite *GoopcsiTestSuite) TestDeleteNVMeNamespace() {
 	assert.Error(suite.T(), err, "DeleteNVMeNamespace failed")
 }
 
-func TestGenerateHostNQN(t *testing.T) {
+func (suite *GoopcsiTestSuite) TestGenerateHostNQN() {
 	hostNQN := GenerateHostNQN()
-	log.Println(hostNQN)
+	assert.NotNil(suite.T(), hostNQN, "GenerateHostNQN success")
 }
 
 func TestGoopcsiTestSuite(t *testing.T) {

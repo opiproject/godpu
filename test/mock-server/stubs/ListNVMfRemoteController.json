@@ -1,0 +1,22 @@
+{
+    "service": "NVMfRemoteControllerServiceServer",
+    "method": "ListNVMfRemoteControllers",
+    "input": {
+        "contains": {}
+    },
+    "output": {
+        "data": {
+            "nvmfRemoteControllers": [
+                {
+                    "id": {"value": "12"}
+                },
+                {
+                    "id": {"value": "13"}
+                },
+                {
+                    "id": {"value": "14"}
+                }
+            ]
+        }
+    }
+}

@@ -1,12 +1,16 @@
 {
-    "service": "FrontendNvmeServiceServer",
-    "method": "DeleteNVMeNamespace",
+    "service": "NullDebugServiceServer",
+    "method": "ListNullDebugs",
     "input": {
         "contains": {
-            "name": "1"
         }
     },
     "output": {
-        "data": {}
+        "data": {
+            "NullDebugs": [{
+                    "Handle": {"Value":"12"},
+                    "Uuid": {"Value": "12"}
+                }]
+        }
     }
 }

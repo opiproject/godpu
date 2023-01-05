@@ -1,0 +1,28 @@
+{
+    "service": "FrontendNvmeServiceServer",
+    "method": "CreateNVMeSubsystem",
+    "input": {
+        "contains": {
+            "CreateNVMeSubsystemRequest": {
+                "NvMeSubsystem":{
+                    "Spec":  {
+                        "Id": {"value": "1"},
+                        "Nqn": "nqn1"
+                    }
+                }
+            }
+        }
+    },
+    "output": {
+        "data": {
+            "NVMeSubsystem": {
+                "spec": {
+                    "NVMeSubsystemSpec": {
+                        "Id": {"value": "1"},
+                        "Nqn": "nqn1"
+                    }
+                }
+            }
+        }
+    }
+}

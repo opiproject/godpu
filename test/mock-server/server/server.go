@@ -19,6 +19,7 @@ package server
 
 import (
 	"bytes"
+	context2 "context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -34,10 +35,94 @@ import (
 // GoopCSI mock gRPC server to implement mock service calls
 type GoopCSI struct{}
 
-// CreateNVMeSubsystem creates mock NVMe subsystem
-func (s *GoopCSI) CreateNVMeSubsystem(ctx context.Context, request *pb.CreateNVMeSubsystemRequest) (*pb.NVMeSubsystem, error) {
+// CreateNullDebug creates a mock NullDebug
+func (s *GoopCSI) CreateNullDebug(ctx context2.Context, request *pb.CreateNullDebugRequest) (*pb.NullDebug, error) {
 	// TODO implement me
 	panic("implement me")
+}
+
+// DeleteNullDebug Deletes a mock NullDebug
+func (s *GoopCSI) DeleteNullDebug(ctx context2.Context, request *pb.DeleteNullDebugRequest) (*emptypb.Empty, error) {
+	// TODO implement me
+	panic("implement me")
+}
+
+// UpdateNullDebug Updated mock NullDebug
+func (s *GoopCSI) UpdateNullDebug(ctx context2.Context, request *pb.UpdateNullDebugRequest) (*pb.NullDebug, error) {
+	// TODO implement me
+	panic("implement me")
+}
+
+// ListNullDebugs Lists mock nullDebugs
+func (s *GoopCSI) ListNullDebugs(ctx context2.Context, request *pb.ListNullDebugsRequest) (*pb.ListNullDebugsResponse, error) {
+	out := &pb.ListNullDebugsResponse{}
+	err := FindStub("NullDebugServiceServer", "ListNullDebugs", request, out)
+	return out, err
+}
+
+// GetNullDebug Gets mock NullDebug
+func (s *GoopCSI) GetNullDebug(ctx context2.Context, request *pb.GetNullDebugRequest) (*pb.NullDebug, error) {
+	// TODO implement me
+	panic("implement me")
+}
+
+// NullDebugStats gets mock NullDebugStats
+func (s *GoopCSI) NullDebugStats(ctx context2.Context, request *pb.NullDebugStatsRequest) (*pb.NullDebugStatsResponse, error) {
+	// TODO implement me
+	panic("implement me")
+}
+
+// CreateNVMfRemoteController creates a mock NVMf Remote controller
+func (s *GoopCSI) CreateNVMfRemoteController(ctx context2.Context, request *pb.CreateNVMfRemoteControllerRequest) (*pb.NVMfRemoteController, error) {
+	out := &pb.NVMfRemoteController{}
+	err := FindStub("NVMfRemoteControllerServiceServer", "CreateNVMfRemoteController", request, out)
+	return out, err
+}
+
+// DeleteNVMfRemoteController deletes a mock NVMfRemote Controller
+func (s *GoopCSI) DeleteNVMfRemoteController(ctx context2.Context, request *pb.DeleteNVMfRemoteControllerRequest) (*emptypb.Empty, error) {
+	out := &emptypb.Empty{}
+	err := FindStub("NVMfRemoteControllerServiceServer", "DeleteNVMfRemoteController", request, out)
+	return out, err
+}
+
+// UpdateNVMfRemoteController updates mock NVMf Remote Controller
+func (s *GoopCSI) UpdateNVMfRemoteController(ctx context2.Context, request *pb.UpdateNVMfRemoteControllerRequest) (*pb.NVMfRemoteController, error) {
+	// TODO implement me
+	panic("implement me")
+}
+
+// ListNVMfRemoteControllers Lists mock NVMfRemote Controllers
+func (s *GoopCSI) ListNVMfRemoteControllers(ctx context2.Context, request *pb.ListNVMfRemoteControllersRequest) (*pb.ListNVMfRemoteControllersResponse, error) {
+	out := &pb.ListNVMfRemoteControllersResponse{}
+	err := FindStub("NVMfRemoteControllerServiceServer", "ListNVMfRemoteControllers", request, out)
+	return out, err
+}
+
+// GetNVMfRemoteController Gets an NVMf Remote controller
+func (s *GoopCSI) GetNVMfRemoteController(ctx context2.Context, request *pb.GetNVMfRemoteControllerRequest) (*pb.NVMfRemoteController, error) {
+	out := &pb.NVMfRemoteController{}
+	err := FindStub("NVMfRemoteControllerServiceServer", "GetNVMfRemoteController", request, out)
+	return out, err
+}
+
+// NVMfRemoteControllerReset Resets mock Remote Controller
+func (s *GoopCSI) NVMfRemoteControllerReset(ctx context2.Context, request *pb.NVMfRemoteControllerResetRequest) (*emptypb.Empty, error) {
+	// TODO implement me
+	panic("implement me")
+}
+
+// NVMfRemoteControllerStats gets mock stats
+func (s *GoopCSI) NVMfRemoteControllerStats(ctx context2.Context, request *pb.NVMfRemoteControllerStatsRequest) (*pb.NVMfRemoteControllerStatsResponse, error) {
+	// TODO implement me
+	panic("implement me")
+}
+
+// CreateNVMeSubsystem creates mock NVMe subsystem
+func (s *GoopCSI) CreateNVMeSubsystem(ctx context.Context, request *pb.CreateNVMeSubsystemRequest) (*pb.NVMeSubsystem, error) {
+	out := &pb.NVMeSubsystem{}
+	err := FindStub("FrontendNvmeServiceServer", "CreateNVMeSubsystem", request, out)
+	return out, err
 }
 
 // DeleteNVMeSubsystem deletes mock NVMe subsystem
@@ -60,8 +145,9 @@ func (s *GoopCSI) ListNVMeSubsystems(ctx context.Context, request *pb.ListNVMeSu
 
 // GetNVMeSubsystem gets a mock NVMe subsystem
 func (s *GoopCSI) GetNVMeSubsystem(ctx context.Context, request *pb.GetNVMeSubsystemRequest) (*pb.NVMeSubsystem, error) {
-	// TODO implement me
-	panic("implement me")
+	out := &pb.NVMeSubsystem{}
+	err := FindStub("FrontendNvmeServiceServer", "GetNVMeSubsystem", request, out)
+	return out, err
 }
 
 // NVMeSubsystemStats gets mock subsystem stats
@@ -96,8 +182,9 @@ func (s *GoopCSI) ListNVMeControllers(ctx context.Context, request *pb.ListNVMeC
 
 // GetNVMeController gets a mock NVMe controller
 func (s *GoopCSI) GetNVMeController(ctx context.Context, request *pb.GetNVMeControllerRequest) (*pb.NVMeController, error) {
-	// TODO implement me
-	panic("implement me")
+	out := &pb.NVMeController{}
+	err := FindStub("FrontendNvmeServiceServer", "GetNVMeController", request, out)
+	return out, err
 }
 
 // NVMeControllerStats gets mock stats

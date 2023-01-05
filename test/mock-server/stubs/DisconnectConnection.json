@@ -1,0 +1,12 @@
+{
+    "service": "NVMfRemoteControllerServiceServer",
+    "method": "DeleteNVMfRemoteController",
+    "input": {
+        "contains": {
+            "name": "12"
+        }
+    },
+    "output": {
+        "data": {}
+    }
+}

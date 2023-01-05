@@ -1,0 +1,23 @@
+{
+    "service": "FrontendNvmeServiceServer",
+    "method": "GetNVMeController",
+    "input": {
+        "contains": {
+            "GetNVMeControllerRequest": {
+                "Name": "name1"
+            }
+        }
+    },
+    "output": {
+        "data": {
+            "NVMeController": {
+                "spec": {
+                    "NVMeSubsystemSpec": {
+                        "Id": {"value": "1"},
+                        "NvmeControllerId": "s1"
+                    }
+                }
+            }
+        }
+    }
+}
