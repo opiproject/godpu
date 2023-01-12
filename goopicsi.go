@@ -7,7 +7,6 @@ package goopicsi
 import (
 	"context"
 	"errors"
-	"flag"
 	"fmt"
 	"log"
 	"strings"
@@ -31,77 +30,6 @@ type NVMeConnection struct {
 	id     string
 	subnqn string
 	traddr string
-}
-
-// ConnectToRemoteAndExpose connects to the remote storage over NVMe/TCP and exposes it as a local NVMe/PCIe device
-func ConnectToRemoteAndExpose(addr string) error {
-	flag.Parse()
-	// Set up a connection to the server.
-	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		log.Printf("did not connect: %v", err)
-		return err
-	}
-	defer func(conn *grpc.ClientConn) {
-		err := conn.Close()
-		if err != nil {
-			log.Fatalf("Failed to close connection: %v", err)
-		}
-	}(conn)
-
-	// Contact the server and print out its response.
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-
-	// Connect to remote NVMe target from xPU
-	c4 := pb.NewNVMfRemoteControllerServiceClient(conn)
-	rr0, err := c4.CreateNVMfRemoteController(ctx, &pb.CreateNVMfRemoteControllerRequest{NvMfRemoteController: &pb.NVMfRemoteController{
-		Id: &pbc.ObjectKey{Value: "nvme-remote-connect"}}})
-	if err != nil {
-		log.Printf("could not connect to Remote NVMf controller: %v", err)
-		return err
-	}
-	log.Printf("Connected: %v", rr0)
-
-	// Expose emulated NVMe device to the Host (Step 1: Subsystem)
-	c1 := pb.NewFrontendNvmeServiceClient(conn)
-	rs1, err := c1.CreateNVMeSubsystem(ctx, &pb.CreateNVMeSubsystemRequest{
-		NvMeSubsystem: &pb.NVMeSubsystem{
-			Spec: &pb.NVMeSubsystemSpec{
-				Id:  &pbc.ObjectKey{Value: "controller-test-ss"},
-				Nqn: "nqn.2022-09.io.spdk:opi2"}}})
-	if err != nil {
-		log.Printf("could not create NVMe subsystem: %v", err)
-		return err
-	}
-	log.Printf("Added: %v", rs1)
-	// Step2: NVMeController
-	rc1, err := c1.CreateNVMeController(ctx, &pb.CreateNVMeControllerRequest{
-		NvMeController: &pb.NVMeController{
-			Spec: &pb.NVMeControllerSpec{
-				Id:               &pbc.ObjectKey{Value: "controller-test"},
-				SubsystemId:      &pbc.ObjectKey{Value: "controller-test-ss"},
-				NvmeControllerId: 13}}})
-	if err != nil {
-		log.Printf("could not create NVMe subsystem: %v", err)
-		return err
-	}
-	log.Printf("Added: %v", rc1)
-
-	// NVMeNamespace
-	rn1, err := c1.CreateNVMeNamespace(ctx, &pb.CreateNVMeNamespaceRequest{
-		NvMeNamespace: &pb.NVMeNamespace{
-			Spec: &pb.NVMeNamespaceSpec{
-				Id:          &pbc.ObjectKey{Value: "namespace-test"},
-				SubsystemId: &pbc.ObjectKey{Value: "namespace-test-ss"},
-				VolumeId:    &pbc.ObjectKey{Value: "Malloc1"},
-				HostNsid:    123}}})
-	if err != nil {
-		log.Printf("could not create NVMe subsystem: %v", err)
-		return err
-	}
-	log.Printf("Added: %v", rn1)
-	return nil
 }
 
 // NVMeControllerConnect Connects to remote NVMf controller
