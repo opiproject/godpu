@@ -203,6 +203,8 @@ func ExposeRemoteNVMe(subsystemNQN string, maxNamespaces int64) (string, string,
 	if err != nil {
 		log.Printf("No existing NVMe Controller found with controllerID: %v", controllerID)
 	}
+
+	// Default value of MaxNamespaces is 32 incase the parameter is not assigned any value
 	if data2 == nil {
 		response2, err := client.CreateNVMeController(ctx, &pb.CreateNVMeControllerRequest{
 			NvMeController: &pb.NVMeController{
