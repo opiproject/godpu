@@ -160,7 +160,7 @@ func NVMeControllerDisconnect(id string) error {
 	return nil
 }
 
-// ExposeRemoteNVMe creates a new NVMe Subsystem and NVMe controller
+// ExposeRemoteNVMe creates a new NVMe Subsystem and NVMe controller. Default value of MaxNamespaces is 32 incase the parameter is not assigned any value
 func ExposeRemoteNVMe(subsystemNQN string, maxNamespaces int64) (string, string, error) {
 	if conn == nil {
 		err := dialConnection()
