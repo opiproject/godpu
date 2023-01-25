@@ -16,6 +16,8 @@ github.com/opiproject/opi-api v0.0.0-20230111150933-e4b3480e8ee9 h1:Y/0Ku5yIfnLE
 github.com/opiproject/opi-api v0.0.0-20230111150933-e4b3480e8ee9/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
 github.com/opiproject/opi-api v0.0.0-20230123165122-10e47bafd42b h1:Ho6qkBoU1vfqERZbih+Hmn7Y1lsx14YtOiqMl4lzdF4=
 github.com/opiproject/opi-api v0.0.0-20230123165122-10e47bafd42b/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
+github.com/opiproject/opi-api v0.0.0-20230125154820-1e771510c996 h1:20DbniIvEeEQeElilrkXINd4NHRJ3oVb+XDWJOzpYl4=
+github.com/opiproject/opi-api v0.0.0-20230125154820-1e771510c996/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
