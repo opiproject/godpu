@@ -5,6 +5,7 @@
 [![License](https://img.shields.io/github/license/opiproject/goopicsi?style=flat-square&color=blue&label=License)](https://github.com/opiproject/goopicsi/blob/master/LICENSE)
 [![codecov](https://codecov.io/gh/opiproject/goopicsi/branch/main/graph/badge.svg)](https://codecov.io/gh/opiproject/goopicsi)
 [![Go Report Card](https://goreportcard.com/badge/github.com/opiproject/goopicsi)](https://goreportcard.com/report/github.com/opiproject/goopicsi)
+[![Go Doc](https://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/opiproject/goopicsi)
 [![Last Release](https://img.shields.io/github/v/release/opiproject/goopicsi?label=Latest&style=flat-square&logo=go)](https://github.com/opiproject/goopicsi/releases)
 
 A Container Storage Interface (CSI) library, client, and other helpful utilities created with Go for OPI
