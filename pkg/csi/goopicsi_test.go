@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2022 Dell Inc, or its subsidiaries.
 
-package godpu
+package csi
 
 import (
 	"fmt"
@@ -32,7 +32,7 @@ func RunServer() {
 	fmt.Println("RUNNING MOCK SERVER")
 	const (
 		csiAddress       = "localhost:50051"
-		defaultStubsPath = "test/mock-server/stubs"
+		defaultStubsPath = "../../test/mock-server/stubs"
 		apiPort          = "4771"
 	)
 
