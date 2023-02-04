@@ -6,6 +6,7 @@
 [![codecov](https://codecov.io/gh/opiproject/godpu/branch/main/graph/badge.svg)](https://codecov.io/gh/opiproject/godpu)
 [![Go Report Card](https://goreportcard.com/badge/github.com/opiproject/godpu)](https://goreportcard.com/report/github.com/opiproject/godpu)
 [![Go Doc](https://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/opiproject/godpu)
+[![Pulls](https://img.shields.io/docker/pulls/opiproject/godpu.svg?logo=docker&style=flat&label=Pulls)](https://hub.docker.com/r/opiproject/godpu)
 [![Last Release](https://img.shields.io/github/v/release/opiproject/godpu?label=Latest&style=flat-square&logo=go)](https://github.com/opiproject/godpu/releases)
 
 A Container Storage Interface (CSI) library, client, and other helpful utilities created with Go for OPI
