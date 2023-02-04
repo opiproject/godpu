@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2022 Dell Inc, or its subsidiaries.
 
-package goopicsi
+package godpu
 
 import (
 	"fmt"
@@ -10,8 +10,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/opiproject/goopicsi/test/mock-server/server"
-	"github.com/opiproject/goopicsi/test/mock-server/stub"
+	"github.com/opiproject/godpu/test/mock-server/server"
+	"github.com/opiproject/godpu/test/mock-server/stub"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 	"github.com/stretchr/testify/suite"
 	"google.golang.org/grpc"

@@ -1,4 +1,4 @@
-module github.com/opiproject/goopicsi
+module github.com/opiproject/godpu
 
 go 1.19
 
