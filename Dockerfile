@@ -12,5 +12,5 @@ COPY go.sum ./
 RUN go mod download
 
 # build an app
-COPY *.go ./
-RUN go build -v
+COPY pkg pkg
+RUN go build -v ./...
