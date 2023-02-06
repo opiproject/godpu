@@ -5,11 +5,9 @@
 package main
 
 import (
-	"github.com/opiproject/godpu/cmd/inventory"
-	"github.com/opiproject/godpu/cmd/ipsec"
+	commands "github.com/opiproject/godpu/cmd"
 )
 
 func main() {
-	ipsec.Execute()
-	inventory.Execute()
+	commands.Execute()
 }

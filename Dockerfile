@@ -12,7 +12,6 @@ COPY go.sum ./
 RUN go mod download
 
 # build an app
-COPY pkg pkg
-COPY cmd cmd
+COPY . .
 RUN go build -v ./...
-ENTRYPOINT [ "dpu" ]
+ENTRYPOINT [ "go", "run", "main.go" ]
