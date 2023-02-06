@@ -13,4 +13,6 @@ RUN go mod download
 
 # build an app
 COPY pkg pkg
+COPY cmd cmd
 RUN go build -v ./...
+ENTRYPOINT [ "dpu" ]
