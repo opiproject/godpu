@@ -1,28 +1,28 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2022 Dell Inc, or its subsidiaries.
 
-// Package inventory implements the CLI commands
-package inventory
+// Package inventorycmd implements the CLI commands
+package inventorycmd
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/spf13/cobra"
 )
 
-var rootCmd = &cobra.Command{
-	Use:   "inventory",
-	Short: "inventory - a simple CLI to transform and inspect strings",
-	Run: func(cmd *cobra.Command, args []string) {
-
-	},
-}
-
-// Execute executes the root command.
-func Execute() {
-	if err := rootCmd.Execute(); err != nil {
-		fmt.Fprintf(os.Stderr, "Whoops. There was an error while executing your CLI '%s'", err)
-		os.Exit(1)
+// NewInventoryCommand returns the inventory command
+func NewInventoryCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "inventory",
+		Short: "DPUs and IPUs inventory commands",
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Println(args)
+		},
 	}
+
+	cmd.AddCommand(newGetCommand())
+	// cmd.AddCommand(newBridgeRm())
+	// cmd.AddCommand(newBridgeRm())
+
+	return cmd
 }
