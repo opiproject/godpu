@@ -31,7 +31,7 @@ There are several ways of running this CLI.
 ### Docker
 
 ```sh
-docker pull godpu:<version>
+docker pull opiproject/godpu:<version>
 ```
 
 You can specify a version like `0.1.1` or use `latest` to get the most up-to-date version.
@@ -39,7 +39,7 @@ You can specify a version like `0.1.1` or use `latest` to get the most up-to-dat
 Run latest version of the CLI in a container:
 
 ```sh
-docker run --rm godpu:latest --help
+docker run --rm opiproject/godpu:latest --help
 ```
 
 Replace `--help` with any `godpu` command, without `godpu` itself.
