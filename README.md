@@ -24,7 +24,33 @@ See [CONTRIBUTING](https://github.com/opiproject/opi/blob/main/CONTRIBUTING.md)
 and [GitHub Basic Process](https://github.com/opiproject/opi/blob/main/doc-github-rules.md)
 for more details.
 
-## Getting started
+## Installation
+
+There are several ways of running this CLI.
+
+### Docker
+
+```sh
+docker pull godpu:<version>
+```
+
+You can specify a version like `0.1.1` or use `latest` to get the most up-to-date version.
+
+Run latest version of the CLI in a container:
+
+```sh
+docker run --rm godpu:latest --help
+```
+
+Replace `--help` with any `godpu` command, without `godpu` itself.
+
+### Golang
+
+```sh
+go install -v github.com/opiproject/godpu@latest
+```
+
+or import
 
 ```go
 import (
