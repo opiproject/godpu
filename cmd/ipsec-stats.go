@@ -2,7 +2,7 @@
 // Copyright (c) 2022 Dell Inc, or its subsidiaries.
 
 // Package ipseccmd implements the CLI commands
-package ipseccmd
+package cmd
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func newStatsCommand() *cobra.Command {
+func NewStatsCommand() *cobra.Command {
 	var (
 		addr string
 	)

@@ -2,7 +2,7 @@
 // Copyright (c) 2022 Dell Inc, or its subsidiaries.
 
 // Package inventorycmd implements the CLI commands
-package inventorycmd
+package cmd
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func newGetCommand() *cobra.Command {
+func NewGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "get",
 		Aliases: []string{"g"},
