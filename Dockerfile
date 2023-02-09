@@ -13,5 +13,6 @@ RUN go mod download
 
 # build an app
 COPY . .
-RUN go build -v ./...
-ENTRYPOINT [ "go", "run", "main.go" ]
+RUN go build -v -o /dpu /app/
+
+ENTRYPOINT [ "/dpu" ]
