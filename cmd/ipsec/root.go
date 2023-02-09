@@ -21,7 +21,7 @@ func NewIpsecCommand() *cobra.Command {
 	}
 
 	cmd.AddCommand(newStatsCommand())
-	// cmd.AddCommand(newBridgeRm())
+	cmd.AddCommand(newTestCommand())
 	// cmd.AddCommand(newBridgeRm())
 
 	return cmd
