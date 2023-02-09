@@ -11,21 +11,23 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func newStatsCommand() *cobra.Command {
+func newTestCommand() *cobra.Command {
 	var (
-		addr string
+		addr     string
+		pingaddr string
 	)
 	cmd := &cobra.Command{
-		Use:     "stats",
+		Use:     "test",
 		Aliases: []string{"c"},
-		Short:   "Queries ipsec statistics",
+		Short:   "Test ipsec functionality",
 		Args:    cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
-			res := ipsec.Stats(addr)
+			res := ipsec.TestIpsec(addr, pingaddr)
 			fmt.Println(res)
 		},
 	}
 	flags := cmd.Flags()
 	flags.StringVar(&addr, "addr", "localhost:50151", "address or OPI gRPC server")
+	flags.StringVar(&pingaddr, "pingaddr", "localhost", "address of other tunnel end to Ping")
 	return cmd
 }
