@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2022 Dell Inc, or its subsidiaries.
 
-// Package inventorycmd implements the CLI commands
-package inventorycmd
+// Package cmd implements the CLI commands
+package cmd
 
 import (
 	"fmt"
@@ -11,7 +11,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func newGetCommand() *cobra.Command {
+// NewGetCommand returns the inventory get command
+func NewGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "get",
 		Aliases: []string{"g"},
