@@ -11,8 +11,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/opiproject/godpu/test/mock-server/server"
-	"github.com/opiproject/godpu/test/mock-server/stub"
+	"github.com/opiproject/godpu/testing/mock-server/server"
+	"github.com/opiproject/godpu/testing/mock-server/stub"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 	"github.com/stretchr/testify/suite"
 	"google.golang.org/grpc"
@@ -33,7 +33,7 @@ func RunServer() {
 	fmt.Println("RUNNING MOCK SERVER")
 	const (
 		csiAddress       = "localhost:50051"
-		defaultStubsPath = "../test/mock-server/stubs"
+		defaultStubsPath = "../testing/mock-server/stubs"
 		apiPort          = "4771"
 	)
 
