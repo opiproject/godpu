@@ -10,7 +10,7 @@
 [![Pulls](https://img.shields.io/docker/pulls/opiproject/godpu.svg?logo=docker&style=flat&label=Pulls)](https://hub.docker.com/r/opiproject/godpu)
 [![Last Release](https://img.shields.io/github/v/release/opiproject/godpu?label=Latest&style=flat-square&logo=go)](https://github.com/opiproject/godpu/releases)
 
-A Container Storage Interface (CSI) library, client, and other helpful utilities created with Go for OPI
+Go library and cli to communicate with DPUs and IPUs.
 
 ## I Want To Contribute
 
