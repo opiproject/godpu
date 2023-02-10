@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2022 Dell Inc, or its subsidiaries.
 
+// Package csi implements the go library for OPI to be used in CSI drivers
 package csi
 
 import (
@@ -32,7 +33,7 @@ func RunServer() {
 	fmt.Println("RUNNING MOCK SERVER")
 	const (
 		csiAddress       = "localhost:50051"
-		defaultStubsPath = "../../test/mock-server/stubs"
+		defaultStubsPath = "../test/mock-server/stubs"
 		apiPort          = "4771"
 	)
 

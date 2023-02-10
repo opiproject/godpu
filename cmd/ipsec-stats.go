@@ -7,7 +7,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/opiproject/godpu/pkg/ipsec"
+	"github.com/opiproject/godpu/ipsec"
 	"github.com/spf13/cobra"
 )
 

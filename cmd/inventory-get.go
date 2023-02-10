@@ -7,7 +7,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/opiproject/godpu/pkg/inventory"
+	"github.com/opiproject/godpu/inventory"
 	"github.com/spf13/cobra"
 )
 
