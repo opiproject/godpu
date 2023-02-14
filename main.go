@@ -40,5 +40,6 @@ func newCommand() *cobra.Command {
 	c.AddCommand(cmd.NewGetCommand())
 	c.AddCommand(cmd.NewTestCommand())
 	c.AddCommand(cmd.NewStatsCommand())
+	c.AddCommand(cmd.NewStorageTestCommand())
 	return c
 }
