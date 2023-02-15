@@ -6,7 +6,7 @@ version: "3.7"
 services:
 
   spdk:
-    image: ghcr.io/opiproject/opi-storage-spdk:main
+    image: docker.io/opiproject/opi-spdk-bridge:main
     volumes:
       - /dev/hugepages:/dev/hugepages
       - /dev/shm:/dev/shm
