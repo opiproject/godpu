@@ -6,7 +6,7 @@ version: "3.7"
 services:
 
   spdk:
-    image: docker.io/opiproject/opi-spdk-bridge:main
+    image: ghcr.io/opiproject/opi-storage-spdk:main
     volumes:
       - /dev/hugepages:/dev/hugepages
       - /dev/shm:/dev/shm
@@ -45,7 +45,7 @@ services:
       timeout: 10s
 
   server:
-    image: ghcr.io/opiproject/opi-storage-server:main
+    image: docker.io/opiproject/opi-spdk-bridge:main
     volumes_from:
       - spdk:rw
     networks:
