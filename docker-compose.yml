@@ -57,7 +57,7 @@ services:
     healthcheck:
       test: grpcurl -plaintext localhost:50051 list || exit 1
 
-  client:
+  opi-test:
     build:
       context: .
     networks:
