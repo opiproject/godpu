@@ -26,6 +26,7 @@ jobs:
 
     - name: Build
       run: go build -v ./...
+      working-directory: cmd
 
     - name: Test
       run: go test -race -coverprofile=coverage.out -covermode=atomic -v ./...
