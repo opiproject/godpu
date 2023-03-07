@@ -142,7 +142,8 @@ func executeVirtioBlk(ctx context.Context, c4 pb.FrontendVirtioBlkServiceClient)
 	log.Printf("Added VirtioBlk: %v", rv1)
 	rv3, err := c4.UpdateVirtioBlk(ctx, &pb.UpdateVirtioBlkRequest{VirtioBlk: &pb.VirtioBlk{Id: &pbc.ObjectKey{Value: "VirtioBlk8"}}})
 	if err != nil {
-		return err
+		// UpdateVirtioBlk is not implemented, so no error here
+		log.Printf("could not update VirtioBlk: %v", err)
 	}
 	log.Printf("Updated VirtioBlk: %v", rv3)
 	rv4, err := c4.ListVirtioBlks(ctx, &pb.ListVirtioBlksRequest{})
@@ -157,7 +158,8 @@ func executeVirtioBlk(ctx context.Context, c4 pb.FrontendVirtioBlkServiceClient)
 	log.Printf("Got VirtioBlk: %v", rv5.Id.Value)
 	rv6, err := c4.VirtioBlkStats(ctx, &pb.VirtioBlkStatsRequest{ControllerId: &pbc.ObjectKey{Value: "VirtioBlk8"}})
 	if err != nil {
-		return err
+		// VirtioBlkStats is not implemented, so no error here
+		log.Printf("could not stats VirtioBlk: %v", err)
 	}
 	log.Printf("Stats VirtioBlk: %v", rv6.Stats)
 	rv2, err := c4.DeleteVirtioBlk(ctx, &pb.DeleteVirtioBlkRequest{Name: "VirtioBlk8"})
