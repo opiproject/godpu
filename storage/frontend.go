@@ -161,7 +161,7 @@ func executeVirtioBlk(ctx context.Context, c4 pb.FrontendVirtioBlkServiceClient)
 		// VirtioBlkStats is not implemented, so no error here
 		log.Printf("could not stats VirtioBlk: %v", err)
 	}
-	log.Printf("Stats VirtioBlk: %v", rv6.Stats)
+	log.Printf("Stats VirtioBlk: %v", rv6)
 	rv2, err := c4.DeleteVirtioBlk(ctx, &pb.DeleteVirtioBlkRequest{Name: "VirtioBlk8"})
 	if err != nil {
 		return err
