@@ -55,7 +55,6 @@ func disconnectConnection() {
 	err := conn.Close()
 	if err != nil {
 		log.Fatalf("Failed to close connection: %v", err)
-	} else {
-		log.Println("GRPC connection closed successfully")
 	}
+	log.Println("GRPC connection closed successfully")
 }

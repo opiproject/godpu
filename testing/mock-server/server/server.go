@@ -36,197 +36,197 @@ import (
 type GoopCSI struct{}
 
 // CreateNullDebug creates a mock NullDebug
-func (s *GoopCSI) CreateNullDebug(ctx context2.Context, request *pb.CreateNullDebugRequest) (*pb.NullDebug, error) {
+func (s *GoopCSI) CreateNullDebug(_ context2.Context, _ *pb.CreateNullDebugRequest) (*pb.NullDebug, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
 // DeleteNullDebug Deletes a mock NullDebug
-func (s *GoopCSI) DeleteNullDebug(ctx context2.Context, request *pb.DeleteNullDebugRequest) (*emptypb.Empty, error) {
+func (s *GoopCSI) DeleteNullDebug(_ context2.Context, _ *pb.DeleteNullDebugRequest) (*emptypb.Empty, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
 // UpdateNullDebug Updated mock NullDebug
-func (s *GoopCSI) UpdateNullDebug(ctx context2.Context, request *pb.UpdateNullDebugRequest) (*pb.NullDebug, error) {
+func (s *GoopCSI) UpdateNullDebug(_ context2.Context, _ *pb.UpdateNullDebugRequest) (*pb.NullDebug, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
 // ListNullDebugs Lists mock nullDebugs
-func (s *GoopCSI) ListNullDebugs(ctx context2.Context, request *pb.ListNullDebugsRequest) (*pb.ListNullDebugsResponse, error) {
+func (s *GoopCSI) ListNullDebugs(_ context2.Context, request *pb.ListNullDebugsRequest) (*pb.ListNullDebugsResponse, error) {
 	out := &pb.ListNullDebugsResponse{}
 	err := FindStub("NullDebugServiceServer", "ListNullDebugs", request, out)
 	return out, err
 }
 
 // GetNullDebug Gets mock NullDebug
-func (s *GoopCSI) GetNullDebug(ctx context2.Context, request *pb.GetNullDebugRequest) (*pb.NullDebug, error) {
+func (s *GoopCSI) GetNullDebug(_ context2.Context, _ *pb.GetNullDebugRequest) (*pb.NullDebug, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
 // NullDebugStats gets mock NullDebugStats
-func (s *GoopCSI) NullDebugStats(ctx context2.Context, request *pb.NullDebugStatsRequest) (*pb.NullDebugStatsResponse, error) {
+func (s *GoopCSI) NullDebugStats(_ context2.Context, _ *pb.NullDebugStatsRequest) (*pb.NullDebugStatsResponse, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
 // CreateNVMfRemoteController creates a mock NVMf Remote controller
-func (s *GoopCSI) CreateNVMfRemoteController(ctx context2.Context, request *pb.CreateNVMfRemoteControllerRequest) (*pb.NVMfRemoteController, error) {
+func (s *GoopCSI) CreateNVMfRemoteController(_ context2.Context, request *pb.CreateNVMfRemoteControllerRequest) (*pb.NVMfRemoteController, error) {
 	out := &pb.NVMfRemoteController{}
 	err := FindStub("NVMfRemoteControllerServiceServer", "CreateNVMfRemoteController", request, out)
 	return out, err
 }
 
 // DeleteNVMfRemoteController deletes a mock NVMfRemote Controller
-func (s *GoopCSI) DeleteNVMfRemoteController(ctx context2.Context, request *pb.DeleteNVMfRemoteControllerRequest) (*emptypb.Empty, error) {
+func (s *GoopCSI) DeleteNVMfRemoteController(_ context2.Context, request *pb.DeleteNVMfRemoteControllerRequest) (*emptypb.Empty, error) {
 	out := &emptypb.Empty{}
 	err := FindStub("NVMfRemoteControllerServiceServer", "DeleteNVMfRemoteController", request, out)
 	return out, err
 }
 
 // UpdateNVMfRemoteController updates mock NVMf Remote Controller
-func (s *GoopCSI) UpdateNVMfRemoteController(ctx context2.Context, request *pb.UpdateNVMfRemoteControllerRequest) (*pb.NVMfRemoteController, error) {
+func (s *GoopCSI) UpdateNVMfRemoteController(_ context2.Context, _ *pb.UpdateNVMfRemoteControllerRequest) (*pb.NVMfRemoteController, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
 // ListNVMfRemoteControllers Lists mock NVMfRemote Controllers
-func (s *GoopCSI) ListNVMfRemoteControllers(ctx context2.Context, request *pb.ListNVMfRemoteControllersRequest) (*pb.ListNVMfRemoteControllersResponse, error) {
+func (s *GoopCSI) ListNVMfRemoteControllers(_ context2.Context, request *pb.ListNVMfRemoteControllersRequest) (*pb.ListNVMfRemoteControllersResponse, error) {
 	out := &pb.ListNVMfRemoteControllersResponse{}
 	err := FindStub("NVMfRemoteControllerServiceServer", "ListNVMfRemoteControllers", request, out)
 	return out, err
 }
 
 // GetNVMfRemoteController Gets an NVMf Remote controller
-func (s *GoopCSI) GetNVMfRemoteController(ctx context2.Context, request *pb.GetNVMfRemoteControllerRequest) (*pb.NVMfRemoteController, error) {
+func (s *GoopCSI) GetNVMfRemoteController(_ context2.Context, request *pb.GetNVMfRemoteControllerRequest) (*pb.NVMfRemoteController, error) {
 	out := &pb.NVMfRemoteController{}
 	err := FindStub("NVMfRemoteControllerServiceServer", "GetNVMfRemoteController", request, out)
 	return out, err
 }
 
 // NVMfRemoteControllerReset Resets mock Remote Controller
-func (s *GoopCSI) NVMfRemoteControllerReset(ctx context2.Context, request *pb.NVMfRemoteControllerResetRequest) (*emptypb.Empty, error) {
+func (s *GoopCSI) NVMfRemoteControllerReset(_ context2.Context, _ *pb.NVMfRemoteControllerResetRequest) (*emptypb.Empty, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
 // NVMfRemoteControllerStats gets mock stats
-func (s *GoopCSI) NVMfRemoteControllerStats(ctx context2.Context, request *pb.NVMfRemoteControllerStatsRequest) (*pb.NVMfRemoteControllerStatsResponse, error) {
+func (s *GoopCSI) NVMfRemoteControllerStats(_ context2.Context, _ *pb.NVMfRemoteControllerStatsRequest) (*pb.NVMfRemoteControllerStatsResponse, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
 // CreateNVMeSubsystem creates mock NVMe subsystem
-func (s *GoopCSI) CreateNVMeSubsystem(ctx context.Context, request *pb.CreateNVMeSubsystemRequest) (*pb.NVMeSubsystem, error) {
+func (s *GoopCSI) CreateNVMeSubsystem(_ context.Context, request *pb.CreateNVMeSubsystemRequest) (*pb.NVMeSubsystem, error) {
 	out := &pb.NVMeSubsystem{}
 	err := FindStub("FrontendNvmeServiceServer", "CreateNVMeSubsystem", request, out)
 	return out, err
 }
 
 // DeleteNVMeSubsystem deletes mock NVMe subsystem
-func (s *GoopCSI) DeleteNVMeSubsystem(ctx context.Context, request *pb.DeleteNVMeSubsystemRequest) (*emptypb.Empty, error) {
+func (s *GoopCSI) DeleteNVMeSubsystem(_ context.Context, _ *pb.DeleteNVMeSubsystemRequest) (*emptypb.Empty, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
 // UpdateNVMeSubsystem updates a mock NVMe subsystem
-func (s *GoopCSI) UpdateNVMeSubsystem(ctx context.Context, request *pb.UpdateNVMeSubsystemRequest) (*pb.NVMeSubsystem, error) {
+func (s *GoopCSI) UpdateNVMeSubsystem(_ context.Context, _ *pb.UpdateNVMeSubsystemRequest) (*pb.NVMeSubsystem, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
 // ListNVMeSubsystems lists mock NVMe subsystems
-func (s *GoopCSI) ListNVMeSubsystems(ctx context.Context, request *pb.ListNVMeSubsystemsRequest) (*pb.ListNVMeSubsystemsResponse, error) {
+func (s *GoopCSI) ListNVMeSubsystems(_ context.Context, _ *pb.ListNVMeSubsystemsRequest) (*pb.ListNVMeSubsystemsResponse, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
 // GetNVMeSubsystem gets a mock NVMe subsystem
-func (s *GoopCSI) GetNVMeSubsystem(ctx context.Context, request *pb.GetNVMeSubsystemRequest) (*pb.NVMeSubsystem, error) {
+func (s *GoopCSI) GetNVMeSubsystem(_ context.Context, request *pb.GetNVMeSubsystemRequest) (*pb.NVMeSubsystem, error) {
 	out := &pb.NVMeSubsystem{}
 	err := FindStub("FrontendNvmeServiceServer", "GetNVMeSubsystem", request, out)
 	return out, err
 }
 
 // NVMeSubsystemStats gets mock subsystem stats
-func (s *GoopCSI) NVMeSubsystemStats(ctx context.Context, request *pb.NVMeSubsystemStatsRequest) (*pb.NVMeSubsystemStatsResponse, error) {
+func (s *GoopCSI) NVMeSubsystemStats(_ context.Context, _ *pb.NVMeSubsystemStatsRequest) (*pb.NVMeSubsystemStatsResponse, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
 // CreateNVMeController creates a mock NVMe controller
-func (s *GoopCSI) CreateNVMeController(ctx context.Context, request *pb.CreateNVMeControllerRequest) (*pb.NVMeController, error) {
+func (s *GoopCSI) CreateNVMeController(_ context.Context, _ *pb.CreateNVMeControllerRequest) (*pb.NVMeController, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
 // DeleteNVMeController deletes a mock NVMe controller
-func (s *GoopCSI) DeleteNVMeController(ctx context.Context, request *pb.DeleteNVMeControllerRequest) (*emptypb.Empty, error) {
+func (s *GoopCSI) DeleteNVMeController(_ context.Context, _ *pb.DeleteNVMeControllerRequest) (*emptypb.Empty, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
 // UpdateNVMeController updates a mock NVMe controller
-func (s *GoopCSI) UpdateNVMeController(ctx context.Context, request *pb.UpdateNVMeControllerRequest) (*pb.NVMeController, error) {
+func (s *GoopCSI) UpdateNVMeController(_ context.Context, _ *pb.UpdateNVMeControllerRequest) (*pb.NVMeController, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
 // ListNVMeControllers lists mock controllers
-func (s *GoopCSI) ListNVMeControllers(ctx context.Context, request *pb.ListNVMeControllersRequest) (*pb.ListNVMeControllersResponse, error) {
+func (s *GoopCSI) ListNVMeControllers(_ context.Context, _ *pb.ListNVMeControllersRequest) (*pb.ListNVMeControllersResponse, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
 // GetNVMeController gets a mock NVMe controller
-func (s *GoopCSI) GetNVMeController(ctx context.Context, request *pb.GetNVMeControllerRequest) (*pb.NVMeController, error) {
+func (s *GoopCSI) GetNVMeController(_ context.Context, request *pb.GetNVMeControllerRequest) (*pb.NVMeController, error) {
 	out := &pb.NVMeController{}
 	err := FindStub("FrontendNvmeServiceServer", "GetNVMeController", request, out)
 	return out, err
 }
 
 // NVMeControllerStats gets mock stats
-func (s *GoopCSI) NVMeControllerStats(ctx context.Context, request *pb.NVMeControllerStatsRequest) (*pb.NVMeControllerStatsResponse, error) {
+func (s *GoopCSI) NVMeControllerStats(_ context.Context, _ *pb.NVMeControllerStatsRequest) (*pb.NVMeControllerStatsResponse, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
 // CreateNVMeNamespace creates a mock NVMe namespace
-func (s *GoopCSI) CreateNVMeNamespace(ctx context.Context, request *pb.CreateNVMeNamespaceRequest) (*pb.NVMeNamespace, error) {
+func (s *GoopCSI) CreateNVMeNamespace(_ context.Context, request *pb.CreateNVMeNamespaceRequest) (*pb.NVMeNamespace, error) {
 	out := &pb.NVMeNamespace{}
 	err := FindStub("FrontendNvmeServiceServer", "CreateNVMeNamespace", request, out)
 	return out, err
 }
 
 // DeleteNVMeNamespace deletes a mock NVMe namespace
-func (s *GoopCSI) DeleteNVMeNamespace(ctx context.Context, request *pb.DeleteNVMeNamespaceRequest) (*emptypb.Empty, error) {
+func (s *GoopCSI) DeleteNVMeNamespace(_ context.Context, request *pb.DeleteNVMeNamespaceRequest) (*emptypb.Empty, error) {
 	out := &emptypb.Empty{}
 	err := FindStub("FrontendNvmeServiceServer", "DeleteNVMeNamespace", request, out)
 	return out, err
 }
 
 // UpdateNVMeNamespace updates a mock namespace
-func (s *GoopCSI) UpdateNVMeNamespace(ctx context.Context, request *pb.UpdateNVMeNamespaceRequest) (*pb.NVMeNamespace, error) {
+func (s *GoopCSI) UpdateNVMeNamespace(_ context.Context, _ *pb.UpdateNVMeNamespaceRequest) (*pb.NVMeNamespace, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
 // ListNVMeNamespaces lists mock namespaces
-func (s *GoopCSI) ListNVMeNamespaces(ctx context.Context, request *pb.ListNVMeNamespacesRequest) (*pb.ListNVMeNamespacesResponse, error) {
+func (s *GoopCSI) ListNVMeNamespaces(_ context.Context, _ *pb.ListNVMeNamespacesRequest) (*pb.ListNVMeNamespacesResponse, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
 // GetNVMeNamespace gets a mock namespace
-func (s *GoopCSI) GetNVMeNamespace(ctx context.Context, request *pb.GetNVMeNamespaceRequest) (*pb.NVMeNamespace, error) {
+func (s *GoopCSI) GetNVMeNamespace(_ context.Context, _ *pb.GetNVMeNamespaceRequest) (*pb.NVMeNamespace, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
 // NVMeNamespaceStats gets mock namespace stats
-func (s *GoopCSI) NVMeNamespaceStats(ctx context.Context, request *pb.NVMeNamespaceStatsRequest) (*pb.NVMeNamespaceStatsResponse, error) {
+func (s *GoopCSI) NVMeNamespaceStats(_ context.Context, _ *pb.NVMeNamespaceStatsRequest) (*pb.NVMeNamespaceStatsResponse, error) {
 	// TODO implement me
 	panic("implement me")
 }
