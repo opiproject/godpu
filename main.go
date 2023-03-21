@@ -16,7 +16,6 @@ func main() {
 	command := newCommand()
 	if err := command.Execute(); err != nil {
 		log.Fatalf("[ERROR] %s", err.Error())
-		os.Exit(-1)
 	}
 }
 
@@ -32,7 +31,6 @@ func newCommand() *cobra.Command {
 			err := cmd.Help()
 			if err != nil {
 				log.Fatalf("[ERROR] %s", err.Error())
-				os.Exit(1)
 			}
 			os.Exit(1)
 		},

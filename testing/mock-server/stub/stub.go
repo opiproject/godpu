@@ -132,7 +132,7 @@ func addStub(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func listStub(w http.ResponseWriter, r *http.Request) {
+func listStub(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	err := json.NewEncoder(w).Encode(allStub())
 	if err != nil {
@@ -204,7 +204,7 @@ func handleFindStub(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleClearStub(w http.ResponseWriter, r *http.Request) {
+func handleClearStub(w http.ResponseWriter, _ *http.Request) {
 	clearStorage()
 	_, err := w.Write([]byte("OK"))
 	if err != nil {
