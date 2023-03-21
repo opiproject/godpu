@@ -7,7 +7,7 @@ require (
 	github.com/go-ping/ping v1.1.0
 	github.com/google/uuid v1.3.0
 	github.com/lithammer/fuzzysearch v1.1.5
-	github.com/opiproject/opi-api v0.0.0-20230317155034-0605e35f1e29
+	github.com/opiproject/opi-api v0.0.0-20230321130819-26d7a341e5cf
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.2
 	golang.org/x/net v0.8.0
