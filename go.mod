@@ -12,7 +12,7 @@ require (
 	github.com/stretchr/testify v1.8.2
 	golang.org/x/net v0.8.0
 	golang.org/x/text v0.8.0
-	google.golang.org/grpc v1.53.0
+	google.golang.org/grpc v1.54.0
 	google.golang.org/protobuf v1.30.0
 )
 
