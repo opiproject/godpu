@@ -1,18 +1,17 @@
-# syntax=docker/dockerfile:1
+FROM docker.io/library/golang:1.20.2-alpine3.17 as builder
 
-# Alpine is chosen for its small footprint
-# compared to Ubuntu
-FROM docker.io/library/golang:1.20.2-alpine
+WORKDIR /build
 
-WORKDIR /app
-
-# Download necessary Go modules
-COPY go.mod ./
-COPY go.sum ./
-RUN go mod download
-
-# build an app
+# create a static binary
 COPY . .
-RUN go build -v -o /dpu /app/
+RUN go mod download && CGO_ENABLED=0 \
+    go build -v -o ./dpu .
+
+FROM alpine:3.17
+
+WORKDIR /
+
+COPY --from=builder /build/dpu .
+RUN chmod +x dpu
 
 ENTRYPOINT [ "/dpu" ]
