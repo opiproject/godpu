@@ -6,13 +6,12 @@ package cmd
 
 import (
 	"context"
+	"github.com/opiproject/godpu/common"
 	"log"
 	"time"
 
 	"github.com/opiproject/godpu/storage"
 	"github.com/spf13/cobra"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 // NewStorageTestCommand returns the storage tests command
@@ -27,18 +26,9 @@ func NewStorageTestCommand() *cobra.Command {
 		Args:    cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
 			// Set up a connection to the server.
-			conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
-			if err != nil {
-				log.Fatalf("did not connect: %v", err)
-			}
-			defer func(conn *grpc.ClientConn) {
-				err := conn.Close()
-				if err != nil {
-					log.Fatalf("did not close connection: %v", err)
-				}
-			}(conn)
+			conn, closer, err := common.NewClient(addr).NewGrpcConn()
+			defer closer()
 
-			// Contact the server and print out its response.
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()
 
