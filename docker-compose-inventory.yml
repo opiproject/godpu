@@ -1,0 +1,27 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2022 Dell Inc, or its subsidiaries.
+---
+version: "3.7"
+
+services:
+
+  opi-smbios-server:
+    image: docker.io/opiproject/opi-smbios-bridge:main
+    networks:
+      - opi
+    command: /opi-smbios-bridge -port=50051
+    healthcheck:
+      test: grpcurl -plaintext localhost:50051 list || exit 1
+
+  opi-test:
+    build:
+      context: .
+    networks:
+      - opi
+    depends_on:
+      opi-smbios-server:
+        condition: service_healthy
+    command: get --addr opi-smbios-server:50051
+
+networks:
+  opi:
