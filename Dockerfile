@@ -1,17 +1,21 @@
-FROM docker.io/library/golang:1.20.2-alpine3.17 as builder
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2022 Dell Inc, or its subsidiaries.
 
-WORKDIR /build
+FROM docker.io/library/golang:1.20.2-alpine as builder
 
-# create a static binary
+WORKDIR /app
+
+# Download necessary Go modules
+COPY go.mod ./
+COPY go.sum ./
+RUN go mod download
+
+# build an app
 COPY . .
-RUN go mod download && CGO_ENABLED=0 \
-    go build -v -o ./dpu .
+RUN CGO_ENABLED=0 go build -v -o ./dpu .
 
 FROM alpine:3.17
-
 WORKDIR /
-
-COPY --from=builder /build/dpu .
+COPY --from=builder /app/dpu .
 RUN chmod +x dpu
-
 ENTRYPOINT [ "/dpu" ]
