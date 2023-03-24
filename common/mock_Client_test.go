@@ -15,6 +15,14 @@ type MockClient struct {
 	mock.Mock
 }
 
+type MockClient_Expecter struct {
+	mock *mock.Mock
+}
+
+func (_m *MockClient) EXPECT() *MockClient_Expecter {
+	return &MockClient_Expecter{mock: &_m.Mock}
+}
+
 // NewGrpcConn provides a mock function with given fields:
 func (_m *MockClient) NewGrpcConn() (grpc.ClientConnInterface, Closer, error) {
 	ret := _m.Called()
@@ -48,6 +56,33 @@ func (_m *MockClient) NewGrpcConn() (grpc.ClientConnInterface, Closer, error) {
 	}
 
 	return r0, r1, r2
+}
+
+// MockClient_NewGrpcConn_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'NewGrpcConn'
+type MockClient_NewGrpcConn_Call struct {
+	*mock.Call
+}
+
+// NewGrpcConn is a helper method to define mock.On call
+func (_e *MockClient_Expecter) NewGrpcConn() *MockClient_NewGrpcConn_Call {
+	return &MockClient_NewGrpcConn_Call{Call: _e.mock.On("NewGrpcConn")}
+}
+
+func (_c *MockClient_NewGrpcConn_Call) Run(run func()) *MockClient_NewGrpcConn_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *MockClient_NewGrpcConn_Call) Return(_a0 grpc.ClientConnInterface, _a1 Closer, _a2 error) *MockClient_NewGrpcConn_Call {
+	_c.Call.Return(_a0, _a1, _a2)
+	return _c
+}
+
+func (_c *MockClient_NewGrpcConn_Call) RunAndReturn(run func() (grpc.ClientConnInterface, Closer, error)) *MockClient_NewGrpcConn_Call {
+	_c.Call.Return(run)
+	return _c
 }
 
 type mockConstructorTestingTNewMockClient interface {

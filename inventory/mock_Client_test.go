@@ -18,6 +18,14 @@ type MockClient struct {
 	mock.Mock
 }
 
+type MockClient_Expecter struct {
+	mock *mock.Mock
+}
+
+func (_m *MockClient) EXPECT() *MockClient_Expecter {
+	return &MockClient_Expecter{mock: &_m.Mock}
+}
+
 // Get provides a mock function with given fields: ctx
 func (_m *MockClient) Get(ctx context.Context) (*_go.InventoryGetResponse, error) {
 	ret := _m.Called(ctx)
@@ -42,6 +50,34 @@ func (_m *MockClient) Get(ctx context.Context) (*_go.InventoryGetResponse, error
 	}
 
 	return r0, r1
+}
+
+// MockClient_Get_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Get'
+type MockClient_Get_Call struct {
+	*mock.Call
+}
+
+// Get is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *MockClient_Expecter) Get(ctx interface{}) *MockClient_Get_Call {
+	return &MockClient_Get_Call{Call: _e.mock.On("Get", ctx)}
+}
+
+func (_c *MockClient_Get_Call) Run(run func(ctx context.Context)) *MockClient_Get_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context))
+	})
+	return _c
+}
+
+func (_c *MockClient_Get_Call) Return(_a0 *_go.InventoryGetResponse, _a1 error) *MockClient_Get_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockClient_Get_Call) RunAndReturn(run func(context.Context) (*_go.InventoryGetResponse, error)) *MockClient_Get_Call {
+	_c.Call.Return(run)
+	return _c
 }
 
 type mockConstructorTestingTNewMockClient interface {
