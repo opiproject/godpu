@@ -13,15 +13,21 @@ import (
 
 // NewGetCommand returns the inventory get command
 func NewGetCommand() *cobra.Command {
+	var (
+		addr string
+	)
 	cmd := &cobra.Command{
 		Use:     "get",
 		Aliases: []string{"g"},
 		Short:   "Gets DPU inventory information",
-		Args:    cobra.ExactArgs(1),
+		Args:    cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
+			inventory.SetAddress(addr)
 			res := inventory.Get()
 			fmt.Println(res)
 		},
 	}
+	flags := cmd.Flags()
+	flags.StringVar(&addr, "addr", "localhost:50151", "address or OPI gRPC server")
 	return cmd
 }

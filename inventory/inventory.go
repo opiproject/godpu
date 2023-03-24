@@ -19,6 +19,11 @@ var (
 	address = "localhost:50051"
 )
 
+// SetAddress changes the gRPC connect address of the DPU
+func SetAddress(addr string) {
+	address = addr
+}
+
 // Get returns inventory information from DPUs
 func Get() error {
 	if conn == nil {

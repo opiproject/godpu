@@ -44,18 +44,36 @@ services:
       start_period: 20s
       timeout: 10s
 
-  server:
+  opi-spdk-server:
     image: docker.io/opiproject/opi-spdk-bridge:main
     volumes_from:
-      - spdk:rw
+      - spdk
     networks:
       - opi
     depends_on:
       spdk:
         condition: service_healthy
-    command: /opi-spdk-bridge -port=50051
+    command: /opi-spdk-bridge -port=50051 -spdk_addr=/var/tmp/spdk.sock
     healthcheck:
       test: grpcurl -plaintext localhost:50051 list || exit 1
+
+  opi-smbios-server:
+    image: docker.io/opiproject/opi-smbios-bridge:main
+    networks:
+      - opi
+    command: /opi-smbios-bridge -port=50051
+    healthcheck:
+      test: grpcurl -plaintext localhost:50051 list || exit 1
+
+  opi-test-smbios:
+    build:
+      context: .
+    networks:
+      - opi
+    depends_on:
+      opi-smbios-server:
+        condition: service_healthy
+    command: get --addr opi-smbios-server:50051
 
   opi-test:
     build:
@@ -63,9 +81,9 @@ services:
     networks:
       - opi
     depends_on:
-      server:
+      opi-spdk-server:
         condition: service_healthy
-    command: storagetest --addr server:50051
+    command: storagetest --addr opi-spdk-server:50051
 
 networks:
   opi:
