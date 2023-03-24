@@ -1,0 +1,4 @@
+inpackage: True
+with-expecter: True
+testonly: True
+boilerplate-file: mocks/boilerplate.txt

@@ -24,5 +24,6 @@ go-test:
 ## mock-generate: Generate the required mock files for interfaces.
 mock-generate:
 	@echo "  >  Starting mock code generation..."
-	mockery --boilerplate-file=mocks/boilerplate.txt --name=Client --dir=common --inpackage
-	mockery --boilerplate-file=mocks/boilerplate.txt --name=client --dir=inventory --inpackage
+	# Can replace with a single command for recursively creating mocks of all exported interfaces once all are implemented
+	mockery --name=Client --dir=common
+	mockery --name=Client --dir=inventory
