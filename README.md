@@ -9,6 +9,8 @@
 [![Go Doc](https://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/opiproject/godpu)
 [![Pulls](https://img.shields.io/docker/pulls/opiproject/godpu.svg?logo=docker&style=flat&label=Pulls)](https://hub.docker.com/r/opiproject/godpu)
 [![Last Release](https://img.shields.io/github/v/release/opiproject/godpu?label=Latest&style=flat-square&logo=go)](https://github.com/opiproject/godpu/releases)
+[![GitHub stars](https://img.shields.io/github/stars/opiproject/godpu.svg?style=flat-square&label=github%20stars)](https://github.com/opiproject/godpu)
+[![GitHub Contributors](https://img.shields.io/github/contributors/opiproject/godpu.svg?style=flat-square)](https://github.com/opiproject/godpu/graphs/contributors)
 
 Go library and cli to communicate with DPUs and IPUs.
 
