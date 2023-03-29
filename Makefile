@@ -18,8 +18,8 @@ go-get:
 	@CGO_ENABLED=0 go get .
 
 go-test:
-	@echo "  >  Running tests..."
-	go test ./...
+	@echo "  >  Running ginkgo test suites..."
+	ginkgo common # can replace with a recursive command ginkgo suites are defined for all packages
 
 ## mock-generate: Generate the required mock files for interfaces.
 mock-generate:
