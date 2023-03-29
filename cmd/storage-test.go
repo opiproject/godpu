@@ -26,7 +26,15 @@ func NewStorageTestCommand() *cobra.Command {
 		Args:    cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
 			// Set up a connection to the server.
-			conn, closer, err := common.NewClient(addr).NewGrpcConn()
+			client, err := common.NewClient(addr)
+			if err != nil {
+				log.Panicf("error creating new client: %v", err)
+			}
+
+			conn, closer, err := client.NewGrpcConn()
+			if err != nil {
+				log.Panicf("error creating gRPC connection: %v", err)
+			}
 			defer closer()
 
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
