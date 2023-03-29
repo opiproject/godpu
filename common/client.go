@@ -5,6 +5,7 @@
 package common
 
 import (
+	"errors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
@@ -12,28 +13,38 @@ import (
 
 type clientImpl struct {
 	addr string // address of OPI gRPC server
-	d    dialler
+	d    Dialler
 }
 
-type dialler func(target string, opts ...grpc.DialOption) (*grpc.ClientConn, error)
+// Dialler defines the function type that creates a gRPC connection
+type Dialler func(target string, opts ...grpc.DialOption) (*grpc.ClientConn, error)
 
+// Closer defines the function type that closes gRPC connections
 type Closer func()
-
-type GetGrpcConn func(addr string) (grpc.ClientConnInterface, Closer, error)
 
 type Client interface {
 	NewGrpcConn() (grpc.ClientConnInterface, Closer, error)
 }
 
-func NewClient(addr string) Client {
-	return clientImpl{
-		addr: addr,
-		d:    grpc.Dial,
-	}
+// NewClient returns a new gRPC client for the server at the given address
+func NewClient(address string) (Client, error) {
+	return NewClientWithDialler(address, grpc.Dial)
 }
 
+// NewClientWithDialler returns a new gRPC client for the server at the given address using the gRPC dialler provided
+func NewClientWithDialler(address string, d Dialler) (Client, error) {
+	if len(address) == 0 {
+		return nil, errors.New("cannot use empty address")
+	}
+	return clientImpl{
+		addr: address,
+		d:    d,
+	}, nil
+}
+
+// NewGrpcConn creates a new gRPC connection
 func (c clientImpl) NewGrpcConn() (grpc.ClientConnInterface, Closer, error) {
-	conn, err := grpc.Dial(c.addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := c.d(c.addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, nil, err
 	}
