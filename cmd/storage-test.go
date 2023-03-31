@@ -6,9 +6,10 @@ package cmd
 
 import (
 	"context"
-	"github.com/opiproject/godpu/grpc"
 	"log"
 	"time"
+
+	"github.com/opiproject/godpu/grpc"
 
 	"github.com/opiproject/godpu/storage"
 	"github.com/spf13/cobra"

@@ -5,8 +5,9 @@ package grpc_test
 
 import (
 	"errors"
-	"google.golang.org/grpc"
 	"testing"
+
+	"google.golang.org/grpc"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -24,5 +25,4 @@ func diallerNoError(target string, opts ...grpc.DialOption) (*grpc.ClientConn, e
 
 func diallerWithError(target string, opts ...grpc.DialOption) (*grpc.ClientConn, error) {
 	return nil, errors.New("error creating connection")
-
 }

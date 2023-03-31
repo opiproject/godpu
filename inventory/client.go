@@ -7,10 +7,11 @@ package inventory
 import (
 	"context"
 	"errors"
+	"log"
+
 	grpcOpi "github.com/opiproject/godpu/grpc"
 	pb "github.com/opiproject/opi-api/common/v1/gen/go"
 	"google.golang.org/grpc"
-	"log"
 )
 
 // PbInvClientGetter defines the function type used to retrieve an inventory protobuf client
@@ -21,6 +22,7 @@ type invClientImpl struct {
 	grpcOpi.Connector
 }
 
+// InvClient is an interface for querying inventory data from an OPI server
 type InvClient interface {
 	Get(ctx context.Context) (*pb.InventoryGetResponse, error)
 }
