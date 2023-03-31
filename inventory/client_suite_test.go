@@ -24,14 +24,14 @@ func TestInventory(t *testing.T) {
 
 func testCloser() {}
 
-func getterWithResponse(c grpc.ClientConnInterface) pb.InventorySvcClient {
+func getterWithResponse(_ grpc.ClientConnInterface) pb.InventorySvcClient {
 	mockPb := mocks.NewInventorySvcClient(GinkgoT())
 	mockPb.EXPECT().InventoryGet(mock.Anything, mock.Anything).
 		Return(getTestInvResponse(), nil).Once()
 	return mockPb
 }
 
-func getterWithError(c grpc.ClientConnInterface) pb.InventorySvcClient {
+func getterWithError(_ grpc.ClientConnInterface) pb.InventorySvcClient {
 	mockPb := mocks.NewInventorySvcClient(GinkgoT())
 	mockPb.EXPECT().InventoryGet(mock.Anything, mock.Anything).
 		Return(nil, errors.New("error getting inventory")).Once()
