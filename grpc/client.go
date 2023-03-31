@@ -2,7 +2,7 @@
    Copyright (c) 2023 Dell Inc, or its subsidiaries.
 */
 
-package common
+package grpc
 
 import (
 	"errors"
@@ -22,28 +22,33 @@ type Dialler func(target string, opts ...grpc.DialOption) (*grpc.ClientConn, err
 // Closer defines the function type that closes gRPC connections
 type Closer func()
 
-type Client interface {
-	NewGrpcConn() (grpc.ClientConnInterface, Closer, error)
+type Connector interface {
+	NewConn() (grpc.ClientConnInterface, Closer, error)
 }
 
-// NewClient returns a new gRPC client for the server at the given address
-func NewClient(address string) (Client, error) {
-	return NewClientWithDialler(address, grpc.Dial)
+// New returns a new gRPC connector for the server at the given address
+func New(address string) (Connector, error) {
+	return NewWithDialler(address, grpc.Dial)
 }
 
-// NewClientWithDialler returns a new gRPC client for the server at the given address using the gRPC dialler provided
-func NewClientWithDialler(address string, d Dialler) (Client, error) {
+// NewWithDialler returns a new gRPC client for the server at the given address using the gRPC dialler provided
+func NewWithDialler(address string, d Dialler) (Connector, error) {
 	if len(address) == 0 {
 		return nil, errors.New("cannot use empty address")
 	}
+
+	if d == nil {
+		return nil, errors.New("grpc dialler is nil")
+	}
+
 	return clientImpl{
 		addr: address,
 		d:    d,
 	}, nil
 }
 
-// NewGrpcConn creates a new gRPC connection
-func (c clientImpl) NewGrpcConn() (grpc.ClientConnInterface, Closer, error) {
+// NewConn creates a new gRPC connection
+func (c clientImpl) NewConn() (grpc.ClientConnInterface, Closer, error) {
 	conn, err := c.d(c.addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, nil, err
