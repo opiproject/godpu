@@ -21,7 +21,6 @@ type invClientImpl struct {
 	grpcOpi.Connector
 }
 
-// InvClient provides a function to retrieve inventory from the target OPI server
 type InvClient interface {
 	Get(ctx context.Context) (*pb.InventoryGetResponse, error)
 }
