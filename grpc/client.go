@@ -1,6 +1,5 @@
-/* SPDX-License-Identifier: Apache-2.0
-   Copyright (c) 2023 Dell Inc, or its subsidiaries.
-*/
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2022-2023 Dell Inc, or its subsidiaries.
 
 package grpc
 
