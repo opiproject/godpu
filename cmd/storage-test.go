@@ -6,7 +6,7 @@ package cmd
 
 import (
 	"context"
-	"github.com/opiproject/godpu/common"
+	"github.com/opiproject/godpu/grpc"
 	"log"
 	"time"
 
@@ -26,12 +26,12 @@ func NewStorageTestCommand() *cobra.Command {
 		Args:    cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
 			// Set up a connection to the server.
-			client, err := common.NewClient(addr)
+			client, err := grpc.New(addr)
 			if err != nil {
 				log.Panicf("error creating new client: %v", err)
 			}
 
-			conn, closer, err := client.NewGrpcConn()
+			conn, closer, err := client.NewConn()
 			if err != nil {
 				log.Panicf("error creating gRPC connection: %v", err)
 			}

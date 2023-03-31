@@ -24,7 +24,7 @@ func NewGetCommand() *cobra.Command {
 		Short:   "Gets DPU inventory information",
 		Args:    cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
-			invClient, err := inventory.NewClient(addr)
+			invClient, err := inventory.New(addr)
 			if err != nil {
 				log.Fatalf("could create gRPC client: %v", err)
 			}

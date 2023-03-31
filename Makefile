@@ -21,9 +21,11 @@ go-test:
 	@echo "  >  Running ginkgo test suites..."
 	ginkgo common # can replace with a recursive command ginkgo suites are defined for all packages
 
-## mock-generate: Generate the required mock files for interfaces.
 mock-generate:
 	@echo "  >  Starting mock code generation..."
-	# Can replace with a single command for recursively creating mocks of all exported interfaces once all are implemented
-	mockery --name=Client --dir=common
-	mockery --name=Client --dir=inventory
+	# Generate mocks for exported interfaces
+	mockery --config=mocks/.mockery.yaml --name=Connector --dir=grpc
+	mockery --config=mocks/.mockery.yaml --name=InvClient --dir=inventory
+
+	# Generate mocks for imported protobuf clients too
+	mockery --config=mocks/.mockery.yaml --name=InventorySvcClient --srcpkg=github.com/opiproject/opi-api/common/v1/gen/go
