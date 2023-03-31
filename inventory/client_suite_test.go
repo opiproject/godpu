@@ -6,11 +6,12 @@ package inventory_test
 import (
 	"encoding/json"
 	"errors"
+	"testing"
+
 	"github.com/opiproject/godpu/mocks"
 	pb "github.com/opiproject/opi-api/common/v1/gen/go"
 	"github.com/stretchr/testify/mock"
 	"google.golang.org/grpc"
-	"testing"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"

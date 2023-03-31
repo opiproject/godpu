@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2022-2023 Dell Inc, or its subsidiaries.
 
+// Package grpc wraps common operations to create grpc connections
 package grpc
 
 import (
 	"errors"
+	"log"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"log"
 )
 
 type clientImpl struct {
@@ -21,6 +23,7 @@ type Dialler func(target string, opts ...grpc.DialOption) (*grpc.ClientConn, err
 // Closer defines the function type that closes gRPC connections
 type Closer func()
 
+// Connector is an interface for creating new grpc Connections
 type Connector interface {
 	NewConn() (grpc.ClientConnInterface, Closer, error)
 }
