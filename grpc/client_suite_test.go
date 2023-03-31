@@ -18,11 +18,11 @@ func TestCommon(t *testing.T) {
 	RunSpecs(t, "gRPC Suite")
 }
 
-func diallerNoError(target string, opts ...grpc.DialOption) (*grpc.ClientConn, error) {
+func diallerNoError(_ string, _ ...grpc.DialOption) (*grpc.ClientConn, error) {
 	dummyConn := grpc.ClientConn{}
 	return &dummyConn, nil
 }
 
-func diallerWithError(target string, opts ...grpc.DialOption) (*grpc.ClientConn, error) {
+func diallerWithError(_ string, _ ...grpc.DialOption) (*grpc.ClientConn, error) {
 	return nil, errors.New("error creating connection")
 }
