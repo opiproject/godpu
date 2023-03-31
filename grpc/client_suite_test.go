@@ -11,7 +11,7 @@ import (
 
 func TestCommon(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Common Suite")
+	RunSpecs(t, "gRPC Suite")
 }
 
 func diallerNoError(target string, opts ...grpc.DialOption) (*grpc.ClientConn, error) {

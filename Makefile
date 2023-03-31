@@ -19,7 +19,8 @@ go-get:
 
 go-test:
 	@echo "  >  Running ginkgo test suites..."
-	ginkgo common # can replace with a recursive command ginkgo suites are defined for all packages
+	# can replace with a recursive command ginkgo suites are defined for all packages
+	ginkgo grpc inventory
 
 mock-generate:
 	@echo "  >  Starting mock code generation..."
