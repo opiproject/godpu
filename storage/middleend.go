@@ -24,7 +24,7 @@ func DoMiddleend(ctx context.Context, conn grpc.ClientConnInterface) error {
 		EncryptedVolume: &pb.EncryptedVolume{
 			EncryptedVolumeId: &pc.ObjectKey{Value: "OpiEncryptedVolume3"},
 			VolumeId:          &pc.ObjectKey{Value: "Malloc1"},
-			Key:               []byte("0123456789abcdef0123456789abcdef"),
+			Key:               []byte("0123456789abcdef0123456789abcdee"),
 			Cipher:            pb.EncryptionType_ENCRYPTION_TYPE_AES_XTS_128,
 		},
 	})
@@ -36,7 +36,7 @@ func DoMiddleend(ctx context.Context, conn grpc.ClientConnInterface) error {
 		EncryptedVolume: &pb.EncryptedVolume{
 			EncryptedVolumeId: &pc.ObjectKey{Value: "OpiEncryptedVolume3"},
 			VolumeId:          &pc.ObjectKey{Value: "Malloc1"},
-			Key:               []byte("0123456789abcdef0123456789abcdef"),
+			Key:               []byte("0123456789abcdef0123456789abcdff"),
 			Cipher:            pb.EncryptionType_ENCRYPTION_TYPE_AES_XTS_128,
 		},
 	})
