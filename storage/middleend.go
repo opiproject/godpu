@@ -16,9 +16,9 @@ import (
 // DoMiddleend executes the middle end code
 func DoMiddleend(ctx context.Context, conn grpc.ClientConnInterface) error {
 	// EncryptedVolume
-	c1 := pb.NewMiddleendServiceClient(conn)
+	c1 := pb.NewMiddleendEncryptionServiceClient(conn)
 	log.Printf("=======================================")
-	log.Printf("Testing NewMiddleendServiceClient")
+	log.Printf("Testing NewMiddleendEncryptionServiceClient")
 	log.Printf("=======================================")
 	rs1, err := c1.CreateEncryptedVolume(ctx, &pb.CreateEncryptedVolumeRequest{
 		EncryptedVolume: &pb.EncryptedVolume{
