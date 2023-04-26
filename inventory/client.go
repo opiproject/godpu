@@ -24,7 +24,7 @@ type invClientImpl struct {
 
 // InvClient is an interface for querying inventory data from an OPI server
 type InvClient interface {
-	Get(ctx context.Context) (*pb.InventoryGetResponse, error)
+	Get(ctx context.Context) (*pb.Inventory, error)
 }
 
 // New creates an inventory client for use with OPI server at the given address
@@ -56,7 +56,7 @@ func NewWithArgs(c grpcOpi.Connector, getter PbInvClientGetter) (InvClient, erro
 }
 
 // Get returns inventory information an OPI server
-func (c invClientImpl) Get(ctx context.Context) (*pb.InventoryGetResponse, error) {
+func (c invClientImpl) Get(ctx context.Context) (*pb.Inventory, error) {
 	conn, closer, err := c.NewConn()
 	if err != nil {
 		log.Printf("error creating connection: %s\n", err)
@@ -66,7 +66,7 @@ func (c invClientImpl) Get(ctx context.Context) (*pb.InventoryGetResponse, error
 
 	client := c.getInvClient(conn)
 
-	data, err := client.InventoryGet(ctx, &pb.InventoryGetRequest{})
+	data, err := client.GetInventory(ctx, &pb.GetInventoryRequest{})
 	if err != nil {
 		log.Printf("error getting inventory: %s\n", err)
 		return nil, err

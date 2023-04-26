@@ -28,8 +28,8 @@ func (_m *InventorySvcClient) EXPECT() *InventorySvcClient_Expecter {
 	return &InventorySvcClient_Expecter{mock: &_m.Mock}
 }
 
-// InventoryGet provides a mock function with given fields: ctx, in, opts
-func (_m *InventorySvcClient) InventoryGet(ctx context.Context, in *_go.InventoryGetRequest, opts ...grpc.CallOption) (*_go.InventoryGetResponse, error) {
+// GetInventory provides a mock function with given fields: ctx, in, opts
+func (_m *InventorySvcClient) GetInventory(ctx context.Context, in *_go.GetInventoryRequest, opts ...grpc.CallOption) (*_go.Inventory, error) {
 	_va := make([]interface{}, len(opts))
 	for _i := range opts {
 		_va[_i] = opts[_i]
@@ -39,20 +39,20 @@ func (_m *InventorySvcClient) InventoryGet(ctx context.Context, in *_go.Inventor
 	_ca = append(_ca, _va...)
 	ret := _m.Called(_ca...)
 
-	var r0 *_go.InventoryGetResponse
+	var r0 *_go.Inventory
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *_go.InventoryGetRequest, ...grpc.CallOption) (*_go.InventoryGetResponse, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *_go.GetInventoryRequest, ...grpc.CallOption) (*_go.Inventory, error)); ok {
 		return rf(ctx, in, opts...)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *_go.InventoryGetRequest, ...grpc.CallOption) *_go.InventoryGetResponse); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *_go.GetInventoryRequest, ...grpc.CallOption) *_go.Inventory); ok {
 		r0 = rf(ctx, in, opts...)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*_go.InventoryGetResponse)
+			r0 = ret.Get(0).(*_go.Inventory)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, *_go.InventoryGetRequest, ...grpc.CallOption) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, *_go.GetInventoryRequest, ...grpc.CallOption) error); ok {
 		r1 = rf(ctx, in, opts...)
 	} else {
 		r1 = ret.Error(1)
@@ -61,21 +61,21 @@ func (_m *InventorySvcClient) InventoryGet(ctx context.Context, in *_go.Inventor
 	return r0, r1
 }
 
-// InventorySvcClient_InventoryGet_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'InventoryGet'
-type InventorySvcClient_InventoryGet_Call struct {
+// InventorySvcClient_GetInventory_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetInventory'
+type InventorySvcClient_GetInventory_Call struct {
 	*mock.Call
 }
 
-// InventoryGet is a helper method to define mock.On call
+// GetInventory is a helper method to define mock.On call
 //   - ctx context.Context
-//   - in *_go.InventoryGetRequest
+//   - in *_go.GetInventoryRequest
 //   - opts ...grpc.CallOption
-func (_e *InventorySvcClient_Expecter) InventoryGet(ctx interface{}, in interface{}, opts ...interface{}) *InventorySvcClient_InventoryGet_Call {
-	return &InventorySvcClient_InventoryGet_Call{Call: _e.mock.On("InventoryGet",
+func (_e *InventorySvcClient_Expecter) GetInventory(ctx interface{}, in interface{}, opts ...interface{}) *InventorySvcClient_GetInventory_Call {
+	return &InventorySvcClient_GetInventory_Call{Call: _e.mock.On("GetInventory",
 		append([]interface{}{ctx, in}, opts...)...)}
 }
 
-func (_c *InventorySvcClient_InventoryGet_Call) Run(run func(ctx context.Context, in *_go.InventoryGetRequest, opts ...grpc.CallOption)) *InventorySvcClient_InventoryGet_Call {
+func (_c *InventorySvcClient_GetInventory_Call) Run(run func(ctx context.Context, in *_go.GetInventoryRequest, opts ...grpc.CallOption)) *InventorySvcClient_GetInventory_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		variadicArgs := make([]grpc.CallOption, len(args)-2)
 		for i, a := range args[2:] {
@@ -83,17 +83,17 @@ func (_c *InventorySvcClient_InventoryGet_Call) Run(run func(ctx context.Context
 				variadicArgs[i] = a.(grpc.CallOption)
 			}
 		}
-		run(args[0].(context.Context), args[1].(*_go.InventoryGetRequest), variadicArgs...)
+		run(args[0].(context.Context), args[1].(*_go.GetInventoryRequest), variadicArgs...)
 	})
 	return _c
 }
 
-func (_c *InventorySvcClient_InventoryGet_Call) Return(_a0 *_go.InventoryGetResponse, _a1 error) *InventorySvcClient_InventoryGet_Call {
+func (_c *InventorySvcClient_GetInventory_Call) Return(_a0 *_go.Inventory, _a1 error) *InventorySvcClient_GetInventory_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *InventorySvcClient_InventoryGet_Call) RunAndReturn(run func(context.Context, *_go.InventoryGetRequest, ...grpc.CallOption) (*_go.InventoryGetResponse, error)) *InventorySvcClient_InventoryGet_Call {
+func (_c *InventorySvcClient_GetInventory_Call) RunAndReturn(run func(context.Context, *_go.GetInventoryRequest, ...grpc.CallOption) (*_go.Inventory, error)) *InventorySvcClient_GetInventory_Call {
 	_c.Call.Return(run)
 	return _c
 }
