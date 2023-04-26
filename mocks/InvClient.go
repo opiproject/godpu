@@ -27,19 +27,19 @@ func (_m *InvClient) EXPECT() *InvClient_Expecter {
 }
 
 // Get provides a mock function with given fields: ctx
-func (_m *InvClient) Get(ctx context.Context) (*_go.InventoryGetResponse, error) {
+func (_m *InvClient) Get(ctx context.Context) (*_go.Inventory, error) {
 	ret := _m.Called(ctx)
 
-	var r0 *_go.InventoryGetResponse
+	var r0 *_go.Inventory
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context) (*_go.InventoryGetResponse, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context) (*_go.Inventory, error)); ok {
 		return rf(ctx)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context) *_go.InventoryGetResponse); ok {
+	if rf, ok := ret.Get(0).(func(context.Context) *_go.Inventory); ok {
 		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*_go.InventoryGetResponse)
+			r0 = ret.Get(0).(*_go.Inventory)
 		}
 	}
 
@@ -70,12 +70,12 @@ func (_c *InvClient_Get_Call) Run(run func(ctx context.Context)) *InvClient_Get_
 	return _c
 }
 
-func (_c *InvClient_Get_Call) Return(_a0 *_go.InventoryGetResponse, _a1 error) *InvClient_Get_Call {
+func (_c *InvClient_Get_Call) Return(_a0 *_go.Inventory, _a1 error) *InvClient_Get_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *InvClient_Get_Call) RunAndReturn(run func(context.Context) (*_go.InventoryGetResponse, error)) *InvClient_Get_Call {
+func (_c *InvClient_Get_Call) RunAndReturn(run func(context.Context) (*_go.Inventory, error)) *InvClient_Get_Call {
 	_c.Call.Return(run)
 	return _c
 }

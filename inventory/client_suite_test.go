@@ -26,20 +26,20 @@ func testCloser() {}
 
 func getterWithResponse(_ grpc.ClientConnInterface) pb.InventorySvcClient {
 	mockPb := mocks.NewInventorySvcClient(GinkgoT())
-	mockPb.EXPECT().InventoryGet(mock.Anything, mock.Anything).
+	mockPb.EXPECT().GetInventory(mock.Anything, mock.Anything).
 		Return(getTestInvResponse(), nil).Once()
 	return mockPb
 }
 
 func getterWithError(_ grpc.ClientConnInterface) pb.InventorySvcClient {
 	mockPb := mocks.NewInventorySvcClient(GinkgoT())
-	mockPb.EXPECT().InventoryGet(mock.Anything, mock.Anything).
+	mockPb.EXPECT().GetInventory(mock.Anything, mock.Anything).
 		Return(nil, errors.New("error getting inventory")).Once()
 	return mockPb
 }
 
-func getTestInvResponse() *pb.InventoryGetResponse {
-	var resp pb.InventoryGetResponse
+func getTestInvResponse() *pb.Inventory {
+	var resp pb.Inventory
 	_ = json.Unmarshal(getTestInvResponseBytes(), &resp)
 	return &resp
 }
