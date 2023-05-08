@@ -16,7 +16,12 @@ import (
 // DoMiddleend executes the middle end code
 func DoMiddleend(ctx context.Context, conn grpc.ClientConnInterface) error {
 	encryption := pb.NewMiddleendEncryptionServiceClient(conn)
+	qos := pb.NewMiddleendQosVolumeServiceClient(conn)
 	err := executeEncryptedVolume(ctx, encryption)
+	if err != nil {
+		return err
+	}
+	err = executeQosVolume(ctx, qos)
 	if err != nil {
 		return err
 	}
@@ -71,5 +76,12 @@ func executeEncryptedVolume(ctx context.Context, c1 pb.MiddleendEncryptionServic
 		return err
 	}
 	log.Printf("Deleted EncryptedVolume: %v -> %v", rs1, rs2)
+	return nil
+}
+
+func executeQosVolume(ctx context.Context, c2 pb.MiddleendQosVolumeServiceClient) error {
+	log.Printf("=======================================")
+	log.Printf("Testing NewMiddleendQosVolumeServiceClient")
+	log.Printf("=======================================")
 	return nil
 }
