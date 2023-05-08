@@ -83,5 +83,18 @@ func executeQosVolume(ctx context.Context, c2 pb.MiddleendQosVolumeServiceClient
 	log.Printf("=======================================")
 	log.Printf("Testing NewMiddleendQosVolumeServiceClient")
 	log.Printf("=======================================")
+	rs1, err := c2.CreateQosVolume(ctx, &pb.CreateQosVolumeRequest{
+		QosVolume: &pb.QosVolume{
+			QosVolumeId: &pc.ObjectKey{Value: "OpiQosVolume3"},
+			VolumeId:    &pc.ObjectKey{Value: "Malloc1"},
+			LimitMax: &pb.QosLimit{
+				RwBandwidthMbs: 2,
+			},
+		},
+	})
+	if err != nil {
+		return err
+	}
+	log.Printf("Added QosVolume: %v", rs1)
 	return nil
 }
