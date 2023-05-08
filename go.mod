@@ -7,7 +7,7 @@ require (
 	github.com/go-ping/ping v1.1.0
 	github.com/google/uuid v1.3.0
 	github.com/lithammer/fuzzysearch v1.1.7
-	github.com/onsi/ginkgo/v2 v2.9.2
+	github.com/onsi/ginkgo/v2 v2.9.4
 	github.com/onsi/gomega v1.27.6
 	github.com/opiproject/opi-api v0.0.0-20230504180422-da1d8ce22515
 	github.com/spf13/cobra v1.7.0
@@ -20,7 +20,7 @@ require (
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/go-logr/logr v1.2.3 // indirect
+	github.com/go-logr/logr v1.2.4 // indirect
 	github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
@@ -31,7 +31,7 @@ require (
 	github.com/stretchr/objx v0.5.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.7.0 // indirect
-	golang.org/x/tools v0.7.0 // indirect
+	golang.org/x/tools v0.8.0 // indirect
 	google.golang.org/genproto v0.0.0-20230306155012-7f2fa6fef1f4 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
