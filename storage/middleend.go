@@ -96,6 +96,19 @@ func executeQosVolume(ctx context.Context, c2 pb.MiddleendQosVolumeServiceClient
 		return err
 	}
 	log.Printf("Added QosVolume: %v", rs1)
+	rs3, err := c2.UpdateQosVolume(ctx, &pb.UpdateQosVolumeRequest{
+		QosVolume: &pb.QosVolume{
+			QosVolumeId: &pc.ObjectKey{Value: "OpiQosVolume3"},
+			VolumeId:    &pc.ObjectKey{Value: "Malloc1"},
+			LimitMax: &pb.QosLimit{
+				RdBandwidthMbs: 2,
+			},
+		},
+	})
+	if err != nil {
+		return err
+	}
+	log.Printf("Updated QosVolume: %v", rs3)
 	rs2, err := c2.DeleteQosVolume(ctx, &pb.DeleteQosVolumeRequest{Name: "OpiQosVolume3"})
 	if err != nil {
 		return err
