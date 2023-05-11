@@ -109,6 +109,11 @@ func executeQosVolume(ctx context.Context, c2 pb.MiddleendQosVolumeServiceClient
 		return err
 	}
 	log.Printf("Updated QosVolume: %v", rs3)
+	rs4, err := c2.ListQosVolumes(ctx, &pb.ListQosVolumesRequest{})
+	if err != nil {
+		return err
+	}
+	log.Printf("Listed QosVolume: %v", rs4)
 	rs2, err := c2.DeleteQosVolume(ctx, &pb.DeleteQosVolumeRequest{Name: "OpiQosVolume3"})
 	if err != nil {
 		return err
