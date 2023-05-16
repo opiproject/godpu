@@ -53,7 +53,7 @@ func NVMeControllerConnect(id string, trAddr string, subnqn string, trSvcID int6
 
 	// we will connect if there is no connection established
 	if data == nil { // This means we are unable to get a connection with this ID
-		request := &pb.CreateNVMfRemoteControllerRequest{NvMfRemoteController: &pb.NVMfRemoteController{
+		request := &pb.CreateNVMfRemoteControllerRequest{NvMfRemoteControllerId: id, NvMfRemoteController: &pb.NVMfRemoteController{
 			Id:      &pbc.ObjectKey{Value: id},
 			Traddr:  trAddr,
 			Subnqn:  subnqn,
