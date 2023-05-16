@@ -6,6 +6,7 @@ package storage
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -52,13 +53,19 @@ func executeVirtioScsiLun(ctx context.Context, c6 pb.FrontendVirtioScsiServiceCl
 	log.Printf("Testing VirtioScsiLun")
 	log.Printf("=======================================")
 	// pre create: controller
-	rss1, err := c6.CreateVirtioScsiController(ctx, &pb.CreateVirtioScsiControllerRequest{VirtioScsiControllerId: "OPI-VirtioScsi8", VirtioScsiController: &pb.VirtioScsiController{Id: &pbc.ObjectKey{Value: "OPI-VirtioScsi8"}}})
+	rss1, err := c6.CreateVirtioScsiController(ctx, &pb.CreateVirtioScsiControllerRequest{VirtioScsiControllerId: "OPI-VirtioScsi8", VirtioScsiController: &pb.VirtioScsiController{Id: &pbc.ObjectKey{}}})
 	if err != nil {
 		return err
 	}
-	rl1, err := c6.CreateVirtioScsiLun(ctx, &pb.CreateVirtioScsiLunRequest{VirtioScsiLunId: "OPI-VirtioScsi8", VirtioScsiLun: &pb.VirtioScsiLun{Id: &pbc.ObjectKey{Value: "OPI-VirtioScsi8"}, TargetId: &pbc.ObjectKey{Value: "OPI-VirtioScsi8"}, VolumeId: &pbc.ObjectKey{Value: "Malloc1"}}})
+	if rss1.Id.Value != "OPI-VirtioScsi8" {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rss1.Id.Value, "OPI-VirtioScsi8")
+	}
+	rl1, err := c6.CreateVirtioScsiLun(ctx, &pb.CreateVirtioScsiLunRequest{VirtioScsiLunId: "OPI-VirtioScsi8", VirtioScsiLun: &pb.VirtioScsiLun{Id: &pbc.ObjectKey{}, TargetId: &pbc.ObjectKey{Value: "OPI-VirtioScsi8"}, VolumeId: &pbc.ObjectKey{Value: "Malloc1"}}})
 	if err != nil {
 		return err
+	}
+	if rl1.Id.Value != "OPI-VirtioScsi8" {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rl1.Id.Value, "OPI-VirtioScsi8")
 	}
 	log.Printf("Added VirtioScsiLun: %v", rl1)
 	rl3, err := c6.UpdateVirtioScsiLun(ctx, &pb.UpdateVirtioScsiLunRequest{VirtioScsiLun: &pb.VirtioScsiLun{Id: &pbc.ObjectKey{Value: "OPI-VirtioScsi8"}, TargetId: &pbc.ObjectKey{Value: "OPI-VirtioScsi8"}, VolumeId: &pbc.ObjectKey{Value: "Malloc1"}}})
@@ -98,9 +105,12 @@ func executeVirtioScsiController(ctx context.Context, c5 pb.FrontendVirtioScsiSe
 	log.Printf("=======================================")
 	log.Printf("Testing VirtioScsiController")
 	log.Printf("=======================================")
-	rss1, err := c5.CreateVirtioScsiController(ctx, &pb.CreateVirtioScsiControllerRequest{VirtioScsiControllerId: "OPI-VirtioScsi8", VirtioScsiController: &pb.VirtioScsiController{Id: &pbc.ObjectKey{Value: "OPI-VirtioScsi8"}}})
+	rss1, err := c5.CreateVirtioScsiController(ctx, &pb.CreateVirtioScsiControllerRequest{VirtioScsiControllerId: "OPI-VirtioScsi8", VirtioScsiController: &pb.VirtioScsiController{Id: &pbc.ObjectKey{}}})
 	if err != nil {
 		return err
+	}
+	if rss1.Id.Value != "OPI-VirtioScsi8" {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rss1.Id.Value, "OPI-VirtioScsi8")
 	}
 	log.Printf("Added VirtioScsiController: %v", rss1)
 	rss3, err := c5.UpdateVirtioScsiController(ctx, &pb.UpdateVirtioScsiControllerRequest{VirtioScsiController: &pb.VirtioScsiController{Id: &pbc.ObjectKey{Value: "OPI-VirtioScsi8"}}})
@@ -135,9 +145,12 @@ func executeVirtioBlk(ctx context.Context, c4 pb.FrontendVirtioBlkServiceClient)
 	log.Printf("=======================================")
 	log.Printf("Testing VirtioBlk")
 	log.Printf("=======================================")
-	rv1, err := c4.CreateVirtioBlk(ctx, &pb.CreateVirtioBlkRequest{VirtioBlkId: "VirtioBlk8", VirtioBlk: &pb.VirtioBlk{Id: &pbc.ObjectKey{Value: "VirtioBlk8"}, VolumeId: &pbc.ObjectKey{Value: "Malloc1"}}})
+	rv1, err := c4.CreateVirtioBlk(ctx, &pb.CreateVirtioBlkRequest{VirtioBlkId: "VirtioBlk8", VirtioBlk: &pb.VirtioBlk{Id: &pbc.ObjectKey{}, VolumeId: &pbc.ObjectKey{Value: "Malloc1"}}})
 	if err != nil {
 		return err
+	}
+	if rv1.Id.Value != "VirtioBlk8" {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rv1.Id.Value, "VirtioBlk8")
 	}
 	log.Printf("Added VirtioBlk: %v", rv1)
 	rv3, err := c4.UpdateVirtioBlk(ctx, &pb.UpdateVirtioBlkRequest{VirtioBlk: &pb.VirtioBlk{Id: &pbc.ObjectKey{Value: "VirtioBlk8"}}})
@@ -180,7 +193,7 @@ func executeNVMeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 		NvMeSubsystemId: "namespace-test-ss",
 		NvMeSubsystem: &pb.NVMeSubsystem{
 			Spec: &pb.NVMeSubsystemSpec{
-				Id:            &pbc.ObjectKey{Value: "namespace-test-ss"},
+				Id:            &pbc.ObjectKey{},
 				ModelNumber:   "OPI Model",
 				SerialNumber:  "OPI SN",
 				MaxNamespaces: 10,
@@ -188,12 +201,15 @@ func executeNVMeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 	if err != nil {
 		return err
 	}
+	if rs1.Spec.Id.Value != "namespace-test-ss" {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Spec.Id.Value, "namespace-test-ss")
+	}
 	log.Printf("Added NVMeSubsystem: %v", rs1)
 	rc1, err := c2.CreateNVMeController(ctx, &pb.CreateNVMeControllerRequest{
 		NvMeControllerId: "namespace-test-ctrler",
 		NvMeController: &pb.NVMeController{
 			Spec: &pb.NVMeControllerSpec{
-				Id:               &pbc.ObjectKey{Value: "namespace-test-ctrler"},
+				Id:               &pbc.ObjectKey{},
 				SubsystemId:      &pbc.ObjectKey{Value: "namespace-test-ss"},
 				PcieId:           &pb.PciEndpoint{PhysicalFunction: 1, VirtualFunction: 2, PortId: 3},
 				MaxNsq:           5,
@@ -203,6 +219,9 @@ func executeNVMeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 				NvmeControllerId: 1}}})
 	if err != nil {
 		return err
+	}
+	if rc1.Spec.Id.Value != "namespace-test-ctrler" {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rc1.Spec.Id.Value, "namespace-test-ctrler")
 	}
 	log.Printf("Added NVMeController: %v", rc1)
 
@@ -214,7 +233,7 @@ func executeNVMeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 		NvMeNamespaceId: "namespace-test",
 		NvMeNamespace: &pb.NVMeNamespace{
 			Spec: &pb.NVMeNamespaceSpec{
-				Id:          &pbc.ObjectKey{Value: "namespace-test"},
+				Id:          &pbc.ObjectKey{},
 				SubsystemId: &pbc.ObjectKey{Value: "namespace-test-ss"},
 				VolumeId:    &pbc.ObjectKey{Value: "Malloc1"},
 				Uuid:        &pbc.Uuid{Value: "1b4e28ba-2fa1-11d2-883f-b9a761bde3fb"},
@@ -223,6 +242,9 @@ func executeNVMeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 				HostNsid:    1}}})
 	if err != nil {
 		return err
+	}
+	if rn1.Spec.Id.Value != "namespace-test" {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rn1.Spec.Id.Value, "namespace-test")
 	}
 	log.Printf("Added NVMeNamespace: %v", rn1)
 	rn3, err := c2.UpdateNVMeNamespace(ctx, &pb.UpdateNVMeNamespaceRequest{
@@ -285,13 +307,16 @@ func executeNVMeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 		NvMeSubsystemId: "controller-test-ss",
 		NvMeSubsystem: &pb.NVMeSubsystem{
 			Spec: &pb.NVMeSubsystemSpec{
-				Id:            &pbc.ObjectKey{Value: "controller-test-ss"},
+				Id:            &pbc.ObjectKey{},
 				ModelNumber:   "OPI Model",
 				SerialNumber:  "OPI SN",
 				MaxNamespaces: 10,
 				Nqn:           "nqn.2022-09.io.spdk:opi2"}}})
 	if err != nil {
 		return err
+	}
+	if rs1.Spec.Id.Value != "controller-test-ss" {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Spec.Id.Value, "controller-test-ss")
 	}
 	log.Printf("Added NVMeSubsystem: %v", rs1)
 
@@ -370,13 +395,16 @@ func executeNVMeSubsystem(ctx context.Context, c1 pb.FrontendNvmeServiceClient) 
 		NvMeSubsystemId: "subsystem-test",
 		NvMeSubsystem: &pb.NVMeSubsystem{
 			Spec: &pb.NVMeSubsystemSpec{
-				Id:            &pbc.ObjectKey{Value: "subsystem-test"},
+				Id:            &pbc.ObjectKey{},
 				ModelNumber:   "OPI Model",
 				SerialNumber:  "OPI SN",
 				MaxNamespaces: 10,
 				Nqn:           "nqn.2022-09.io.spdk:opi3"}}})
 	if err != nil {
 		return err
+	}
+	if rs1.Spec.Id.Value != "subsystem-test" {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Spec.Id.Value, "subsystem-test")
 	}
 	log.Printf("Added NVMeSubsystem: %v", rs1)
 	rs3, err := c1.UpdateNVMeSubsystem(ctx, &pb.UpdateNVMeSubsystemRequest{
