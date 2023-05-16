@@ -52,48 +52,49 @@ func executeVirtioScsiLun(ctx context.Context, c6 pb.FrontendVirtioScsiServiceCl
 	log.Printf("=======================================")
 	log.Printf("Testing VirtioScsiLun")
 	log.Printf("=======================================")
+	name := "OPI-VirtioScsi8"
 	// pre create: controller
-	rss1, err := c6.CreateVirtioScsiController(ctx, &pb.CreateVirtioScsiControllerRequest{VirtioScsiControllerId: "OPI-VirtioScsi8", VirtioScsiController: &pb.VirtioScsiController{Id: &pbc.ObjectKey{}}})
+	rss1, err := c6.CreateVirtioScsiController(ctx, &pb.CreateVirtioScsiControllerRequest{VirtioScsiControllerId: name, VirtioScsiController: &pb.VirtioScsiController{Id: &pbc.ObjectKey{}}})
 	if err != nil {
 		return err
 	}
-	if rss1.Id.Value != "OPI-VirtioScsi8" {
-		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rss1.Id.Value, "OPI-VirtioScsi8")
+	if rss1.Id.Value != name {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rss1.Id.Value, name)
 	}
-	rl1, err := c6.CreateVirtioScsiLun(ctx, &pb.CreateVirtioScsiLunRequest{VirtioScsiLunId: "OPI-VirtioScsi8", VirtioScsiLun: &pb.VirtioScsiLun{Id: &pbc.ObjectKey{}, TargetId: &pbc.ObjectKey{Value: "OPI-VirtioScsi8"}, VolumeId: &pbc.ObjectKey{Value: "Malloc1"}}})
+	rl1, err := c6.CreateVirtioScsiLun(ctx, &pb.CreateVirtioScsiLunRequest{VirtioScsiLunId: name, VirtioScsiLun: &pb.VirtioScsiLun{Id: &pbc.ObjectKey{}, TargetId: &pbc.ObjectKey{Value: name}, VolumeId: &pbc.ObjectKey{Value: "Malloc1"}}})
 	if err != nil {
 		return err
 	}
-	if rl1.Id.Value != "OPI-VirtioScsi8" {
-		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rl1.Id.Value, "OPI-VirtioScsi8")
+	if rl1.Id.Value != name {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rl1.Id.Value, name)
 	}
 	log.Printf("Added VirtioScsiLun: %v", rl1)
-	rl3, err := c6.UpdateVirtioScsiLun(ctx, &pb.UpdateVirtioScsiLunRequest{VirtioScsiLun: &pb.VirtioScsiLun{Id: &pbc.ObjectKey{Value: "OPI-VirtioScsi8"}, TargetId: &pbc.ObjectKey{Value: "OPI-VirtioScsi8"}, VolumeId: &pbc.ObjectKey{Value: "Malloc1"}}})
+	rl3, err := c6.UpdateVirtioScsiLun(ctx, &pb.UpdateVirtioScsiLunRequest{VirtioScsiLun: &pb.VirtioScsiLun{Id: &pbc.ObjectKey{Value: name}, TargetId: &pbc.ObjectKey{Value: name}, VolumeId: &pbc.ObjectKey{Value: "Malloc1"}}})
 	if err != nil {
 		return err
 	}
 	log.Printf("Updated VirtioScsiLun: %v", rl3)
-	rl4, err := c6.ListVirtioScsiLuns(ctx, &pb.ListVirtioScsiLunsRequest{Parent: "OPI-VirtioScsi8"})
+	rl4, err := c6.ListVirtioScsiLuns(ctx, &pb.ListVirtioScsiLunsRequest{Parent: name})
 	if err != nil {
 		return err
 	}
 	log.Printf("Listed VirtioScsiLun: %v", rl4)
-	rl5, err := c6.GetVirtioScsiLun(ctx, &pb.GetVirtioScsiLunRequest{Name: "OPI-VirtioScsi8"})
+	rl5, err := c6.GetVirtioScsiLun(ctx, &pb.GetVirtioScsiLunRequest{Name: name})
 	if err != nil {
 		return err
 	}
 	log.Printf("Got VirtioScsiLun: %v", rl5.VolumeId.Value)
-	rl6, err := c6.VirtioScsiLunStats(ctx, &pb.VirtioScsiLunStatsRequest{ControllerId: &pbc.ObjectKey{Value: "OPI-VirtioScsi8"}})
+	rl6, err := c6.VirtioScsiLunStats(ctx, &pb.VirtioScsiLunStatsRequest{ControllerId: &pbc.ObjectKey{Value: name}})
 	if err != nil {
 		return err
 	}
 	log.Printf("Stats VirtioScsiLun: %v", rl6.Stats)
-	rl2, err := c6.DeleteVirtioScsiLun(ctx, &pb.DeleteVirtioScsiLunRequest{Name: "OPI-VirtioScsi8"})
+	rl2, err := c6.DeleteVirtioScsiLun(ctx, &pb.DeleteVirtioScsiLunRequest{Name: name})
 	if err != nil {
 		return err
 	}
 	log.Printf("Deleted VirtioScsiLun: %v -> %v", rl1, rl2)
-	rss2, err := c6.DeleteVirtioScsiController(ctx, &pb.DeleteVirtioScsiControllerRequest{Name: "OPI-VirtioScsi8"})
+	rss2, err := c6.DeleteVirtioScsiController(ctx, &pb.DeleteVirtioScsiControllerRequest{Name: name})
 	if err != nil {
 		return err
 	}
@@ -105,15 +106,16 @@ func executeVirtioScsiController(ctx context.Context, c5 pb.FrontendVirtioScsiSe
 	log.Printf("=======================================")
 	log.Printf("Testing VirtioScsiController")
 	log.Printf("=======================================")
-	rss1, err := c5.CreateVirtioScsiController(ctx, &pb.CreateVirtioScsiControllerRequest{VirtioScsiControllerId: "OPI-VirtioScsi8", VirtioScsiController: &pb.VirtioScsiController{Id: &pbc.ObjectKey{}}})
+	name := "OPI-VirtioScsi8"
+	rss1, err := c5.CreateVirtioScsiController(ctx, &pb.CreateVirtioScsiControllerRequest{VirtioScsiControllerId: name, VirtioScsiController: &pb.VirtioScsiController{Id: &pbc.ObjectKey{}}})
 	if err != nil {
 		return err
 	}
-	if rss1.Id.Value != "OPI-VirtioScsi8" {
-		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rss1.Id.Value, "OPI-VirtioScsi8")
+	if rss1.Id.Value != name {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rss1.Id.Value, name)
 	}
 	log.Printf("Added VirtioScsiController: %v", rss1)
-	rss3, err := c5.UpdateVirtioScsiController(ctx, &pb.UpdateVirtioScsiControllerRequest{VirtioScsiController: &pb.VirtioScsiController{Id: &pbc.ObjectKey{Value: "OPI-VirtioScsi8"}}})
+	rss3, err := c5.UpdateVirtioScsiController(ctx, &pb.UpdateVirtioScsiControllerRequest{VirtioScsiController: &pb.VirtioScsiController{Id: &pbc.ObjectKey{Value: name}}})
 	if err != nil {
 		return err
 	}
@@ -123,17 +125,17 @@ func executeVirtioScsiController(ctx context.Context, c5 pb.FrontendVirtioScsiSe
 		return err
 	}
 	log.Printf("Listed VirtioScsiControllers: %s", rss4)
-	rss5, err := c5.GetVirtioScsiController(ctx, &pb.GetVirtioScsiControllerRequest{Name: "OPI-VirtioScsi8"})
+	rss5, err := c5.GetVirtioScsiController(ctx, &pb.GetVirtioScsiControllerRequest{Name: name})
 	if err != nil {
 		return err
 	}
 	log.Printf("Got VirtioScsiController: %s", rss5.Id.Value)
-	rss6, err := c5.VirtioScsiControllerStats(ctx, &pb.VirtioScsiControllerStatsRequest{ControllerId: &pbc.ObjectKey{Value: "OPI-VirtioScsi8"}})
+	rss6, err := c5.VirtioScsiControllerStats(ctx, &pb.VirtioScsiControllerStatsRequest{ControllerId: &pbc.ObjectKey{Value: name}})
 	if err != nil {
 		return err
 	}
 	log.Printf("Stats VirtioScsiController: %s", rss6.Stats)
-	rss2, err := c5.DeleteVirtioScsiController(ctx, &pb.DeleteVirtioScsiControllerRequest{Name: "OPI-VirtioScsi8"})
+	rss2, err := c5.DeleteVirtioScsiController(ctx, &pb.DeleteVirtioScsiControllerRequest{Name: name})
 	if err != nil {
 		return err
 	}
