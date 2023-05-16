@@ -52,11 +52,11 @@ func executeVirtioScsiLun(ctx context.Context, c6 pb.FrontendVirtioScsiServiceCl
 	log.Printf("Testing VirtioScsiLun")
 	log.Printf("=======================================")
 	// pre create: controller
-	rss1, err := c6.CreateVirtioScsiController(ctx, &pb.CreateVirtioScsiControllerRequest{VirtioScsiController: &pb.VirtioScsiController{Id: &pbc.ObjectKey{Value: "OPI-VirtioScsi8"}}})
+	rss1, err := c6.CreateVirtioScsiController(ctx, &pb.CreateVirtioScsiControllerRequest{VirtioScsiControllerId: "OPI-VirtioScsi8", VirtioScsiController: &pb.VirtioScsiController{Id: &pbc.ObjectKey{Value: "OPI-VirtioScsi8"}}})
 	if err != nil {
 		return err
 	}
-	rl1, err := c6.CreateVirtioScsiLun(ctx, &pb.CreateVirtioScsiLunRequest{VirtioScsiLun: &pb.VirtioScsiLun{Id: &pbc.ObjectKey{Value: "OPI-VirtioScsi8"}, TargetId: &pbc.ObjectKey{Value: "OPI-VirtioScsi8"}, VolumeId: &pbc.ObjectKey{Value: "Malloc1"}}})
+	rl1, err := c6.CreateVirtioScsiLun(ctx, &pb.CreateVirtioScsiLunRequest{VirtioScsiLunId: "OPI-VirtioScsi8", VirtioScsiLun: &pb.VirtioScsiLun{Id: &pbc.ObjectKey{Value: "OPI-VirtioScsi8"}, TargetId: &pbc.ObjectKey{Value: "OPI-VirtioScsi8"}, VolumeId: &pbc.ObjectKey{Value: "Malloc1"}}})
 	if err != nil {
 		return err
 	}
@@ -98,7 +98,7 @@ func executeVirtioScsiController(ctx context.Context, c5 pb.FrontendVirtioScsiSe
 	log.Printf("=======================================")
 	log.Printf("Testing VirtioScsiController")
 	log.Printf("=======================================")
-	rss1, err := c5.CreateVirtioScsiController(ctx, &pb.CreateVirtioScsiControllerRequest{VirtioScsiController: &pb.VirtioScsiController{Id: &pbc.ObjectKey{Value: "OPI-VirtioScsi8"}}})
+	rss1, err := c5.CreateVirtioScsiController(ctx, &pb.CreateVirtioScsiControllerRequest{VirtioScsiControllerId: "OPI-VirtioScsi8", VirtioScsiController: &pb.VirtioScsiController{Id: &pbc.ObjectKey{Value: "OPI-VirtioScsi8"}}})
 	if err != nil {
 		return err
 	}
@@ -135,7 +135,7 @@ func executeVirtioBlk(ctx context.Context, c4 pb.FrontendVirtioBlkServiceClient)
 	log.Printf("=======================================")
 	log.Printf("Testing VirtioBlk")
 	log.Printf("=======================================")
-	rv1, err := c4.CreateVirtioBlk(ctx, &pb.CreateVirtioBlkRequest{VirtioBlk: &pb.VirtioBlk{Id: &pbc.ObjectKey{Value: "VirtioBlk8"}, VolumeId: &pbc.ObjectKey{Value: "Malloc1"}}})
+	rv1, err := c4.CreateVirtioBlk(ctx, &pb.CreateVirtioBlkRequest{VirtioBlkId: "VirtioBlk8", VirtioBlk: &pb.VirtioBlk{Id: &pbc.ObjectKey{Value: "VirtioBlk8"}, VolumeId: &pbc.ObjectKey{Value: "Malloc1"}}})
 	if err != nil {
 		return err
 	}
@@ -177,6 +177,7 @@ func executeNVMeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 	log.Printf("=======================================")
 	// pre create: subsystem and controller
 	rs1, err := c2.CreateNVMeSubsystem(ctx, &pb.CreateNVMeSubsystemRequest{
+		NvMeSubsystemId: "namespace-test-ss",
 		NvMeSubsystem: &pb.NVMeSubsystem{
 			Spec: &pb.NVMeSubsystemSpec{
 				Id:            &pbc.ObjectKey{Value: "namespace-test-ss"},
@@ -189,6 +190,7 @@ func executeNVMeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 	}
 	log.Printf("Added NVMeSubsystem: %v", rs1)
 	rc1, err := c2.CreateNVMeController(ctx, &pb.CreateNVMeControllerRequest{
+		NvMeControllerId: "namespace-test-ctrler",
 		NvMeController: &pb.NVMeController{
 			Spec: &pb.NVMeControllerSpec{
 				Id:               &pbc.ObjectKey{Value: "namespace-test-ctrler"},
@@ -209,6 +211,7 @@ func executeNVMeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 
 	// NVMeNamespace
 	rn1, err := c2.CreateNVMeNamespace(ctx, &pb.CreateNVMeNamespaceRequest{
+		NvMeNamespaceId: "namespace-test",
 		NvMeNamespace: &pb.NVMeNamespace{
 			Spec: &pb.NVMeNamespaceSpec{
 				Id:          &pbc.ObjectKey{Value: "namespace-test"},
@@ -279,6 +282,7 @@ func executeNVMeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 	log.Printf("=======================================")
 	// pre create: subsystem
 	rs1, err := c2.CreateNVMeSubsystem(ctx, &pb.CreateNVMeSubsystemRequest{
+		NvMeSubsystemId: "controller-test-ss",
 		NvMeSubsystem: &pb.NVMeSubsystem{
 			Spec: &pb.NVMeSubsystemSpec{
 				Id:            &pbc.ObjectKey{Value: "controller-test-ss"},
@@ -293,6 +297,7 @@ func executeNVMeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 
 	// NVMeController
 	rc1, err := c2.CreateNVMeController(ctx, &pb.CreateNVMeControllerRequest{
+		NvMeControllerId: "controller-test",
 		NvMeController: &pb.NVMeController{
 			Spec: &pb.NVMeControllerSpec{
 				Id:               &pbc.ObjectKey{Value: "controller-test"},
@@ -362,6 +367,7 @@ func executeNVMeSubsystem(ctx context.Context, c1 pb.FrontendNvmeServiceClient) 
 	log.Printf("Testing NVMeSubsystem")
 	log.Printf("=======================================")
 	rs1, err := c1.CreateNVMeSubsystem(ctx, &pb.CreateNVMeSubsystemRequest{
+		NvMeSubsystemId: "subsystem-test",
 		NvMeSubsystem: &pb.NVMeSubsystem{
 			Spec: &pb.NVMeSubsystemSpec{
 				Id:            &pbc.ObjectKey{Value: "subsystem-test"},

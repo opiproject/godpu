@@ -45,6 +45,7 @@ func executeNVMfRemoteController(ctx context.Context, c4 pb.NVMfRemoteController
 		return err
 	}
 	rr0, err := c4.CreateNVMfRemoteController(ctx, &pb.CreateNVMfRemoteControllerRequest{
+		NvMfRemoteControllerId: "OpiNvme8",
 		NvMfRemoteController: &pb.NVMfRemoteController{
 			Id:      &pc.ObjectKey{Value: "OpiNvme8"},
 			Trtype:  pb.NvmeTransportType_NVME_TRANSPORT_TCP,
@@ -89,7 +90,7 @@ func executeNullDebug(ctx context.Context, c1 pb.NullDebugServiceClient) error {
 	log.Printf("=======================================")
 	log.Printf("Testing NewNullDebugServiceClient")
 	log.Printf("=======================================")
-	rs1, err := c1.CreateNullDebug(ctx, &pb.CreateNullDebugRequest{NullDebug: &pb.NullDebug{Handle: &pc.ObjectKey{Value: "OpiNull9"}}})
+	rs1, err := c1.CreateNullDebug(ctx, &pb.CreateNullDebugRequest{NullDebugId: "OpiNull9", NullDebug: &pb.NullDebug{Handle: &pc.ObjectKey{Value: "OpiNull9"}}})
 	if err != nil {
 		return err
 	}
@@ -126,7 +127,7 @@ func executeAioController(ctx context.Context, c2 pb.AioControllerServiceClient)
 	log.Printf("=======================================")
 	log.Printf("Testing NewAioControllerServiceClient")
 	log.Printf("=======================================")
-	ra1, err := c2.CreateAioController(ctx, &pb.CreateAioControllerRequest{AioController: &pb.AioController{Handle: &pc.ObjectKey{Value: "OpiAio4"}, Filename: "/tmp/aio_bdev_file"}})
+	ra1, err := c2.CreateAioController(ctx, &pb.CreateAioControllerRequest{AioControllerId: "OpiAio4", AioController: &pb.AioController{Handle: &pc.ObjectKey{Value: "OpiAio4"}, Filename: "/tmp/aio_bdev_file"}})
 	if err != nil {
 		return err
 	}

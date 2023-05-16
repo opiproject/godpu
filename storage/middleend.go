@@ -33,6 +33,7 @@ func executeEncryptedVolume(ctx context.Context, c1 pb.MiddleendEncryptionServic
 	log.Printf("Testing NewMiddleendEncryptionServiceClient")
 	log.Printf("=======================================")
 	rs1, err := c1.CreateEncryptedVolume(ctx, &pb.CreateEncryptedVolumeRequest{
+		EncryptedVolumeId: "OpiEncryptedVolume3",
 		EncryptedVolume: &pb.EncryptedVolume{
 			EncryptedVolumeId: &pc.ObjectKey{Value: "OpiEncryptedVolume3"},
 			VolumeId:          &pc.ObjectKey{Value: "Malloc1"},
@@ -84,6 +85,7 @@ func executeQosVolume(ctx context.Context, c2 pb.MiddleendQosVolumeServiceClient
 	log.Printf("Testing NewMiddleendQosVolumeServiceClient")
 	log.Printf("=======================================")
 	rs1, err := c2.CreateQosVolume(ctx, &pb.CreateQosVolumeRequest{
+		QosVolumeId: "OpiQosVolume3",
 		QosVolume: &pb.QosVolume{
 			QosVolumeId: &pc.ObjectKey{Value: "OpiQosVolume3"},
 			VolumeId:    &pc.ObjectKey{Value: "Malloc1"},
