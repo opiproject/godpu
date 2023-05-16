@@ -6,6 +6,7 @@ package storage
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net"
 
@@ -47,7 +48,7 @@ func executeNVMfRemoteController(ctx context.Context, c4 pb.NVMfRemoteController
 	rr0, err := c4.CreateNVMfRemoteController(ctx, &pb.CreateNVMfRemoteControllerRequest{
 		NvMfRemoteControllerId: "OpiNvme8",
 		NvMfRemoteController: &pb.NVMfRemoteController{
-			Id:      &pc.ObjectKey{Value: "OpiNvme8"},
+			Id:      &pc.ObjectKey{},
 			Trtype:  pb.NvmeTransportType_NVME_TRANSPORT_TCP,
 			Adrfam:  pb.NvmeAddressFamily_NVMF_ADRFAM_IPV4,
 			Traddr:  addr[0].String(),
@@ -56,6 +57,9 @@ func executeNVMfRemoteController(ctx context.Context, c4 pb.NVMfRemoteController
 			Hostnqn: "nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c"}})
 	if err != nil {
 		return err
+	}
+	if rr0.Id.Value != "OpiNvme8" {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rr0.Id.Value, "OpiNvme8")
 	}
 	log.Printf("Connected NVMf: %v", rr0)
 	rr2, err := c4.NVMfRemoteControllerReset(ctx, &pb.NVMfRemoteControllerResetRequest{Id: &pc.ObjectKey{Value: "OpiNvme8"}})
@@ -90,9 +94,12 @@ func executeNullDebug(ctx context.Context, c1 pb.NullDebugServiceClient) error {
 	log.Printf("=======================================")
 	log.Printf("Testing NewNullDebugServiceClient")
 	log.Printf("=======================================")
-	rs1, err := c1.CreateNullDebug(ctx, &pb.CreateNullDebugRequest{NullDebugId: "OpiNull9", NullDebug: &pb.NullDebug{Handle: &pc.ObjectKey{Value: "OpiNull9"}}})
+	rs1, err := c1.CreateNullDebug(ctx, &pb.CreateNullDebugRequest{NullDebugId: "OpiNull9", NullDebug: &pb.NullDebug{Handle: &pc.ObjectKey{}}})
 	if err != nil {
 		return err
+	}
+	if rs1.Handle.Value != "OpiNull9" {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Handle.Value, "OpiNull9")
 	}
 	log.Printf("Added Null: %v", rs1)
 	rs3, err := c1.UpdateNullDebug(ctx, &pb.UpdateNullDebugRequest{NullDebug: &pb.NullDebug{Handle: &pc.ObjectKey{Value: "OpiNull9"}}})
@@ -127,9 +134,12 @@ func executeAioController(ctx context.Context, c2 pb.AioControllerServiceClient)
 	log.Printf("=======================================")
 	log.Printf("Testing NewAioControllerServiceClient")
 	log.Printf("=======================================")
-	ra1, err := c2.CreateAioController(ctx, &pb.CreateAioControllerRequest{AioControllerId: "OpiAio4", AioController: &pb.AioController{Handle: &pc.ObjectKey{Value: "OpiAio4"}, Filename: "/tmp/aio_bdev_file"}})
+	ra1, err := c2.CreateAioController(ctx, &pb.CreateAioControllerRequest{AioControllerId: "OpiAio4", AioController: &pb.AioController{Handle: &pc.ObjectKey{}, Filename: "/tmp/aio_bdev_file"}})
 	if err != nil {
 		return err
+	}
+	if ra1.Handle.Value != "OpiAio4" {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", ra1.Handle.Value, "OpiAio4")
 	}
 	log.Printf("Added Aio: %v", ra1)
 	ra3, err := c2.UpdateAioController(ctx, &pb.UpdateAioControllerRequest{AioController: &pb.AioController{Handle: &pc.ObjectKey{Value: "OpiAio4"}, Filename: "/tmp/aio_bdev_file"}})
