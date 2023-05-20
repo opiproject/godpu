@@ -6,7 +6,7 @@ require (
 	github.com/go-chi/chi v1.5.4
 	github.com/go-ping/ping v1.1.0
 	github.com/google/uuid v1.3.0
-	github.com/lithammer/fuzzysearch v1.1.7
+	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/onsi/ginkgo/v2 v2.9.5
 	github.com/onsi/gomega v1.27.7
 	github.com/opiproject/opi-api v0.0.0-20230511183445-d8ac77a12618
