@@ -35,10 +35,10 @@ func executeEncryptedVolume(ctx context.Context, c1 pb.MiddleendEncryptionServic
 	rs1, err := c1.CreateEncryptedVolume(ctx, &pb.CreateEncryptedVolumeRequest{
 		EncryptedVolumeId: "OpiEncryptedVolume3",
 		EncryptedVolume: &pb.EncryptedVolume{
-			EncryptedVolumeId: &pc.ObjectKey{Value: "OpiEncryptedVolume3"},
-			VolumeId:          &pc.ObjectKey{Value: "Malloc1"},
-			Key:               []byte("0123456789abcdef0123456789abcdee"),
-			Cipher:            pb.EncryptionType_ENCRYPTION_TYPE_AES_XTS_128,
+			Name:     "OpiEncryptedVolume3",
+			VolumeId: &pc.ObjectKey{Value: "Malloc1"},
+			Key:      []byte("0123456789abcdef0123456789abcdee"),
+			Cipher:   pb.EncryptionType_ENCRYPTION_TYPE_AES_XTS_128,
 		},
 	})
 	if err != nil {
@@ -47,10 +47,10 @@ func executeEncryptedVolume(ctx context.Context, c1 pb.MiddleendEncryptionServic
 	log.Printf("Added EncryptedVolume: %v", rs1)
 	rs3, err := c1.UpdateEncryptedVolume(ctx, &pb.UpdateEncryptedVolumeRequest{
 		EncryptedVolume: &pb.EncryptedVolume{
-			EncryptedVolumeId: &pc.ObjectKey{Value: "OpiEncryptedVolume3"},
-			VolumeId:          &pc.ObjectKey{Value: "Malloc1"},
-			Key:               []byte("0123456789abcdef0123456789abcdff"),
-			Cipher:            pb.EncryptionType_ENCRYPTION_TYPE_AES_XTS_128,
+			Name:     "OpiEncryptedVolume3",
+			VolumeId: &pc.ObjectKey{Value: "Malloc1"},
+			Key:      []byte("0123456789abcdef0123456789abcdff"),
+			Cipher:   pb.EncryptionType_ENCRYPTION_TYPE_AES_XTS_128,
 		},
 	})
 	if err != nil {
@@ -66,7 +66,7 @@ func executeEncryptedVolume(ctx context.Context, c1 pb.MiddleendEncryptionServic
 	if err != nil {
 		return err
 	}
-	log.Printf("Got EncryptedVolume: %s", rs5.EncryptedVolumeId.Value)
+	log.Printf("Got EncryptedVolume: %s", rs5.Name)
 	rs6, err := c1.EncryptedVolumeStats(ctx, &pb.EncryptedVolumeStatsRequest{EncryptedVolumeId: &pc.ObjectKey{Value: "OpiEncryptedVolume3"}})
 	if err != nil {
 		return err
@@ -87,8 +87,8 @@ func executeQosVolume(ctx context.Context, c2 pb.MiddleendQosVolumeServiceClient
 	rs1, err := c2.CreateQosVolume(ctx, &pb.CreateQosVolumeRequest{
 		QosVolumeId: "OpiQosVolume3",
 		QosVolume: &pb.QosVolume{
-			QosVolumeId: &pc.ObjectKey{Value: "OpiQosVolume3"},
-			VolumeId:    &pc.ObjectKey{Value: "Malloc1"},
+			Name:     "OpiQosVolume3",
+			VolumeId: &pc.ObjectKey{Value: "Malloc1"},
 			LimitMax: &pb.QosLimit{
 				RwBandwidthMbs: 2,
 			},
@@ -100,8 +100,8 @@ func executeQosVolume(ctx context.Context, c2 pb.MiddleendQosVolumeServiceClient
 	log.Printf("Added QosVolume: %v", rs1)
 	rs3, err := c2.UpdateQosVolume(ctx, &pb.UpdateQosVolumeRequest{
 		QosVolume: &pb.QosVolume{
-			QosVolumeId: &pc.ObjectKey{Value: "OpiQosVolume3"},
-			VolumeId:    &pc.ObjectKey{Value: "Malloc1"},
+			Name:     "OpiQosVolume3",
+			VolumeId: &pc.ObjectKey{Value: "Malloc1"},
 			LimitMax: &pb.QosLimit{
 				RdBandwidthMbs: 2,
 			},
@@ -120,7 +120,7 @@ func executeQosVolume(ctx context.Context, c2 pb.MiddleendQosVolumeServiceClient
 	if err != nil {
 		return err
 	}
-	log.Printf("Got QosVolume: %v", rs5.QosVolumeId.Value)
+	log.Printf("Got QosVolume: %v", rs5.Name)
 	rs6, err := c2.QosVolumeStats(ctx, &pb.QosVolumeStatsRequest{VolumeId: &pc.ObjectKey{Value: "OpiQosVolume3"}})
 	if err != nil {
 		return err
