@@ -54,7 +54,7 @@ func NVMeControllerConnect(id string, trAddr string, subnqn string, trSvcID int6
 	// we will connect if there is no connection established
 	if data == nil { // This means we are unable to get a connection with this ID
 		request := &pb.CreateNVMfRemoteControllerRequest{NvMfRemoteControllerId: id, NvMfRemoteController: &pb.NVMfRemoteController{
-			Id:      &pbc.ObjectKey{Value: id},
+			Name:    id,
 			Traddr:  trAddr,
 			Subnqn:  subnqn,
 			Trsvcid: trSvcID,
@@ -183,7 +183,7 @@ func ExposeRemoteNVMe(subsystemNQN string, maxNamespaces int64) (string, string,
 		response1, err := client.CreateNVMeSubsystem(ctx, &pb.CreateNVMeSubsystemRequest{
 			NvMeSubsystem: &pb.NVMeSubsystem{
 				Spec: &pb.NVMeSubsystemSpec{
-					Id:            &pbc.ObjectKey{Value: subsystemID},
+					Name:          subsystemID,
 					Nqn:           subsystemNQN,
 					MaxNamespaces: maxNamespaces,
 				},
@@ -209,7 +209,7 @@ func ExposeRemoteNVMe(subsystemNQN string, maxNamespaces int64) (string, string,
 		response2, err := client.CreateNVMeController(ctx, &pb.CreateNVMeControllerRequest{
 			NvMeController: &pb.NVMeController{
 				Spec: &pb.NVMeControllerSpec{
-					Id:            &pbc.ObjectKey{Value: controllerID},
+					Name:          controllerID,
 					SubsystemId:   &pbc.ObjectKey{Value: subsystemID},
 					MaxNamespaces: int32(maxNamespaces),
 				},
@@ -251,7 +251,7 @@ func CreateNVMeNamespace(id string, subSystemID string, nguid string, hostID int
 	for _, data := range volumeData {
 		uuid := strings.ReplaceAll(data.Uuid.Value, "-", "")
 		if uuid == nguid {
-			volumeID = data.Handle.Value
+			volumeID = data.Name
 		}
 	}
 	if volumeID == "" {
@@ -262,7 +262,7 @@ func CreateNVMeNamespace(id string, subSystemID string, nguid string, hostID int
 	resp, err := client2.CreateNVMeNamespace(ctx, &pb.CreateNVMeNamespaceRequest{
 		NvMeNamespace: &pb.NVMeNamespace{
 			Spec: &pb.NVMeNamespaceSpec{
-				Id:          &pbc.ObjectKey{Value: id},
+				Name:        id,
 				SubsystemId: &pbc.ObjectKey{Value: subSystemID},
 				VolumeId:    &pbc.ObjectKey{Value: volumeID},
 				HostNsid:    hostID,
@@ -274,7 +274,7 @@ func CreateNVMeNamespace(id string, subSystemID string, nguid string, hostID int
 		return "", err
 	}
 	log.Println(resp)
-	return resp.Spec.Id.Value, nil
+	return resp.Spec.Name, nil
 }
 
 // DeleteNVMeNamespace deletes the NVMe namespace
