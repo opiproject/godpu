@@ -25,15 +25,15 @@ var (
 	address = "localhost:50051"
 )
 
-// NVMeConnection defines remote NVMf connection
-type NVMeConnection struct {
+// NvmeConnection defines remote NVMf connection
+type NvmeConnection struct {
 	id     string
 	subnqn string
 	traddr string
 }
 
-// NVMeControllerConnect Connects to remote NVMf controller
-func NVMeControllerConnect(id string, trAddr string, subnqn string, trSvcID int64, hostnqn string) error {
+// NvmeControllerConnect Connects to remote NVMf controller
+func NvmeControllerConnect(id string, trAddr string, subnqn string, trSvcID int64, hostnqn string) error {
 	if conn == nil {
 		err := dialConnection()
 		if err != nil {
@@ -75,12 +75,12 @@ func NVMeControllerConnect(id string, trAddr string, subnqn string, trSvcID int6
 	return nil
 }
 
-// NVMeControllerList lists all the connections to the remote NVMf controller
-func NVMeControllerList() ([]NVMeConnection, error) {
+// NvmeControllerList lists all the connections to the remote NVMf controller
+func NvmeControllerList() ([]NvmeConnection, error) {
 	if conn == nil {
 		err := dialConnection()
 		if err != nil {
-			return []NVMeConnection{}, err
+			return []NvmeConnection{}, err
 		}
 	}
 
@@ -91,11 +91,11 @@ func NVMeControllerList() ([]NVMeConnection, error) {
 	response, err := client.ListNVMfRemoteControllers(ctx, &pb.ListNVMfRemoteControllersRequest{})
 	if err != nil {
 		log.Printf("could not list the connections to Remote NVMf controller: %v", err)
-		return []NVMeConnection{}, err
+		return []NvmeConnection{}, err
 	}
-	nvmeConnections := make([]NVMeConnection, 0)
+	nvmeConnections := make([]NvmeConnection, 0)
 	for _, connection := range response.NvMfRemoteControllers {
-		nvmeConnections = append(nvmeConnections, NVMeConnection{
+		nvmeConnections = append(nvmeConnections, NvmeConnection{
 			id:     "",
 			subnqn: connection.Subnqn,
 			traddr: "",
@@ -104,8 +104,8 @@ func NVMeControllerList() ([]NVMeConnection, error) {
 	return nvmeConnections, nil
 }
 
-// NVMeControllerGet lists the connection to the remote NVMf controller corresponding to the given ID
-func NVMeControllerGet(id string) (string, error) {
+// NvmeControllerGet lists the connection to the remote NVMf controller corresponding to the given ID
+func NvmeControllerGet(id string) (string, error) {
 	if conn == nil {
 		err := dialConnection()
 		if err != nil {
@@ -125,8 +125,8 @@ func NVMeControllerGet(id string) (string, error) {
 	return response.Subnqn, nil
 }
 
-// NVMeControllerDisconnect disconnects remote NVMf controller connection
-func NVMeControllerDisconnect(id string) error {
+// NvmeControllerDisconnect disconnects remote NVMf controller connection
+func NvmeControllerDisconnect(id string) error {
 	if conn == nil {
 		err := dialConnection()
 		if err != nil {
@@ -160,8 +160,8 @@ func NVMeControllerDisconnect(id string) error {
 	return nil
 }
 
-// ExposeRemoteNVMe creates a new NVMe Subsystem and NVMe controller. Default value of MaxNamespaces is 32 incase the parameter is not assigned any value
-func ExposeRemoteNVMe(subsystemNQN string, maxNamespaces int64) (string, string, error) {
+// ExposeRemoteNvme creates a new Nvme Subsystem and Nvme controller. Default value of MaxNamespaces is 32 incase the parameter is not assigned any value
+func ExposeRemoteNvme(subsystemNQN string, maxNamespaces int64) (string, string, error) {
 	if conn == nil {
 		err := dialConnection()
 		if err != nil {
@@ -174,15 +174,15 @@ func ExposeRemoteNVMe(subsystemNQN string, maxNamespaces int64) (string, string,
 
 	client := pb.NewFrontendNvmeServiceClient(conn)
 	subsystemID := uuid.New().String()
-	data1, err := client.GetNVMeSubsystem(ctx, &pb.GetNVMeSubsystemRequest{Name: subsystemID})
+	data1, err := client.GetNvmeSubsystem(ctx, &pb.GetNvmeSubsystemRequest{Name: subsystemID})
 	if err != nil {
-		log.Printf("No existing NVMe Subsystem found with subsystemID: %v", subsystemID)
+		log.Printf("No existing Nvme Subsystem found with subsystemID: %v", subsystemID)
 	}
 
 	if data1 == nil {
-		response1, err := client.CreateNVMeSubsystem(ctx, &pb.CreateNVMeSubsystemRequest{
-			NvMeSubsystem: &pb.NVMeSubsystem{
-				Spec: &pb.NVMeSubsystemSpec{
+		response1, err := client.CreateNvmeSubsystem(ctx, &pb.CreateNvmeSubsystemRequest{
+			NvmeSubsystem: &pb.NvmeSubsystem{
+				Spec: &pb.NvmeSubsystemSpec{
 					Name:          subsystemID,
 					Nqn:           subsystemNQN,
 					MaxNamespaces: maxNamespaces,
@@ -193,22 +193,22 @@ func ExposeRemoteNVMe(subsystemNQN string, maxNamespaces int64) (string, string,
 			log.Println(err)
 			return "", "", err
 		}
-		log.Printf("NVMe Subsytem created: %v", response1)
+		log.Printf("Nvme Subsytem created: %v", response1)
 	} else {
-		log.Printf("NVMe Subsystem is already present with the subsytemID: %v", subsystemID)
+		log.Printf("Nvme Subsystem is already present with the subsytemID: %v", subsystemID)
 	}
 
 	controllerID := uuid.New().String()
-	data2, err := client.GetNVMeController(ctx, &pb.GetNVMeControllerRequest{Name: controllerID})
+	data2, err := client.GetNvmeController(ctx, &pb.GetNvmeControllerRequest{Name: controllerID})
 	if err != nil {
-		log.Printf("No existing NVMe Controller found with controllerID: %v", controllerID)
+		log.Printf("No existing Nvme Controller found with controllerID: %v", controllerID)
 	}
 
 	// Default value of MaxNamespaces is 32 incase the parameter is not assigned any value
 	if data2 == nil {
-		response2, err := client.CreateNVMeController(ctx, &pb.CreateNVMeControllerRequest{
-			NvMeController: &pb.NVMeController{
-				Spec: &pb.NVMeControllerSpec{
+		response2, err := client.CreateNvmeController(ctx, &pb.CreateNvmeControllerRequest{
+			NvmeController: &pb.NvmeController{
+				Spec: &pb.NvmeControllerSpec{
 					Name:          controllerID,
 					SubsystemId:   &pbc.ObjectKey{Value: subsystemID},
 					MaxNamespaces: int32(maxNamespaces),
@@ -219,15 +219,15 @@ func ExposeRemoteNVMe(subsystemNQN string, maxNamespaces int64) (string, string,
 			log.Println(err)
 			return subsystemID, "", err
 		}
-		log.Printf("NVMe Controller created: %v", response2)
+		log.Printf("Nvme Controller created: %v", response2)
 		return subsystemID, controllerID, nil
 	}
-	log.Printf("NVMe Controller is already present with the controllerID: %v", controllerID)
+	log.Printf("Nvme Controller is already present with the controllerID: %v", controllerID)
 	return subsystemID, controllerID, nil
 }
 
-// CreateNVMeNamespace Creates a new NVMe namespace
-func CreateNVMeNamespace(id string, subSystemID string, nguid string, hostID int32) (string, error) {
+// CreateNvmeNamespace Creates a new Nvme namespace
+func CreateNvmeNamespace(id string, subSystemID string, nguid string, hostID int32) (string, error) {
 	if conn == nil {
 		err := dialConnection()
 		if err != nil {
@@ -259,9 +259,9 @@ func CreateNVMeNamespace(id string, subSystemID string, nguid string, hostID int
 	}
 
 	client2 := pb.NewFrontendNvmeServiceClient(conn)
-	resp, err := client2.CreateNVMeNamespace(ctx, &pb.CreateNVMeNamespaceRequest{
-		NvMeNamespace: &pb.NVMeNamespace{
-			Spec: &pb.NVMeNamespaceSpec{
+	resp, err := client2.CreateNvmeNamespace(ctx, &pb.CreateNvmeNamespaceRequest{
+		NvmeNamespace: &pb.NvmeNamespace{
+			Spec: &pb.NvmeNamespaceSpec{
 				Name:        id,
 				SubsystemId: &pbc.ObjectKey{Value: subSystemID},
 				VolumeId:    &pbc.ObjectKey{Value: volumeID},
@@ -277,8 +277,8 @@ func CreateNVMeNamespace(id string, subSystemID string, nguid string, hostID int
 	return resp.Spec.Name, nil
 }
 
-// DeleteNVMeNamespace deletes the NVMe namespace
-func DeleteNVMeNamespace(id string) error {
+// DeleteNvmeNamespace deletes the Nvme namespace
+func DeleteNvmeNamespace(id string) error {
 	if conn == nil {
 		err := dialConnection()
 		if err != nil {
@@ -290,7 +290,7 @@ func DeleteNVMeNamespace(id string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	resp, err := client.DeleteNVMeNamespace(ctx, &pb.DeleteNVMeNamespaceRequest{Name: id})
+	resp, err := client.DeleteNvmeNamespace(ctx, &pb.DeleteNvmeNamespaceRequest{Name: id})
 	if err != nil {
 		log.Println(err)
 		return err
@@ -301,7 +301,7 @@ func DeleteNVMeNamespace(id string) error {
 
 // GenerateHostNQN generates a new hostNQN
 func GenerateHostNQN() string {
-	// Sample of NVMe Qualified Name in UUID-based format - nqn.2014-08.org.nvmexpress:uuid:a11a1111-11a1-111a-a111-1a111aaa1a11
+	// Sample of Nvme Qualified Name in UUID-based format - nqn.2014-08.org.nvmexpress:uuid:a11a1111-11a1-111a-a111-1a111aaa1a11
 	nqnConst := "nqn.2014-08.org.nvmexpress:uuid:"
 	nqnUUID := uuid.New().String()
 

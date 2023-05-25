@@ -1,18 +1,18 @@
 {
     "service": "FrontendNvmeServiceServer",
-    "method": "GetNVMeSubsystem",
+    "method": "GetNvmeSubsystem",
     "input": {
         "contains": {
-            "GetNVMeSubsystemRequest": {
+            "GetNvmeSubsystemRequest": {
                 "Name": "name1"
             }
         }
     },
     "output": {
         "data": {
-            "NVMeSubsystem": {
+            "NvmeSubsystem": {
                 "spec": {
-                    "NVMeSubsystemSpec": {
+                    "NvmeSubsystemSpec": {
                         "Id": {"value": "1"},
                         "Nqn": "nqn1"
                     }

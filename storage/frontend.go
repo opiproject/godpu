@@ -21,15 +21,15 @@ func DoFrontend(ctx context.Context, conn grpc.ClientConnInterface) error {
 	blk := pb.NewFrontendVirtioBlkServiceClient(conn)
 	scsi := pb.NewFrontendVirtioScsiServiceClient(conn)
 
-	err := executeNVMeSubsystem(ctx, nvme)
+	err := executeNvmeSubsystem(ctx, nvme)
 	if err != nil {
 		return err
 	}
-	err = executeNVMeController(ctx, nvme)
+	err = executeNvmeController(ctx, nvme)
 	if err != nil {
 		return err
 	}
-	err = executeNVMeNamespace(ctx, nvme)
+	err = executeNvmeNamespace(ctx, nvme)
 	if err != nil {
 		return err
 	}
@@ -186,15 +186,15 @@ func executeVirtioBlk(ctx context.Context, c4 pb.FrontendVirtioBlkServiceClient)
 	return err
 }
 
-func executeNVMeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) error {
+func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) error {
 	log.Printf("=======================================")
-	log.Printf("Testing NVMeNamespace")
+	log.Printf("Testing NvmeNamespace")
 	log.Printf("=======================================")
 	// pre create: subsystem and controller
-	rs1, err := c2.CreateNVMeSubsystem(ctx, &pb.CreateNVMeSubsystemRequest{
-		NvMeSubsystemId: "namespace-test-ss",
-		NvMeSubsystem: &pb.NVMeSubsystem{
-			Spec: &pb.NVMeSubsystemSpec{
+	rs1, err := c2.CreateNvmeSubsystem(ctx, &pb.CreateNvmeSubsystemRequest{
+		NvmeSubsystemId: "namespace-test-ss",
+		NvmeSubsystem: &pb.NvmeSubsystem{
+			Spec: &pb.NvmeSubsystemSpec{
 				Name:          "",
 				ModelNumber:   "OPI Model",
 				SerialNumber:  "OPI SN",
@@ -206,11 +206,11 @@ func executeNVMeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 	if rs1.Spec.Name != "namespace-test-ss" {
 		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Spec.Name, "namespace-test-ss")
 	}
-	log.Printf("Added NVMeSubsystem: %v", rs1)
-	rc1, err := c2.CreateNVMeController(ctx, &pb.CreateNVMeControllerRequest{
-		NvMeControllerId: "namespace-test-ctrler",
-		NvMeController: &pb.NVMeController{
-			Spec: &pb.NVMeControllerSpec{
+	log.Printf("Added NvmeSubsystem: %v", rs1)
+	rc1, err := c2.CreateNvmeController(ctx, &pb.CreateNvmeControllerRequest{
+		NvmeControllerId: "namespace-test-ctrler",
+		NvmeController: &pb.NvmeController{
+			Spec: &pb.NvmeControllerSpec{
 				Name:             "",
 				SubsystemId:      &pbc.ObjectKey{Value: "namespace-test-ss"},
 				PcieId:           &pb.PciEndpoint{PhysicalFunction: 1, VirtualFunction: 2, PortId: 3},
@@ -225,16 +225,16 @@ func executeNVMeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 	if rc1.Spec.Name != "namespace-test-ctrler" {
 		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rc1.Spec.Name, "namespace-test-ctrler")
 	}
-	log.Printf("Added NVMeController: %v", rc1)
+	log.Printf("Added NvmeController: %v", rc1)
 
 	// wait for some time for the backend to created above objects
 	time.Sleep(time.Second)
 
-	// NVMeNamespace
-	rn1, err := c2.CreateNVMeNamespace(ctx, &pb.CreateNVMeNamespaceRequest{
-		NvMeNamespaceId: "namespace-test",
-		NvMeNamespace: &pb.NVMeNamespace{
-			Spec: &pb.NVMeNamespaceSpec{
+	// NvmeNamespace
+	rn1, err := c2.CreateNvmeNamespace(ctx, &pb.CreateNvmeNamespaceRequest{
+		NvmeNamespaceId: "namespace-test",
+		NvmeNamespace: &pb.NvmeNamespace{
+			Spec: &pb.NvmeNamespaceSpec{
 				Name:        "",
 				SubsystemId: &pbc.ObjectKey{Value: "namespace-test-ss"},
 				VolumeId:    &pbc.ObjectKey{Value: "Malloc1"},
@@ -248,10 +248,10 @@ func executeNVMeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 	if rn1.Spec.Name != "namespace-test" {
 		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rn1.Spec.Name, "namespace-test")
 	}
-	log.Printf("Added NVMeNamespace: %v", rn1)
-	rn3, err := c2.UpdateNVMeNamespace(ctx, &pb.UpdateNVMeNamespaceRequest{
-		NvMeNamespace: &pb.NVMeNamespace{
-			Spec: &pb.NVMeNamespaceSpec{
+	log.Printf("Added NvmeNamespace: %v", rn1)
+	rn3, err := c2.UpdateNvmeNamespace(ctx, &pb.UpdateNvmeNamespaceRequest{
+		NvmeNamespace: &pb.NvmeNamespace{
+			Spec: &pb.NvmeNamespaceSpec{
 				Name:        "namespace-test",
 				SubsystemId: &pbc.ObjectKey{Value: "namespace-test-ss"},
 				VolumeId:    &pbc.ObjectKey{Value: "Malloc1"},
@@ -262,53 +262,53 @@ func executeNVMeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 	if err != nil {
 		return err
 	}
-	log.Printf("Updated NVMeNamespace: %v", rn3)
-	rn4, err := c2.ListNVMeNamespaces(ctx, &pb.ListNVMeNamespacesRequest{Parent: "namespace-test-ss"})
+	log.Printf("Updated NvmeNamespace: %v", rn3)
+	rn4, err := c2.ListNvmeNamespaces(ctx, &pb.ListNvmeNamespacesRequest{Parent: "namespace-test-ss"})
 	if err != nil {
 		return err
 	}
-	log.Printf("Listed NVMeNamespaces: %v", rn4)
-	rn5, err := c2.GetNVMeNamespace(ctx, &pb.GetNVMeNamespaceRequest{Name: "namespace-test"})
+	log.Printf("Listed NvmeNamespaces: %v", rn4)
+	rn5, err := c2.GetNvmeNamespace(ctx, &pb.GetNvmeNamespaceRequest{Name: "namespace-test"})
 	if err != nil {
 		return err
 	}
-	log.Printf("Got NVMeNamespace: %v", rn5.Spec.Name)
-	rn6, err := c2.NVMeNamespaceStats(ctx, &pb.NVMeNamespaceStatsRequest{NamespaceId: &pbc.ObjectKey{Value: "namespace-test"}})
+	log.Printf("Got NvmeNamespace: %v", rn5.Spec.Name)
+	rn6, err := c2.NvmeNamespaceStats(ctx, &pb.NvmeNamespaceStatsRequest{NamespaceId: &pbc.ObjectKey{Value: "namespace-test"}})
 	if err != nil {
 		return err
 	}
-	log.Printf("Stats NVMeNamespace: %v", rn6.Stats)
-	rn2, err := c2.DeleteNVMeNamespace(ctx, &pb.DeleteNVMeNamespaceRequest{Name: "namespace-test"})
+	log.Printf("Stats NvmeNamespace: %v", rn6.Stats)
+	rn2, err := c2.DeleteNvmeNamespace(ctx, &pb.DeleteNvmeNamespaceRequest{Name: "namespace-test"})
 	if err != nil {
 		return err
 	}
-	log.Printf("Deleted NVMeNamespace:  %v -> %v", rn1, rn2)
+	log.Printf("Deleted NvmeNamespace:  %v -> %v", rn1, rn2)
 
 	// post cleanup: controller and subsystem
-	rc2, err := c2.DeleteNVMeController(ctx, &pb.DeleteNVMeControllerRequest{Name: "namespace-test-ctrler"})
+	rc2, err := c2.DeleteNvmeController(ctx, &pb.DeleteNvmeControllerRequest{Name: "namespace-test-ctrler"})
 	if err != nil {
 		return err
 	}
-	log.Printf("Deleted NVMeController: %v", rc2)
+	log.Printf("Deleted NvmeController: %v", rc2)
 
 	// post cleanup: subsystem
-	rs2, err := c2.DeleteNVMeSubsystem(ctx, &pb.DeleteNVMeSubsystemRequest{Name: "namespace-test-ss"})
+	rs2, err := c2.DeleteNvmeSubsystem(ctx, &pb.DeleteNvmeSubsystemRequest{Name: "namespace-test-ss"})
 	if err != nil {
 		return err
 	}
-	log.Printf("Deleted NVMeSubsystem: %v -> %v", rs1, rs2)
+	log.Printf("Deleted NvmeSubsystem: %v -> %v", rs1, rs2)
 	return nil
 }
 
-func executeNVMeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient) error {
+func executeNvmeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient) error {
 	log.Printf("=======================================")
-	log.Printf("Testing NVMeController")
+	log.Printf("Testing NvmeController")
 	log.Printf("=======================================")
 	// pre create: subsystem
-	rs1, err := c2.CreateNVMeSubsystem(ctx, &pb.CreateNVMeSubsystemRequest{
-		NvMeSubsystemId: "controller-test-ss",
-		NvMeSubsystem: &pb.NVMeSubsystem{
-			Spec: &pb.NVMeSubsystemSpec{
+	rs1, err := c2.CreateNvmeSubsystem(ctx, &pb.CreateNvmeSubsystemRequest{
+		NvmeSubsystemId: "controller-test-ss",
+		NvmeSubsystem: &pb.NvmeSubsystem{
+			Spec: &pb.NvmeSubsystemSpec{
 				Name:          "",
 				ModelNumber:   "OPI Model",
 				SerialNumber:  "OPI SN",
@@ -320,13 +320,13 @@ func executeNVMeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 	if rs1.Spec.Name != "controller-test-ss" {
 		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Spec.Name, "controller-test-ss")
 	}
-	log.Printf("Added NVMeSubsystem: %v", rs1)
+	log.Printf("Added NvmeSubsystem: %v", rs1)
 
-	// NVMeController
-	rc1, err := c2.CreateNVMeController(ctx, &pb.CreateNVMeControllerRequest{
-		NvMeControllerId: "controller-test",
-		NvMeController: &pb.NVMeController{
-			Spec: &pb.NVMeControllerSpec{
+	// NvmeController
+	rc1, err := c2.CreateNvmeController(ctx, &pb.CreateNvmeControllerRequest{
+		NvmeControllerId: "controller-test",
+		NvmeController: &pb.NvmeController{
+			Spec: &pb.NvmeControllerSpec{
 				Name:             "controller-test",
 				SubsystemId:      &pbc.ObjectKey{Value: "controller-test-ss"},
 				PcieId:           &pb.PciEndpoint{PhysicalFunction: 1, VirtualFunction: 2, PortId: 3},
@@ -338,11 +338,11 @@ func executeNVMeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 	if err != nil {
 		return err
 	}
-	log.Printf("Added NVMeController: %v", rc1)
+	log.Printf("Added NvmeController: %v", rc1)
 
-	rc3, err := c2.UpdateNVMeController(ctx, &pb.UpdateNVMeControllerRequest{
-		NvMeController: &pb.NVMeController{
-			Spec: &pb.NVMeControllerSpec{
+	rc3, err := c2.UpdateNvmeController(ctx, &pb.UpdateNvmeControllerRequest{
+		NvmeController: &pb.NvmeController{
+			Spec: &pb.NvmeControllerSpec{
 				Name:             "controller-test",
 				SubsystemId:      &pbc.ObjectKey{Value: "controller-test-ss"},
 				PcieId:           &pb.PciEndpoint{PhysicalFunction: 1, VirtualFunction: 2, PortId: 3},
@@ -354,49 +354,49 @@ func executeNVMeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 	if err != nil {
 		return err
 	}
-	log.Printf("Updated NVMeController: %v", rc3)
+	log.Printf("Updated NvmeController: %v", rc3)
 
-	rc4, err := c2.ListNVMeControllers(ctx, &pb.ListNVMeControllersRequest{Parent: "controller-test-ss"})
+	rc4, err := c2.ListNvmeControllers(ctx, &pb.ListNvmeControllersRequest{Parent: "controller-test-ss"})
 	if err != nil {
 		return err
 	}
-	log.Printf("Listed NVMeControllers: %s", rc4)
+	log.Printf("Listed NvmeControllers: %s", rc4)
 
-	rc5, err := c2.GetNVMeController(ctx, &pb.GetNVMeControllerRequest{Name: "controller-test"})
+	rc5, err := c2.GetNvmeController(ctx, &pb.GetNvmeControllerRequest{Name: "controller-test"})
 	if err != nil {
 		return err
 	}
-	log.Printf("Got NVMeController: %s", rc5.Spec.Name)
+	log.Printf("Got NvmeController: %s", rc5.Spec.Name)
 
-	rc6, err := c2.NVMeControllerStats(ctx, &pb.NVMeControllerStatsRequest{Id: &pbc.ObjectKey{Value: "controller-test"}})
+	rc6, err := c2.NvmeControllerStats(ctx, &pb.NvmeControllerStatsRequest{Id: &pbc.ObjectKey{Value: "controller-test"}})
 	if err != nil {
 		return err
 	}
-	log.Printf("Stats NVMeController: %s", rc6.Stats)
+	log.Printf("Stats NvmeController: %s", rc6.Stats)
 
-	rc2, err := c2.DeleteNVMeController(ctx, &pb.DeleteNVMeControllerRequest{Name: "controller-test"})
+	rc2, err := c2.DeleteNvmeController(ctx, &pb.DeleteNvmeControllerRequest{Name: "controller-test"})
 	if err != nil {
 		return err
 	}
-	log.Printf("Deleted NVMeController: %v -> %v", rc1, rc2)
+	log.Printf("Deleted NvmeController: %v -> %v", rc1, rc2)
 
 	// post cleanup: subsystem
-	rs2, err := c2.DeleteNVMeSubsystem(ctx, &pb.DeleteNVMeSubsystemRequest{Name: "controller-test-ss"})
+	rs2, err := c2.DeleteNvmeSubsystem(ctx, &pb.DeleteNvmeSubsystemRequest{Name: "controller-test-ss"})
 	if err != nil {
 		return err
 	}
-	log.Printf("Deleted NVMeSubsystem: %v -> %v", rs1, rs2)
+	log.Printf("Deleted NvmeSubsystem: %v -> %v", rs1, rs2)
 	return nil
 }
 
-func executeNVMeSubsystem(ctx context.Context, c1 pb.FrontendNvmeServiceClient) error {
+func executeNvmeSubsystem(ctx context.Context, c1 pb.FrontendNvmeServiceClient) error {
 	log.Printf("=======================================")
-	log.Printf("Testing NVMeSubsystem")
+	log.Printf("Testing NvmeSubsystem")
 	log.Printf("=======================================")
-	rs1, err := c1.CreateNVMeSubsystem(ctx, &pb.CreateNVMeSubsystemRequest{
-		NvMeSubsystemId: "subsystem-test",
-		NvMeSubsystem: &pb.NVMeSubsystem{
-			Spec: &pb.NVMeSubsystemSpec{
+	rs1, err := c1.CreateNvmeSubsystem(ctx, &pb.CreateNvmeSubsystemRequest{
+		NvmeSubsystemId: "subsystem-test",
+		NvmeSubsystem: &pb.NvmeSubsystem{
+			Spec: &pb.NvmeSubsystemSpec{
 				Name:          "",
 				ModelNumber:   "OPI Model",
 				SerialNumber:  "OPI SN",
@@ -408,39 +408,39 @@ func executeNVMeSubsystem(ctx context.Context, c1 pb.FrontendNvmeServiceClient) 
 	if rs1.Spec.Name != "subsystem-test" {
 		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Spec.Name, "subsystem-test")
 	}
-	log.Printf("Added NVMeSubsystem: %v", rs1)
-	rs3, err := c1.UpdateNVMeSubsystem(ctx, &pb.UpdateNVMeSubsystemRequest{
-		NvMeSubsystem: &pb.NVMeSubsystem{
-			Spec: &pb.NVMeSubsystemSpec{
+	log.Printf("Added NvmeSubsystem: %v", rs1)
+	rs3, err := c1.UpdateNvmeSubsystem(ctx, &pb.UpdateNvmeSubsystemRequest{
+		NvmeSubsystem: &pb.NvmeSubsystem{
+			Spec: &pb.NvmeSubsystemSpec{
 				Name: "subsystem-test",
 				Nqn:  "nqn.2022-09.io.spdk:opi3"}}})
 	if err != nil {
-		// UpdateNVMeSubsystem is not implemented, so no error here
-		log.Printf("could not update NVMe subsystem: %v", err)
+		// UpdateNvmeSubsystem is not implemented, so no error here
+		log.Printf("could not update Nvme subsystem: %v", err)
 	}
-	log.Printf("Updated UpdateNVMeSubsystem: %v", rs3)
-	rs4, err := c1.ListNVMeSubsystems(ctx, &pb.ListNVMeSubsystemsRequest{})
+	log.Printf("Updated UpdateNvmeSubsystem: %v", rs3)
+	rs4, err := c1.ListNvmeSubsystems(ctx, &pb.ListNvmeSubsystemsRequest{})
 	if err != nil {
 		return err
 	}
-	log.Printf("Listed UpdateNVMeSubsystems: %v", rs4)
-	rs5, err := c1.GetNVMeSubsystem(ctx, &pb.GetNVMeSubsystemRequest{Name: "subsystem-test"})
+	log.Printf("Listed UpdateNvmeSubsystems: %v", rs4)
+	rs5, err := c1.GetNvmeSubsystem(ctx, &pb.GetNvmeSubsystemRequest{Name: "subsystem-test"})
 	if err != nil {
 		return err
 	}
-	log.Printf("Got UpdateNVMeSubsystem: %s", rs5.Spec.Nqn)
-	rs6, err := c1.NVMeSubsystemStats(ctx, &pb.NVMeSubsystemStatsRequest{
+	log.Printf("Got UpdateNvmeSubsystem: %s", rs5.Spec.Nqn)
+	rs6, err := c1.NvmeSubsystemStats(ctx, &pb.NvmeSubsystemStatsRequest{
 		SubsystemId: &pbc.ObjectKey{Value: "subsystem-test"}})
 	if err != nil {
 		return err
 	}
-	log.Printf("Stats UpdateNVMeSubsystem: %s", rs6.Stats)
+	log.Printf("Stats UpdateNvmeSubsystem: %s", rs6.Stats)
 
 	// post cleanup: subsystem
-	rs2, err := c1.DeleteNVMeSubsystem(ctx, &pb.DeleteNVMeSubsystemRequest{Name: "subsystem-test"})
+	rs2, err := c1.DeleteNvmeSubsystem(ctx, &pb.DeleteNvmeSubsystemRequest{Name: "subsystem-test"})
 	if err != nil {
 		return err
 	}
-	log.Printf("Deleted NVMeSubsystem: %v -> %v", rs1, rs2)
+	log.Printf("Deleted NvmeSubsystem: %v -> %v", rs1, rs2)
 	return nil
 }

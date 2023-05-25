@@ -1,6 +1,6 @@
 {
     "service": "FrontendNvmeServiceServer",
-    "method": "DeleteNVMeNamespace",
+    "method": "DeleteNvmeNamespace",
     "input": {
         "contains": {
             "name": "1"
