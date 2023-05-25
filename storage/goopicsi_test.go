@@ -76,59 +76,59 @@ func (suite *GoopcsiTestSuite) TearDownTestSuite() {
 	suite.T().Log("Cleaning up resources..")
 }
 
-func (suite *GoopcsiTestSuite) TestExposeRemoteNVMe() {
+func (suite *GoopcsiTestSuite) TestExposeRemoteNvme() {
 	// Negative scenario
-	subsystemID, controllerID, err := ExposeRemoteNVMe("nqn.2022-09.io.spdk:test", 10)
+	subsystemID, controllerID, err := ExposeRemoteNvme("nqn.2022-09.io.spdk:test", 10)
 	assert.Error(suite.T(), err)
-	assert.Empty(suite.T(), subsystemID, "ExposeRemoteNVMe failed")
-	assert.Empty(suite.T(), controllerID, "ExposeRemoteNVMe failed")
+	assert.Empty(suite.T(), subsystemID, "ExposeRemoteNvme failed")
+	assert.Empty(suite.T(), controllerID, "ExposeRemoteNvme failed")
 }
 
-func (suite *GoopcsiTestSuite) TestCreateNVMeNamespace() {
+func (suite *GoopcsiTestSuite) TestCreateNvmeNamespace() {
 	// scenario: when volume ID not found
-	resp, err := CreateNVMeNamespace("1", "nqn", "nguid", 1)
+	resp, err := CreateNvmeNamespace("1", "nqn", "nguid", 1)
 	assert.Error(suite.T(), err)
-	assert.Empty(suite.T(), resp, "CreateNVMeNamespace failed with invalid volume ID")
+	assert.Empty(suite.T(), resp, "CreateNvmeNamespace failed with invalid volume ID")
 }
 
-func (suite *GoopcsiTestSuite) TestNVMeControllerDisconnect() {
+func (suite *GoopcsiTestSuite) TestNvmeControllerDisconnect() {
 	// scenario: when connection already exists
-	err := NVMeControllerDisconnect("12")
+	err := NvmeControllerDisconnect("12")
 	assert.NoError(suite.T(), err)
 }
 
-func (suite *GoopcsiTestSuite) TestNVMeControllerConnect() {
+func (suite *GoopcsiTestSuite) TestNvmeControllerConnect() {
 	// scenario: when connection already exists
-	err := NVMeControllerConnect("12", "", "", 44565, "")
+	err := NvmeControllerConnect("12", "", "", 44565, "")
 	assert.NoError(suite.T(), err)
 }
 
-func (suite *GoopcsiTestSuite) TestNVMeControllerList() {
-	resp, err := NVMeControllerList()
+func (suite *GoopcsiTestSuite) TestNvmeControllerList() {
+	resp, err := NvmeControllerList()
 	assert.NoError(suite.T(), err)
 	assert.NotNil(suite.T(), resp, "ListControllers success")
 }
 
-func (suite *GoopcsiTestSuite) TestNVMeControllerGet() {
+func (suite *GoopcsiTestSuite) TestNvmeControllerGet() {
 	// positive scenario
-	resp, err := NVMeControllerGet("12")
+	resp, err := NvmeControllerGet("12")
 	assert.NoError(suite.T(), err)
 	assert.NotNil(suite.T(), resp, "GetController success")
 
 	// negative scenario
-	resp, err = NVMeControllerGet("invalid")
+	resp, err = NvmeControllerGet("invalid")
 	assert.Error(suite.T(), err, "GetController failed")
 	assert.Empty(suite.T(), resp, "GetController failed")
 }
 
-func (suite *GoopcsiTestSuite) TestDeleteNVMeNamespace() {
+func (suite *GoopcsiTestSuite) TestDeleteNvmeNamespace() {
 	// positive scenario
-	err := DeleteNVMeNamespace("1")
-	assert.NoError(suite.T(), err, "DeleteNVMeNamespace success")
+	err := DeleteNvmeNamespace("1")
+	assert.NoError(suite.T(), err, "DeleteNvmeNamespace success")
 
 	// negative scenario
-	err = DeleteNVMeNamespace("invalid")
-	assert.Error(suite.T(), err, "DeleteNVMeNamespace failed")
+	err = DeleteNvmeNamespace("invalid")
+	assert.Error(suite.T(), err, "DeleteNvmeNamespace failed")
 }
 
 func (suite *GoopcsiTestSuite) TestGenerateHostNQN() {

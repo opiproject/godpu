@@ -105,115 +105,115 @@ func (s *GoopCSI) NVMfRemoteControllerStats(_ context2.Context, _ *pb.NVMfRemote
 	panic("implement me")
 }
 
-// CreateNVMeSubsystem creates mock NVMe subsystem
-func (s *GoopCSI) CreateNVMeSubsystem(_ context.Context, request *pb.CreateNVMeSubsystemRequest) (*pb.NVMeSubsystem, error) {
-	out := &pb.NVMeSubsystem{}
-	err := FindStub("FrontendNvmeServiceServer", "CreateNVMeSubsystem", request, out)
+// CreateNvmeSubsystem creates mock Nvme subsystem
+func (s *GoopCSI) CreateNvmeSubsystem(_ context.Context, request *pb.CreateNvmeSubsystemRequest) (*pb.NvmeSubsystem, error) {
+	out := &pb.NvmeSubsystem{}
+	err := FindStub("FrontendNvmeServiceServer", "CreateNvmeSubsystem", request, out)
 	return out, err
 }
 
-// DeleteNVMeSubsystem deletes mock NVMe subsystem
-func (s *GoopCSI) DeleteNVMeSubsystem(_ context.Context, _ *pb.DeleteNVMeSubsystemRequest) (*emptypb.Empty, error) {
+// DeleteNvmeSubsystem deletes mock Nvme subsystem
+func (s *GoopCSI) DeleteNvmeSubsystem(_ context.Context, _ *pb.DeleteNvmeSubsystemRequest) (*emptypb.Empty, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-// UpdateNVMeSubsystem updates a mock NVMe subsystem
-func (s *GoopCSI) UpdateNVMeSubsystem(_ context.Context, _ *pb.UpdateNVMeSubsystemRequest) (*pb.NVMeSubsystem, error) {
+// UpdateNvmeSubsystem updates a mock Nvme subsystem
+func (s *GoopCSI) UpdateNvmeSubsystem(_ context.Context, _ *pb.UpdateNvmeSubsystemRequest) (*pb.NvmeSubsystem, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-// ListNVMeSubsystems lists mock NVMe subsystems
-func (s *GoopCSI) ListNVMeSubsystems(_ context.Context, _ *pb.ListNVMeSubsystemsRequest) (*pb.ListNVMeSubsystemsResponse, error) {
+// ListNvmeSubsystems lists mock Nvme subsystems
+func (s *GoopCSI) ListNvmeSubsystems(_ context.Context, _ *pb.ListNvmeSubsystemsRequest) (*pb.ListNvmeSubsystemsResponse, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-// GetNVMeSubsystem gets a mock NVMe subsystem
-func (s *GoopCSI) GetNVMeSubsystem(_ context.Context, request *pb.GetNVMeSubsystemRequest) (*pb.NVMeSubsystem, error) {
-	out := &pb.NVMeSubsystem{}
-	err := FindStub("FrontendNvmeServiceServer", "GetNVMeSubsystem", request, out)
+// GetNvmeSubsystem gets a mock Nvme subsystem
+func (s *GoopCSI) GetNvmeSubsystem(_ context.Context, request *pb.GetNvmeSubsystemRequest) (*pb.NvmeSubsystem, error) {
+	out := &pb.NvmeSubsystem{}
+	err := FindStub("FrontendNvmeServiceServer", "GetNvmeSubsystem", request, out)
 	return out, err
 }
 
-// NVMeSubsystemStats gets mock subsystem stats
-func (s *GoopCSI) NVMeSubsystemStats(_ context.Context, _ *pb.NVMeSubsystemStatsRequest) (*pb.NVMeSubsystemStatsResponse, error) {
+// NvmeSubsystemStats gets mock subsystem stats
+func (s *GoopCSI) NvmeSubsystemStats(_ context.Context, _ *pb.NvmeSubsystemStatsRequest) (*pb.NvmeSubsystemStatsResponse, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-// CreateNVMeController creates a mock NVMe controller
-func (s *GoopCSI) CreateNVMeController(_ context.Context, _ *pb.CreateNVMeControllerRequest) (*pb.NVMeController, error) {
+// CreateNvmeController creates a mock Nvme controller
+func (s *GoopCSI) CreateNvmeController(_ context.Context, _ *pb.CreateNvmeControllerRequest) (*pb.NvmeController, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-// DeleteNVMeController deletes a mock NVMe controller
-func (s *GoopCSI) DeleteNVMeController(_ context.Context, _ *pb.DeleteNVMeControllerRequest) (*emptypb.Empty, error) {
+// DeleteNvmeController deletes a mock Nvme controller
+func (s *GoopCSI) DeleteNvmeController(_ context.Context, _ *pb.DeleteNvmeControllerRequest) (*emptypb.Empty, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-// UpdateNVMeController updates a mock NVMe controller
-func (s *GoopCSI) UpdateNVMeController(_ context.Context, _ *pb.UpdateNVMeControllerRequest) (*pb.NVMeController, error) {
+// UpdateNvmeController updates a mock Nvme controller
+func (s *GoopCSI) UpdateNvmeController(_ context.Context, _ *pb.UpdateNvmeControllerRequest) (*pb.NvmeController, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-// ListNVMeControllers lists mock controllers
-func (s *GoopCSI) ListNVMeControllers(_ context.Context, _ *pb.ListNVMeControllersRequest) (*pb.ListNVMeControllersResponse, error) {
+// ListNvmeControllers lists mock controllers
+func (s *GoopCSI) ListNvmeControllers(_ context.Context, _ *pb.ListNvmeControllersRequest) (*pb.ListNvmeControllersResponse, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-// GetNVMeController gets a mock NVMe controller
-func (s *GoopCSI) GetNVMeController(_ context.Context, request *pb.GetNVMeControllerRequest) (*pb.NVMeController, error) {
-	out := &pb.NVMeController{}
-	err := FindStub("FrontendNvmeServiceServer", "GetNVMeController", request, out)
+// GetNvmeController gets a mock Nvme controller
+func (s *GoopCSI) GetNvmeController(_ context.Context, request *pb.GetNvmeControllerRequest) (*pb.NvmeController, error) {
+	out := &pb.NvmeController{}
+	err := FindStub("FrontendNvmeServiceServer", "GetNvmeController", request, out)
 	return out, err
 }
 
-// NVMeControllerStats gets mock stats
-func (s *GoopCSI) NVMeControllerStats(_ context.Context, _ *pb.NVMeControllerStatsRequest) (*pb.NVMeControllerStatsResponse, error) {
+// NvmeControllerStats gets mock stats
+func (s *GoopCSI) NvmeControllerStats(_ context.Context, _ *pb.NvmeControllerStatsRequest) (*pb.NvmeControllerStatsResponse, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-// CreateNVMeNamespace creates a mock NVMe namespace
-func (s *GoopCSI) CreateNVMeNamespace(_ context.Context, request *pb.CreateNVMeNamespaceRequest) (*pb.NVMeNamespace, error) {
-	out := &pb.NVMeNamespace{}
-	err := FindStub("FrontendNvmeServiceServer", "CreateNVMeNamespace", request, out)
+// CreateNvmeNamespace creates a mock Nvme namespace
+func (s *GoopCSI) CreateNvmeNamespace(_ context.Context, request *pb.CreateNvmeNamespaceRequest) (*pb.NvmeNamespace, error) {
+	out := &pb.NvmeNamespace{}
+	err := FindStub("FrontendNvmeServiceServer", "CreateNvmeNamespace", request, out)
 	return out, err
 }
 
-// DeleteNVMeNamespace deletes a mock NVMe namespace
-func (s *GoopCSI) DeleteNVMeNamespace(_ context.Context, request *pb.DeleteNVMeNamespaceRequest) (*emptypb.Empty, error) {
+// DeleteNvmeNamespace deletes a mock Nvme namespace
+func (s *GoopCSI) DeleteNvmeNamespace(_ context.Context, request *pb.DeleteNvmeNamespaceRequest) (*emptypb.Empty, error) {
 	out := &emptypb.Empty{}
-	err := FindStub("FrontendNvmeServiceServer", "DeleteNVMeNamespace", request, out)
+	err := FindStub("FrontendNvmeServiceServer", "DeleteNvmeNamespace", request, out)
 	return out, err
 }
 
-// UpdateNVMeNamespace updates a mock namespace
-func (s *GoopCSI) UpdateNVMeNamespace(_ context.Context, _ *pb.UpdateNVMeNamespaceRequest) (*pb.NVMeNamespace, error) {
+// UpdateNvmeNamespace updates a mock namespace
+func (s *GoopCSI) UpdateNvmeNamespace(_ context.Context, _ *pb.UpdateNvmeNamespaceRequest) (*pb.NvmeNamespace, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-// ListNVMeNamespaces lists mock namespaces
-func (s *GoopCSI) ListNVMeNamespaces(_ context.Context, _ *pb.ListNVMeNamespacesRequest) (*pb.ListNVMeNamespacesResponse, error) {
+// ListNvmeNamespaces lists mock namespaces
+func (s *GoopCSI) ListNvmeNamespaces(_ context.Context, _ *pb.ListNvmeNamespacesRequest) (*pb.ListNvmeNamespacesResponse, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-// GetNVMeNamespace gets a mock namespace
-func (s *GoopCSI) GetNVMeNamespace(_ context.Context, _ *pb.GetNVMeNamespaceRequest) (*pb.NVMeNamespace, error) {
+// GetNvmeNamespace gets a mock namespace
+func (s *GoopCSI) GetNvmeNamespace(_ context.Context, _ *pb.GetNvmeNamespaceRequest) (*pb.NvmeNamespace, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-// NVMeNamespaceStats gets mock namespace stats
-func (s *GoopCSI) NVMeNamespaceStats(_ context.Context, _ *pb.NVMeNamespaceStatsRequest) (*pb.NVMeNamespaceStatsResponse, error) {
+// NvmeNamespaceStats gets mock namespace stats
+func (s *GoopCSI) NvmeNamespaceStats(_ context.Context, _ *pb.NvmeNamespaceStatsRequest) (*pb.NvmeNamespaceStatsResponse, error) {
 	// TODO implement me
 	panic("implement me")
 }
