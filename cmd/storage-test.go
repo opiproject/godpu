@@ -55,7 +55,7 @@ func NewStorageTestCommand() *cobra.Command {
 			log.Printf("==============================================================================")
 			err = storage.DoBackend(ctx, conn)
 			if err != nil {
-				log.Panicf("DoFrontend tests failed with error: %v", err)
+				log.Panicf("DoBackend tests failed with error: %v", err)
 			}
 
 			log.Printf("==============================================================================")
@@ -63,7 +63,7 @@ func NewStorageTestCommand() *cobra.Command {
 			log.Printf("==============================================================================")
 			err = storage.DoMiddleend(ctx, conn)
 			if err != nil {
-				log.Panicf("DoFrontend tests failed with error: %v", err)
+				log.Panicf("DoMiddleend tests failed with error: %v", err)
 			}
 		},
 	}
