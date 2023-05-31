@@ -59,11 +59,12 @@ func executeNVMfRemoteController(ctx context.Context, c4 pb.NVMfRemoteController
 	if err != nil {
 		return err
 	}
-	if rr0.Name != name {
-		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rr0.Name, name)
+	fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", name)
+	if rr0.Name != fullname {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rr0.Name, fullname)
 	}
 	log.Printf("Connected NVMf: %v", rr0)
-	rr2, err := c4.NVMfRemoteControllerReset(ctx, &pb.NVMfRemoteControllerResetRequest{Id: &pc.ObjectKey{Value: name}})
+	rr2, err := c4.NVMfRemoteControllerReset(ctx, &pb.NVMfRemoteControllerResetRequest{Id: &pc.ObjectKey{Value: fullname}})
 	if err != nil {
 		return err
 	}
@@ -73,17 +74,17 @@ func executeNVMfRemoteController(ctx context.Context, c4 pb.NVMfRemoteController
 		return err
 	}
 	log.Printf("List NVMf: %v", rr3)
-	rr4, err := c4.GetNVMfRemoteController(ctx, &pb.GetNVMfRemoteControllerRequest{Name: name})
+	rr4, err := c4.GetNVMfRemoteController(ctx, &pb.GetNVMfRemoteControllerRequest{Name: fullname})
 	if err != nil {
 		return err
 	}
 	log.Printf("Got NVMf: %v", rr4)
-	rr5, err := c4.NVMfRemoteControllerStats(ctx, &pb.NVMfRemoteControllerStatsRequest{Id: &pc.ObjectKey{Value: name}})
+	rr5, err := c4.NVMfRemoteControllerStats(ctx, &pb.NVMfRemoteControllerStatsRequest{Id: &pc.ObjectKey{Value: fullname}})
 	if err != nil {
 		return err
 	}
 	log.Printf("Stats NVMf: %v", rr5)
-	rr1, err := c4.DeleteNVMfRemoteController(ctx, &pb.DeleteNVMfRemoteControllerRequest{Name: name})
+	rr1, err := c4.DeleteNVMfRemoteController(ctx, &pb.DeleteNVMfRemoteControllerRequest{Name: fullname})
 	if err != nil {
 		return err
 	}
@@ -100,11 +101,12 @@ func executeNullDebug(ctx context.Context, c1 pb.NullDebugServiceClient) error {
 	if err != nil {
 		return err
 	}
-	if rs1.Name != name {
-		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Name, name)
+	fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", name)
+	if rs1.Name != fullname {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Name, fullname)
 	}
 	log.Printf("Added Null: %v", rs1)
-	rs3, err := c1.UpdateNullDebug(ctx, &pb.UpdateNullDebugRequest{NullDebug: &pb.NullDebug{Name: name}})
+	rs3, err := c1.UpdateNullDebug(ctx, &pb.UpdateNullDebugRequest{NullDebug: &pb.NullDebug{Name: fullname}})
 	if err != nil {
 		return err
 	}
@@ -114,17 +116,17 @@ func executeNullDebug(ctx context.Context, c1 pb.NullDebugServiceClient) error {
 		return err
 	}
 	log.Printf("Listed Null: %v", rs4)
-	rs5, err := c1.GetNullDebug(ctx, &pb.GetNullDebugRequest{Name: name})
+	rs5, err := c1.GetNullDebug(ctx, &pb.GetNullDebugRequest{Name: fullname})
 	if err != nil {
 		return err
 	}
 	log.Printf("Got Null: %s", rs5.Name)
-	rs6, err := c1.NullDebugStats(ctx, &pb.NullDebugStatsRequest{Handle: &pc.ObjectKey{Value: name}})
+	rs6, err := c1.NullDebugStats(ctx, &pb.NullDebugStatsRequest{Handle: &pc.ObjectKey{Value: fullname}})
 	if err != nil {
 		return err
 	}
 	log.Printf("Stats Null: %s", rs6.Stats)
-	rs2, err := c1.DeleteNullDebug(ctx, &pb.DeleteNullDebugRequest{Name: name})
+	rs2, err := c1.DeleteNullDebug(ctx, &pb.DeleteNullDebugRequest{Name: fullname})
 	if err != nil {
 		return err
 	}
@@ -141,11 +143,12 @@ func executeAioController(ctx context.Context, c2 pb.AioControllerServiceClient)
 	if err != nil {
 		return err
 	}
-	if ra1.Name != name {
-		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", ra1.Name, name)
+	fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", name)
+	if ra1.Name != fullname {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", ra1.Name, fullname)
 	}
 	log.Printf("Added Aio: %v", ra1)
-	ra3, err := c2.UpdateAioController(ctx, &pb.UpdateAioControllerRequest{AioController: &pb.AioController{Name: name, Filename: "/tmp/aio_bdev_file"}})
+	ra3, err := c2.UpdateAioController(ctx, &pb.UpdateAioControllerRequest{AioController: &pb.AioController{Name: fullname, Filename: "/tmp/aio_bdev_file"}})
 	if err != nil {
 		return err
 	}
@@ -155,17 +158,17 @@ func executeAioController(ctx context.Context, c2 pb.AioControllerServiceClient)
 		return err
 	}
 	log.Printf("Listed Aio: %v", ra4)
-	ra5, err := c2.GetAioController(ctx, &pb.GetAioControllerRequest{Name: name})
+	ra5, err := c2.GetAioController(ctx, &pb.GetAioControllerRequest{Name: fullname})
 	if err != nil {
 		return err
 	}
 	log.Printf("Got Aio: %s", ra5.Name)
-	ra6, err := c2.AioControllerStats(ctx, &pb.AioControllerStatsRequest{Handle: &pc.ObjectKey{Value: name}})
+	ra6, err := c2.AioControllerStats(ctx, &pb.AioControllerStatsRequest{Handle: &pc.ObjectKey{Value: fullname}})
 	if err != nil {
 		return err
 	}
 	log.Printf("Stats Aio: %s", ra6.Stats)
-	ra2, err := c2.DeleteAioController(ctx, &pb.DeleteAioControllerRequest{Name: name})
+	ra2, err := c2.DeleteAioController(ctx, &pb.DeleteAioControllerRequest{Name: fullname})
 	if err != nil {
 		return err
 	}
