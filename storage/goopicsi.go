@@ -182,8 +182,8 @@ func ExposeRemoteNvme(subsystemNQN string, maxNamespaces int64) (string, string,
 	if data1 == nil {
 		response1, err := client.CreateNvmeSubsystem(ctx, &pb.CreateNvmeSubsystemRequest{
 			NvmeSubsystem: &pb.NvmeSubsystem{
+				Name: subsystemID,
 				Spec: &pb.NvmeSubsystemSpec{
-					Name:          subsystemID,
 					Nqn:           subsystemNQN,
 					MaxNamespaces: maxNamespaces,
 				},
@@ -208,8 +208,8 @@ func ExposeRemoteNvme(subsystemNQN string, maxNamespaces int64) (string, string,
 	if data2 == nil {
 		response2, err := client.CreateNvmeController(ctx, &pb.CreateNvmeControllerRequest{
 			NvmeController: &pb.NvmeController{
+				Name: controllerID,
 				Spec: &pb.NvmeControllerSpec{
-					Name:          controllerID,
 					SubsystemId:   &pbc.ObjectKey{Value: subsystemID},
 					MaxNamespaces: int32(maxNamespaces),
 				},
@@ -261,8 +261,8 @@ func CreateNvmeNamespace(id string, subSystemID string, nguid string, hostID int
 	client2 := pb.NewFrontendNvmeServiceClient(conn)
 	resp, err := client2.CreateNvmeNamespace(ctx, &pb.CreateNvmeNamespaceRequest{
 		NvmeNamespace: &pb.NvmeNamespace{
+			Name: id,
 			Spec: &pb.NvmeNamespaceSpec{
-				Name:        id,
 				SubsystemId: &pbc.ObjectKey{Value: subSystemID},
 				VolumeId:    &pbc.ObjectKey{Value: volumeID},
 				HostNsid:    hostID,
@@ -274,7 +274,7 @@ func CreateNvmeNamespace(id string, subSystemID string, nguid string, hostID int
 		return "", err
 	}
 	log.Println(resp)
-	return resp.Spec.Name, nil
+	return resp.Name, nil
 }
 
 // DeleteNvmeNamespace deletes the Nvme namespace

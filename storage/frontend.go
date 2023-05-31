@@ -195,7 +195,6 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 		NvmeSubsystemId: "namespace-test-ss",
 		NvmeSubsystem: &pb.NvmeSubsystem{
 			Spec: &pb.NvmeSubsystemSpec{
-				Name:          "",
 				ModelNumber:   "OPI Model",
 				SerialNumber:  "OPI SN",
 				MaxNamespaces: 10,
@@ -203,15 +202,14 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 	if err != nil {
 		return err
 	}
-	if rs1.Spec.Name != "namespace-test-ss" {
-		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Spec.Name, "namespace-test-ss")
+	if rs1.Name != "namespace-test-ss" {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Name, "namespace-test-ss")
 	}
 	log.Printf("Added NvmeSubsystem: %v", rs1)
 	rc1, err := c2.CreateNvmeController(ctx, &pb.CreateNvmeControllerRequest{
 		NvmeControllerId: "namespace-test-ctrler",
 		NvmeController: &pb.NvmeController{
 			Spec: &pb.NvmeControllerSpec{
-				Name:             "",
 				SubsystemId:      &pbc.ObjectKey{Value: "namespace-test-ss"},
 				PcieId:           &pb.PciEndpoint{PhysicalFunction: 1, VirtualFunction: 2, PortId: 3},
 				MaxNsq:           5,
@@ -222,8 +220,8 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 	if err != nil {
 		return err
 	}
-	if rc1.Spec.Name != "namespace-test-ctrler" {
-		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rc1.Spec.Name, "namespace-test-ctrler")
+	if rc1.Name != "namespace-test-ctrler" {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rc1.Name, "namespace-test-ctrler")
 	}
 	log.Printf("Added NvmeController: %v", rc1)
 
@@ -235,7 +233,6 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 		NvmeNamespaceId: "namespace-test",
 		NvmeNamespace: &pb.NvmeNamespace{
 			Spec: &pb.NvmeNamespaceSpec{
-				Name:        "",
 				SubsystemId: &pbc.ObjectKey{Value: "namespace-test-ss"},
 				VolumeId:    &pbc.ObjectKey{Value: "Malloc1"},
 				Uuid:        &pbc.Uuid{Value: "1b4e28ba-2fa1-11d2-883f-b9a761bde3fb"},
@@ -245,14 +242,14 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 	if err != nil {
 		return err
 	}
-	if rn1.Spec.Name != "namespace-test" {
-		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rn1.Spec.Name, "namespace-test")
+	if rn1.Name != "namespace-test" {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rn1.Name, "namespace-test")
 	}
 	log.Printf("Added NvmeNamespace: %v", rn1)
 	rn3, err := c2.UpdateNvmeNamespace(ctx, &pb.UpdateNvmeNamespaceRequest{
 		NvmeNamespace: &pb.NvmeNamespace{
+			Name: "namespace-test",
 			Spec: &pb.NvmeNamespaceSpec{
-				Name:        "namespace-test",
 				SubsystemId: &pbc.ObjectKey{Value: "namespace-test-ss"},
 				VolumeId:    &pbc.ObjectKey{Value: "Malloc1"},
 				Uuid:        &pbc.Uuid{Value: "1b4e28ba-2fa1-11d2-883f-b9a761bde3fb"},
@@ -272,7 +269,7 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 	if err != nil {
 		return err
 	}
-	log.Printf("Got NvmeNamespace: %v", rn5.Spec.Name)
+	log.Printf("Got NvmeNamespace: %v", rn5.Name)
 	rn6, err := c2.NvmeNamespaceStats(ctx, &pb.NvmeNamespaceStatsRequest{NamespaceId: &pbc.ObjectKey{Value: "namespace-test"}})
 	if err != nil {
 		return err
@@ -309,7 +306,6 @@ func executeNvmeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 		NvmeSubsystemId: "controller-test-ss",
 		NvmeSubsystem: &pb.NvmeSubsystem{
 			Spec: &pb.NvmeSubsystemSpec{
-				Name:          "",
 				ModelNumber:   "OPI Model",
 				SerialNumber:  "OPI SN",
 				MaxNamespaces: 10,
@@ -317,8 +313,8 @@ func executeNvmeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 	if err != nil {
 		return err
 	}
-	if rs1.Spec.Name != "controller-test-ss" {
-		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Spec.Name, "controller-test-ss")
+	if rs1.Name != "controller-test-ss" {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Name, "controller-test-ss")
 	}
 	log.Printf("Added NvmeSubsystem: %v", rs1)
 
@@ -326,8 +322,8 @@ func executeNvmeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 	rc1, err := c2.CreateNvmeController(ctx, &pb.CreateNvmeControllerRequest{
 		NvmeControllerId: "controller-test",
 		NvmeController: &pb.NvmeController{
+			Name: "controller-test",
 			Spec: &pb.NvmeControllerSpec{
-				Name:             "controller-test",
 				SubsystemId:      &pbc.ObjectKey{Value: "controller-test-ss"},
 				PcieId:           &pb.PciEndpoint{PhysicalFunction: 1, VirtualFunction: 2, PortId: 3},
 				MaxNsq:           5,
@@ -342,8 +338,8 @@ func executeNvmeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 
 	rc3, err := c2.UpdateNvmeController(ctx, &pb.UpdateNvmeControllerRequest{
 		NvmeController: &pb.NvmeController{
+			Name: "controller-test",
 			Spec: &pb.NvmeControllerSpec{
-				Name:             "controller-test",
 				SubsystemId:      &pbc.ObjectKey{Value: "controller-test-ss"},
 				PcieId:           &pb.PciEndpoint{PhysicalFunction: 1, VirtualFunction: 2, PortId: 3},
 				MaxNsq:           5,
@@ -366,7 +362,7 @@ func executeNvmeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 	if err != nil {
 		return err
 	}
-	log.Printf("Got NvmeController: %s", rc5.Spec.Name)
+	log.Printf("Got NvmeController: %s", rc5.Name)
 
 	rc6, err := c2.NvmeControllerStats(ctx, &pb.NvmeControllerStatsRequest{Id: &pbc.ObjectKey{Value: "controller-test"}})
 	if err != nil {
@@ -397,7 +393,6 @@ func executeNvmeSubsystem(ctx context.Context, c1 pb.FrontendNvmeServiceClient) 
 		NvmeSubsystemId: "subsystem-test",
 		NvmeSubsystem: &pb.NvmeSubsystem{
 			Spec: &pb.NvmeSubsystemSpec{
-				Name:          "",
 				ModelNumber:   "OPI Model",
 				SerialNumber:  "OPI SN",
 				MaxNamespaces: 10,
@@ -405,15 +400,15 @@ func executeNvmeSubsystem(ctx context.Context, c1 pb.FrontendNvmeServiceClient) 
 	if err != nil {
 		return err
 	}
-	if rs1.Spec.Name != "subsystem-test" {
-		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Spec.Name, "subsystem-test")
+	if rs1.Name != "subsystem-test" {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Name, "subsystem-test")
 	}
 	log.Printf("Added NvmeSubsystem: %v", rs1)
 	rs3, err := c1.UpdateNvmeSubsystem(ctx, &pb.UpdateNvmeSubsystemRequest{
 		NvmeSubsystem: &pb.NvmeSubsystem{
+			Name: "subsystem-test",
 			Spec: &pb.NvmeSubsystemSpec{
-				Name: "subsystem-test",
-				Nqn:  "nqn.2022-09.io.spdk:opi3"}}})
+				Nqn: "nqn.2022-09.io.spdk:opi3"}}})
 	if err != nil {
 		// UpdateNvmeSubsystem is not implemented, so no error here
 		log.Printf("could not update Nvme subsystem: %v", err)
