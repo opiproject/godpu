@@ -45,8 +45,9 @@ func executeNVMfRemoteController(ctx context.Context, c4 pb.NVMfRemoteController
 	if err != nil {
 		return err
 	}
+	name := "OpiNvme8"
 	rr0, err := c4.CreateNVMfRemoteController(ctx, &pb.CreateNVMfRemoteControllerRequest{
-		NvMfRemoteControllerId: "OpiNvme8",
+		NvMfRemoteControllerId: name,
 		NvMfRemoteController: &pb.NVMfRemoteController{
 			Name:    "",
 			Trtype:  pb.NvmeTransportType_NVME_TRANSPORT_TCP,
@@ -58,11 +59,11 @@ func executeNVMfRemoteController(ctx context.Context, c4 pb.NVMfRemoteController
 	if err != nil {
 		return err
 	}
-	if rr0.Name != "OpiNvme8" {
-		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rr0.Name, "OpiNvme8")
+	if rr0.Name != name {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rr0.Name, name)
 	}
 	log.Printf("Connected NVMf: %v", rr0)
-	rr2, err := c4.NVMfRemoteControllerReset(ctx, &pb.NVMfRemoteControllerResetRequest{Id: &pc.ObjectKey{Value: "OpiNvme8"}})
+	rr2, err := c4.NVMfRemoteControllerReset(ctx, &pb.NVMfRemoteControllerResetRequest{Id: &pc.ObjectKey{Value: name}})
 	if err != nil {
 		return err
 	}
@@ -72,17 +73,17 @@ func executeNVMfRemoteController(ctx context.Context, c4 pb.NVMfRemoteController
 		return err
 	}
 	log.Printf("List NVMf: %v", rr3)
-	rr4, err := c4.GetNVMfRemoteController(ctx, &pb.GetNVMfRemoteControllerRequest{Name: "OpiNvme8"})
+	rr4, err := c4.GetNVMfRemoteController(ctx, &pb.GetNVMfRemoteControllerRequest{Name: name})
 	if err != nil {
 		return err
 	}
 	log.Printf("Got NVMf: %v", rr4)
-	rr5, err := c4.NVMfRemoteControllerStats(ctx, &pb.NVMfRemoteControllerStatsRequest{Id: &pc.ObjectKey{Value: "OpiNvme8"}})
+	rr5, err := c4.NVMfRemoteControllerStats(ctx, &pb.NVMfRemoteControllerStatsRequest{Id: &pc.ObjectKey{Value: name}})
 	if err != nil {
 		return err
 	}
 	log.Printf("Stats NVMf: %v", rr5)
-	rr1, err := c4.DeleteNVMfRemoteController(ctx, &pb.DeleteNVMfRemoteControllerRequest{Name: "OpiNvme8"})
+	rr1, err := c4.DeleteNVMfRemoteController(ctx, &pb.DeleteNVMfRemoteControllerRequest{Name: name})
 	if err != nil {
 		return err
 	}
@@ -94,15 +95,16 @@ func executeNullDebug(ctx context.Context, c1 pb.NullDebugServiceClient) error {
 	log.Printf("=======================================")
 	log.Printf("Testing NewNullDebugServiceClient")
 	log.Printf("=======================================")
-	rs1, err := c1.CreateNullDebug(ctx, &pb.CreateNullDebugRequest{NullDebugId: "OpiNull9", NullDebug: &pb.NullDebug{Name: ""}})
+	name := "OpiNull9"
+	rs1, err := c1.CreateNullDebug(ctx, &pb.CreateNullDebugRequest{NullDebugId: name, NullDebug: &pb.NullDebug{Name: ""}})
 	if err != nil {
 		return err
 	}
-	if rs1.Name != "OpiNull9" {
-		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Name, "OpiNull9")
+	if rs1.Name != name {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Name, name)
 	}
 	log.Printf("Added Null: %v", rs1)
-	rs3, err := c1.UpdateNullDebug(ctx, &pb.UpdateNullDebugRequest{NullDebug: &pb.NullDebug{Name: "OpiNull9"}})
+	rs3, err := c1.UpdateNullDebug(ctx, &pb.UpdateNullDebugRequest{NullDebug: &pb.NullDebug{Name: name}})
 	if err != nil {
 		return err
 	}
@@ -112,17 +114,17 @@ func executeNullDebug(ctx context.Context, c1 pb.NullDebugServiceClient) error {
 		return err
 	}
 	log.Printf("Listed Null: %v", rs4)
-	rs5, err := c1.GetNullDebug(ctx, &pb.GetNullDebugRequest{Name: "OpiNull9"})
+	rs5, err := c1.GetNullDebug(ctx, &pb.GetNullDebugRequest{Name: name})
 	if err != nil {
 		return err
 	}
 	log.Printf("Got Null: %s", rs5.Name)
-	rs6, err := c1.NullDebugStats(ctx, &pb.NullDebugStatsRequest{Handle: &pc.ObjectKey{Value: "OpiNull9"}})
+	rs6, err := c1.NullDebugStats(ctx, &pb.NullDebugStatsRequest{Handle: &pc.ObjectKey{Value: name}})
 	if err != nil {
 		return err
 	}
 	log.Printf("Stats Null: %s", rs6.Stats)
-	rs2, err := c1.DeleteNullDebug(ctx, &pb.DeleteNullDebugRequest{Name: "OpiNull9"})
+	rs2, err := c1.DeleteNullDebug(ctx, &pb.DeleteNullDebugRequest{Name: name})
 	if err != nil {
 		return err
 	}
@@ -134,15 +136,16 @@ func executeAioController(ctx context.Context, c2 pb.AioControllerServiceClient)
 	log.Printf("=======================================")
 	log.Printf("Testing NewAioControllerServiceClient")
 	log.Printf("=======================================")
-	ra1, err := c2.CreateAioController(ctx, &pb.CreateAioControllerRequest{AioControllerId: "OpiAio4", AioController: &pb.AioController{Name: "", Filename: "/tmp/aio_bdev_file"}})
+	name := "OpiAio4"
+	ra1, err := c2.CreateAioController(ctx, &pb.CreateAioControllerRequest{AioControllerId: name, AioController: &pb.AioController{Name: "", Filename: "/tmp/aio_bdev_file"}})
 	if err != nil {
 		return err
 	}
-	if ra1.Name != "OpiAio4" {
-		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", ra1.Name, "OpiAio4")
+	if ra1.Name != name {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", ra1.Name, name)
 	}
 	log.Printf("Added Aio: %v", ra1)
-	ra3, err := c2.UpdateAioController(ctx, &pb.UpdateAioControllerRequest{AioController: &pb.AioController{Name: "OpiAio4", Filename: "/tmp/aio_bdev_file"}})
+	ra3, err := c2.UpdateAioController(ctx, &pb.UpdateAioControllerRequest{AioController: &pb.AioController{Name: name, Filename: "/tmp/aio_bdev_file"}})
 	if err != nil {
 		return err
 	}
@@ -152,17 +155,17 @@ func executeAioController(ctx context.Context, c2 pb.AioControllerServiceClient)
 		return err
 	}
 	log.Printf("Listed Aio: %v", ra4)
-	ra5, err := c2.GetAioController(ctx, &pb.GetAioControllerRequest{Name: "OpiAio4"})
+	ra5, err := c2.GetAioController(ctx, &pb.GetAioControllerRequest{Name: name})
 	if err != nil {
 		return err
 	}
 	log.Printf("Got Aio: %s", ra5.Name)
-	ra6, err := c2.AioControllerStats(ctx, &pb.AioControllerStatsRequest{Handle: &pc.ObjectKey{Value: "OpiAio4"}})
+	ra6, err := c2.AioControllerStats(ctx, &pb.AioControllerStatsRequest{Handle: &pc.ObjectKey{Value: name}})
 	if err != nil {
 		return err
 	}
 	log.Printf("Stats Aio: %s", ra6.Stats)
-	ra2, err := c2.DeleteAioController(ctx, &pb.DeleteAioControllerRequest{Name: "OpiAio4"})
+	ra2, err := c2.DeleteAioController(ctx, &pb.DeleteAioControllerRequest{Name: name})
 	if err != nil {
 		return err
 	}
