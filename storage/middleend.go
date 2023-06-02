@@ -93,7 +93,7 @@ func executeQosVolume(ctx context.Context, c2 pb.MiddleendQosVolumeServiceClient
 		QosVolumeId: name,
 		QosVolume: &pb.QosVolume{
 			VolumeId: &pc.ObjectKey{Value: "Malloc1"},
-			LimitMax: &pb.QosLimit{
+			MaxLimit: &pb.QosLimit{
 				RwBandwidthMbs: 2,
 			},
 		},
@@ -109,7 +109,7 @@ func executeQosVolume(ctx context.Context, c2 pb.MiddleendQosVolumeServiceClient
 		QosVolume: &pb.QosVolume{
 			Name:     name,
 			VolumeId: &pc.ObjectKey{Value: "Malloc1"},
-			LimitMax: &pb.QosLimit{
+			MaxLimit: &pb.QosLimit{
 				RdBandwidthMbs: 2,
 			},
 		},
