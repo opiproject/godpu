@@ -11,7 +11,7 @@ require (
 	github.com/onsi/gomega v1.27.7
 	github.com/opiproject/opi-api v0.0.0-20230603003023-432a550f4f6c
 	github.com/spf13/cobra v1.7.0
-	github.com/stretchr/testify v1.8.3
+	github.com/stretchr/testify v1.8.4
 	golang.org/x/net v0.10.0
 	golang.org/x/text v0.9.0
 	google.golang.org/grpc v1.55.0
