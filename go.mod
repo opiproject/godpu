@@ -9,7 +9,7 @@ require (
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/onsi/ginkgo/v2 v2.9.5
 	github.com/onsi/gomega v1.27.7
-	github.com/opiproject/opi-api v0.0.0-20230602133440-27c95c84f3bf
+	github.com/opiproject/opi-api v0.0.0-20230603003023-432a550f4f6c
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.3
 	golang.org/x/net v0.10.0
