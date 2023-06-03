@@ -9,7 +9,9 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"path"
 
+	"github.com/google/uuid"
 	pc "github.com/opiproject/opi-api/common/v1/gen/go"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 	"google.golang.org/grpc"
@@ -60,13 +62,21 @@ func executeNVMfRemoteController(ctx context.Context, c4 pb.NVMfRemoteController
 		if err != nil {
 			return err
 		}
-		if resourceID != "" {
-			fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", resourceID)
-			if rr0.Name != fullname {
-				return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rr0.Name, fullname)
+		// verify
+		newResourceID := resourceID
+		if resourceID == "" {
+			parsed, err := uuid.Parse(path.Base(rr0.Name))
+			if err != nil {
+				return err
 			}
+			newResourceID = parsed.String()
+		}
+		fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", newResourceID)
+		if rr0.Name != fullname {
+			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rr0.Name, fullname)
 		}
 		log.Printf("Connected NVMf: %v", rr0)
+		// continue
 		rr2, err := c4.NVMfRemoteControllerReset(ctx, &pb.NVMfRemoteControllerResetRequest{Id: &pc.ObjectKey{Value: rr0.Name}})
 		if err != nil {
 			return err
@@ -109,13 +119,21 @@ func executeNullDebug(ctx context.Context, c1 pb.NullDebugServiceClient) error {
 		if err != nil {
 			return err
 		}
-		if resourceID != "" {
-			fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", resourceID)
-			if rs1.Name != fullname {
-				return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Name, fullname)
+		// verify
+		newResourceID := resourceID
+		if resourceID == "" {
+			parsed, err := uuid.Parse(path.Base(rs1.Name))
+			if err != nil {
+				return err
 			}
+			newResourceID = parsed.String()
+		}
+		fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", newResourceID)
+		if rs1.Name != fullname {
+			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Name, fullname)
 		}
 		log.Printf("Added Null: %v", rs1)
+		// continue
 		rs3, err := c1.UpdateNullDebug(ctx, &pb.UpdateNullDebugRequest{NullDebug: &pb.NullDebug{Name: rs1.Name}})
 		if err != nil {
 			return err
@@ -158,13 +176,21 @@ func executeAioController(ctx context.Context, c2 pb.AioControllerServiceClient)
 		if err != nil {
 			return err
 		}
-		if resourceID != "" {
-			fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", resourceID)
-			if ra1.Name != fullname {
-				return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", ra1.Name, fullname)
+		// verify
+		newResourceID := resourceID
+		if resourceID == "" {
+			parsed, err := uuid.Parse(path.Base(ra1.Name))
+			if err != nil {
+				return err
 			}
+			newResourceID = parsed.String()
+		}
+		fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", newResourceID)
+		if ra1.Name != fullname {
+			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", ra1.Name, fullname)
 		}
 		log.Printf("Added Aio: %v", ra1)
+		// continue
 		ra3, err := c2.UpdateAioController(ctx, &pb.UpdateAioControllerRequest{AioController: &pb.AioController{Name: ra1.Name, Filename: "/tmp/aio_bdev_file"}})
 		if err != nil {
 			return err
