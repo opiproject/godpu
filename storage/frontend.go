@@ -8,8 +8,10 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"path"
 	"time"
 
+	"github.com/google/uuid"
 	pbc "github.com/opiproject/opi-api/common/v1/gen/go"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 	"google.golang.org/grpc"
@@ -106,85 +108,110 @@ func executeVirtioScsiController(ctx context.Context, c5 pb.FrontendVirtioScsiSe
 	log.Printf("=======================================")
 	log.Printf("Testing VirtioScsiController")
 	log.Printf("=======================================")
-	const name = "opi-virtio-scsi8"
-	rss1, err := c5.CreateVirtioScsiController(ctx, &pb.CreateVirtioScsiControllerRequest{VirtioScsiControllerId: name, VirtioScsiController: &pb.VirtioScsiController{Name: ""}})
-	if err != nil {
-		return err
+
+	// testing with and without {resource}_id field
+	for _, resourceID := range []string{"opi-virtio-scsi8", ""} {
+		rss1, err := c5.CreateVirtioScsiController(ctx, &pb.CreateVirtioScsiControllerRequest{VirtioScsiControllerId: resourceID, VirtioScsiController: &pb.VirtioScsiController{Name: ""}})
+		if err != nil {
+			return err
+		}
+		// verify
+		newResourceID := resourceID
+		if resourceID == "" {
+			parsed, err := uuid.Parse(path.Base(rss1.Name))
+			if err != nil {
+				return err
+			}
+			newResourceID = parsed.String()
+		}
+		fullname := newResourceID // TODO: fmt.Sprintf("//storage.opiproject.org/volumes/%s", newResourceID)
+		if rss1.Name != fullname {
+			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rss1.Name, fullname)
+		}
+		log.Printf("Added VirtioScsiController: %v", rss1)
+		rss3, err := c5.UpdateVirtioScsiController(ctx, &pb.UpdateVirtioScsiControllerRequest{VirtioScsiController: &pb.VirtioScsiController{Name: rss1.Name}})
+		if err != nil {
+			return err
+		}
+		log.Printf("Updated VirtioScsiController: %v", rss3)
+		rss4, err := c5.ListVirtioScsiControllers(ctx, &pb.ListVirtioScsiControllersRequest{})
+		if err != nil {
+			return err
+		}
+		log.Printf("Listed VirtioScsiControllers: %s", rss4)
+		rss5, err := c5.GetVirtioScsiController(ctx, &pb.GetVirtioScsiControllerRequest{Name: rss1.Name})
+		if err != nil {
+			return err
+		}
+		log.Printf("Got VirtioScsiController: %s", rss5.Name)
+		rss6, err := c5.VirtioScsiControllerStats(ctx, &pb.VirtioScsiControllerStatsRequest{ControllerId: &pbc.ObjectKey{Value: rss1.Name}})
+		if err != nil {
+			return err
+		}
+		log.Printf("Stats VirtioScsiController: %s", rss6.Stats)
+		rss2, err := c5.DeleteVirtioScsiController(ctx, &pb.DeleteVirtioScsiControllerRequest{Name: rss1.Name})
+		if err != nil {
+			return err
+		}
+		log.Printf("Deleted VirtioScsiController: %v -> %v", rss1, rss2)
 	}
-	if rss1.Name != name {
-		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rss1.Name, name)
-	}
-	log.Printf("Added VirtioScsiController: %v", rss1)
-	rss3, err := c5.UpdateVirtioScsiController(ctx, &pb.UpdateVirtioScsiControllerRequest{VirtioScsiController: &pb.VirtioScsiController{Name: name}})
-	if err != nil {
-		return err
-	}
-	log.Printf("Updated VirtioScsiController: %v", rss3)
-	rss4, err := c5.ListVirtioScsiControllers(ctx, &pb.ListVirtioScsiControllersRequest{})
-	if err != nil {
-		return err
-	}
-	log.Printf("Listed VirtioScsiControllers: %s", rss4)
-	rss5, err := c5.GetVirtioScsiController(ctx, &pb.GetVirtioScsiControllerRequest{Name: name})
-	if err != nil {
-		return err
-	}
-	log.Printf("Got VirtioScsiController: %s", rss5.Name)
-	rss6, err := c5.VirtioScsiControllerStats(ctx, &pb.VirtioScsiControllerStatsRequest{ControllerId: &pbc.ObjectKey{Value: name}})
-	if err != nil {
-		return err
-	}
-	log.Printf("Stats VirtioScsiController: %s", rss6.Stats)
-	rss2, err := c5.DeleteVirtioScsiController(ctx, &pb.DeleteVirtioScsiControllerRequest{Name: name})
-	if err != nil {
-		return err
-	}
-	log.Printf("Deleted VirtioScsiController: %v -> %v", rss1, rss2)
-	return err
+	return nil
 }
 
 func executeVirtioBlk(ctx context.Context, c4 pb.FrontendVirtioBlkServiceClient) error {
 	log.Printf("=======================================")
 	log.Printf("Testing VirtioBlk")
 	log.Printf("=======================================")
-	const virtioBlkResourceID = "opi-virtio-blk8"
-	rv1, err := c4.CreateVirtioBlk(ctx, &pb.CreateVirtioBlkRequest{VirtioBlkId: virtioBlkResourceID, VirtioBlk: &pb.VirtioBlk{Name: "", VolumeId: &pbc.ObjectKey{Value: "Malloc1"}}})
-	if err != nil {
-		return err
-	}
-	if rv1.Name != virtioBlkResourceID {
-		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rv1.Name, virtioBlkResourceID)
-	}
-	log.Printf("Added VirtioBlk: %v", rv1)
-	rv3, err := c4.UpdateVirtioBlk(ctx, &pb.UpdateVirtioBlkRequest{VirtioBlk: &pb.VirtioBlk{Name: virtioBlkResourceID}})
-	if err != nil {
-		// UpdateVirtioBlk is not implemented, so no error here
-		log.Printf("could not update VirtioBlk: %v", err)
-	}
-	log.Printf("Updated VirtioBlk: %v", rv3)
-	rv4, err := c4.ListVirtioBlks(ctx, &pb.ListVirtioBlksRequest{})
-	if err != nil {
-		return err
-	}
-	log.Printf("Listed VirtioBlks: %v", rv4)
-	rv5, err := c4.GetVirtioBlk(ctx, &pb.GetVirtioBlkRequest{Name: virtioBlkResourceID})
-	if err != nil {
-		return err
-	}
-	log.Printf("Got VirtioBlk: %v", rv5.Name)
-	rv6, err := c4.VirtioBlkStats(ctx, &pb.VirtioBlkStatsRequest{ControllerId: &pbc.ObjectKey{Value: virtioBlkResourceID}})
-	if err != nil {
-		// VirtioBlkStats is not implemented, so no error here
-		log.Printf("could not stats VirtioBlk: %v", err)
-	}
-	log.Printf("Stats VirtioBlk: %v", rv6)
-	rv2, err := c4.DeleteVirtioBlk(ctx, &pb.DeleteVirtioBlkRequest{Name: virtioBlkResourceID})
-	if err != nil {
-		return err
-	}
-	log.Printf("Deleted VirtioBlk: %v -> %v", rv1, rv2)
 
-	return err
+	// testing with and without {resource}_id field
+	for _, resourceID := range []string{"opi-virtio-blk8", ""} {
+		rv1, err := c4.CreateVirtioBlk(ctx, &pb.CreateVirtioBlkRequest{VirtioBlkId: resourceID, VirtioBlk: &pb.VirtioBlk{Name: "", VolumeId: &pbc.ObjectKey{Value: "Malloc1"}}})
+		if err != nil {
+			return err
+		}
+		// verify
+		newResourceID := resourceID
+		if resourceID == "" {
+			parsed, err := uuid.Parse(path.Base(rv1.Name))
+			if err != nil {
+				return err
+			}
+			newResourceID = parsed.String()
+		}
+		fullname := newResourceID // TODO: fmt.Sprintf("//storage.opiproject.org/volumes/%s", newResourceID)
+		if rv1.Name != fullname {
+			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rv1.Name, fullname)
+		}
+		log.Printf("Added VirtioBlk: %v", rv1)
+		rv3, err := c4.UpdateVirtioBlk(ctx, &pb.UpdateVirtioBlkRequest{VirtioBlk: &pb.VirtioBlk{Name: rv1.Name}})
+		if err != nil {
+			// UpdateVirtioBlk is not implemented, so no error here
+			log.Printf("could not update VirtioBlk: %v", err)
+		}
+		log.Printf("Updated VirtioBlk: %v", rv3)
+		rv4, err := c4.ListVirtioBlks(ctx, &pb.ListVirtioBlksRequest{})
+		if err != nil {
+			return err
+		}
+		log.Printf("Listed VirtioBlks: %v", rv4)
+		rv5, err := c4.GetVirtioBlk(ctx, &pb.GetVirtioBlkRequest{Name: rv1.Name})
+		if err != nil {
+			return err
+		}
+		log.Printf("Got VirtioBlk: %v", rv5.Name)
+		rv6, err := c4.VirtioBlkStats(ctx, &pb.VirtioBlkStatsRequest{ControllerId: &pbc.ObjectKey{Value: rv1.Name}})
+		if err != nil {
+			// VirtioBlkStats is not implemented, so no error here
+			log.Printf("could not stats VirtioBlk: %v", err)
+		}
+		log.Printf("Stats VirtioBlk: %v", rv6)
+		rv2, err := c4.DeleteVirtioBlk(ctx, &pb.DeleteVirtioBlkRequest{Name: rv1.Name})
+		if err != nil {
+			return err
+		}
+		log.Printf("Deleted VirtioBlk: %v -> %v", rv1, rv2)
+	}
+	return nil
 }
 
 func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) error {
@@ -390,53 +417,67 @@ func executeNvmeSubsystem(ctx context.Context, c1 pb.FrontendNvmeServiceClient) 
 	log.Printf("=======================================")
 	log.Printf("Testing NvmeSubsystem")
 	log.Printf("=======================================")
-	rs1, err := c1.CreateNvmeSubsystem(ctx, &pb.CreateNvmeSubsystemRequest{
-		NvmeSubsystemId: "subsystem-test",
-		NvmeSubsystem: &pb.NvmeSubsystem{
-			Spec: &pb.NvmeSubsystemSpec{
-				ModelNumber:   "OPI Model",
-				SerialNumber:  "OPI SN",
-				MaxNamespaces: 10,
-				Nqn:           "nqn.2022-09.io.spdk:opi3"}}})
-	if err != nil {
-		return err
-	}
-	if rs1.Name != "subsystem-test" {
-		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Name, "subsystem-test")
-	}
-	log.Printf("Added NvmeSubsystem: %v", rs1)
-	rs3, err := c1.UpdateNvmeSubsystem(ctx, &pb.UpdateNvmeSubsystemRequest{
-		NvmeSubsystem: &pb.NvmeSubsystem{
-			Name: "subsystem-test",
-			Spec: &pb.NvmeSubsystemSpec{
-				Nqn: "nqn.2022-09.io.spdk:opi3"}}})
-	if err != nil {
-		// UpdateNvmeSubsystem is not implemented, so no error here
-		log.Printf("could not update Nvme subsystem: %v", err)
-	}
-	log.Printf("Updated UpdateNvmeSubsystem: %v", rs3)
-	rs4, err := c1.ListNvmeSubsystems(ctx, &pb.ListNvmeSubsystemsRequest{})
-	if err != nil {
-		return err
-	}
-	log.Printf("Listed UpdateNvmeSubsystems: %v", rs4)
-	rs5, err := c1.GetNvmeSubsystem(ctx, &pb.GetNvmeSubsystemRequest{Name: "subsystem-test"})
-	if err != nil {
-		return err
-	}
-	log.Printf("Got UpdateNvmeSubsystem: %s", rs5.Spec.Nqn)
-	rs6, err := c1.NvmeSubsystemStats(ctx, &pb.NvmeSubsystemStatsRequest{
-		SubsystemId: &pbc.ObjectKey{Value: "subsystem-test"}})
-	if err != nil {
-		return err
-	}
-	log.Printf("Stats UpdateNvmeSubsystem: %s", rs6.Stats)
 
-	// post cleanup: subsystem
-	rs2, err := c1.DeleteNvmeSubsystem(ctx, &pb.DeleteNvmeSubsystemRequest{Name: "subsystem-test"})
-	if err != nil {
-		return err
+	// testing with and without {resource}_id field
+	for _, resourceID := range []string{"subsystem-test", ""} {
+		rs1, err := c1.CreateNvmeSubsystem(ctx, &pb.CreateNvmeSubsystemRequest{
+			NvmeSubsystemId: resourceID,
+			NvmeSubsystem: &pb.NvmeSubsystem{
+				Spec: &pb.NvmeSubsystemSpec{
+					ModelNumber:   "OPI Model",
+					SerialNumber:  "OPI SN",
+					MaxNamespaces: 10,
+					Nqn:           "nqn.2022-09.io.spdk:opi3"}}})
+		if err != nil {
+			return err
+		}
+		// verify
+		newResourceID := resourceID
+		if resourceID == "" {
+			parsed, err := uuid.Parse(path.Base(rs1.Name))
+			if err != nil {
+				return err
+			}
+			newResourceID = parsed.String()
+		}
+		fullname := newResourceID // TODO: fmt.Sprintf("//storage.opiproject.org/volumes/%s", newResourceID)
+		if rs1.Name != fullname {
+			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Name, fullname)
+		}
+		log.Printf("Added NvmeSubsystem: %v", rs1)
+		rs3, err := c1.UpdateNvmeSubsystem(ctx, &pb.UpdateNvmeSubsystemRequest{
+			NvmeSubsystem: &pb.NvmeSubsystem{
+				Name: rs1.Name,
+				Spec: &pb.NvmeSubsystemSpec{
+					Nqn: "nqn.2022-09.io.spdk:opi3"}}})
+		if err != nil {
+			// UpdateNvmeSubsystem is not implemented, so no error here
+			log.Printf("could not update Nvme subsystem: %v", err)
+		}
+		log.Printf("Updated UpdateNvmeSubsystem: %v", rs3)
+		rs4, err := c1.ListNvmeSubsystems(ctx, &pb.ListNvmeSubsystemsRequest{})
+		if err != nil {
+			return err
+		}
+		log.Printf("Listed UpdateNvmeSubsystems: %v", rs4)
+		rs5, err := c1.GetNvmeSubsystem(ctx, &pb.GetNvmeSubsystemRequest{Name: rs1.Name})
+		if err != nil {
+			return err
+		}
+		log.Printf("Got UpdateNvmeSubsystem: %s", rs5.Spec.Nqn)
+		rs6, err := c1.NvmeSubsystemStats(ctx, &pb.NvmeSubsystemStatsRequest{
+			SubsystemId: &pbc.ObjectKey{Value: rs1.Name}})
+		if err != nil {
+			return err
+		}
+		log.Printf("Stats UpdateNvmeSubsystem: %s", rs6.Stats)
+
+		// post cleanup: subsystem
+		rs2, err := c1.DeleteNvmeSubsystem(ctx, &pb.DeleteNvmeSubsystemRequest{Name: rs1.Name})
+		if err != nil {
+			return err
+		}
+		log.Printf("Deleted NvmeSubsystem: %v -> %v", rs1, rs2)
 	}
-	log.Printf("Deleted NvmeSubsystem: %v -> %v", rs1, rs2)
 	return nil
 }
