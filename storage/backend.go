@@ -49,7 +49,7 @@ func executeNVMfRemoteController(ctx context.Context, c4 pb.NVMfRemoteController
 	}
 
 	// testing with and without {resource}_id field
-	for _, resourceID := range []string{"OpiNvme8"} {
+	for _, resourceID := range []string{"opi-nvme8"} {
 		rr0, err := c4.CreateNVMfRemoteController(ctx, &pb.CreateNVMfRemoteControllerRequest{
 			NvMfRemoteControllerId: resourceID,
 			NvMfRemoteController: &pb.NVMfRemoteController{
@@ -112,7 +112,7 @@ func executeNullDebug(ctx context.Context, c1 pb.NullDebugServiceClient) error {
 	log.Printf("=======================================")
 
 	// testing with and without {resource}_id field
-	for _, resourceID := range []string{"OpiNull9", ""} {
+	for _, resourceID := range []string{"opi-null9", ""} {
 		rs1, err := c1.CreateNullDebug(ctx, &pb.CreateNullDebugRequest{
 			NullDebugId: resourceID,
 			NullDebug:   &pb.NullDebug{BlockSize: 512, BlocksCount: 64}})
@@ -169,7 +169,7 @@ func executeAioController(ctx context.Context, c2 pb.AioControllerServiceClient)
 	log.Printf("=======================================")
 
 	// testing with and without {resource}_id field
-	for _, resourceID := range []string{"OpiAio4", ""} {
+	for _, resourceID := range []string{"opi-aio4", ""} {
 		ra1, err := c2.CreateAioController(ctx, &pb.CreateAioControllerRequest{
 			AioControllerId: resourceID,
 			AioController:   &pb.AioController{BlockSize: 512, BlocksCount: 12, Filename: "/tmp/aio_bdev_file"}})

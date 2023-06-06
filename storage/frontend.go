@@ -52,7 +52,7 @@ func executeVirtioScsiLun(ctx context.Context, c6 pb.FrontendVirtioScsiServiceCl
 	log.Printf("=======================================")
 	log.Printf("Testing VirtioScsiLun")
 	log.Printf("=======================================")
-	name := "OPI-VirtioScsi8"
+	const name = "opi-virtio-scsi8"
 	// pre create: controller
 	rss1, err := c6.CreateVirtioScsiController(ctx, &pb.CreateVirtioScsiControllerRequest{VirtioScsiControllerId: name, VirtioScsiController: &pb.VirtioScsiController{Name: ""}})
 	if err != nil {
@@ -106,7 +106,7 @@ func executeVirtioScsiController(ctx context.Context, c5 pb.FrontendVirtioScsiSe
 	log.Printf("=======================================")
 	log.Printf("Testing VirtioScsiController")
 	log.Printf("=======================================")
-	name := "OPI-VirtioScsi8"
+	const name = "opi-virtio-scsi8"
 	rss1, err := c5.CreateVirtioScsiController(ctx, &pb.CreateVirtioScsiControllerRequest{VirtioScsiControllerId: name, VirtioScsiController: &pb.VirtioScsiController{Name: ""}})
 	if err != nil {
 		return err
@@ -147,15 +147,16 @@ func executeVirtioBlk(ctx context.Context, c4 pb.FrontendVirtioBlkServiceClient)
 	log.Printf("=======================================")
 	log.Printf("Testing VirtioBlk")
 	log.Printf("=======================================")
-	rv1, err := c4.CreateVirtioBlk(ctx, &pb.CreateVirtioBlkRequest{VirtioBlkId: "VirtioBlk8", VirtioBlk: &pb.VirtioBlk{Name: "", VolumeId: &pbc.ObjectKey{Value: "Malloc1"}}})
+	const virtioBlkResourceID = "opi-virtio-blk8"
+	rv1, err := c4.CreateVirtioBlk(ctx, &pb.CreateVirtioBlkRequest{VirtioBlkId: virtioBlkResourceID, VirtioBlk: &pb.VirtioBlk{Name: "", VolumeId: &pbc.ObjectKey{Value: "Malloc1"}}})
 	if err != nil {
 		return err
 	}
-	if rv1.Name != "VirtioBlk8" {
-		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rv1.Name, "VirtioBlk8")
+	if rv1.Name != virtioBlkResourceID {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rv1.Name, virtioBlkResourceID)
 	}
 	log.Printf("Added VirtioBlk: %v", rv1)
-	rv3, err := c4.UpdateVirtioBlk(ctx, &pb.UpdateVirtioBlkRequest{VirtioBlk: &pb.VirtioBlk{Name: "VirtioBlk8"}})
+	rv3, err := c4.UpdateVirtioBlk(ctx, &pb.UpdateVirtioBlkRequest{VirtioBlk: &pb.VirtioBlk{Name: virtioBlkResourceID}})
 	if err != nil {
 		// UpdateVirtioBlk is not implemented, so no error here
 		log.Printf("could not update VirtioBlk: %v", err)
@@ -166,18 +167,18 @@ func executeVirtioBlk(ctx context.Context, c4 pb.FrontendVirtioBlkServiceClient)
 		return err
 	}
 	log.Printf("Listed VirtioBlks: %v", rv4)
-	rv5, err := c4.GetVirtioBlk(ctx, &pb.GetVirtioBlkRequest{Name: "VirtioBlk8"})
+	rv5, err := c4.GetVirtioBlk(ctx, &pb.GetVirtioBlkRequest{Name: virtioBlkResourceID})
 	if err != nil {
 		return err
 	}
 	log.Printf("Got VirtioBlk: %v", rv5.Name)
-	rv6, err := c4.VirtioBlkStats(ctx, &pb.VirtioBlkStatsRequest{ControllerId: &pbc.ObjectKey{Value: "VirtioBlk8"}})
+	rv6, err := c4.VirtioBlkStats(ctx, &pb.VirtioBlkStatsRequest{ControllerId: &pbc.ObjectKey{Value: virtioBlkResourceID}})
 	if err != nil {
 		// VirtioBlkStats is not implemented, so no error here
 		log.Printf("could not stats VirtioBlk: %v", err)
 	}
 	log.Printf("Stats VirtioBlk: %v", rv6)
-	rv2, err := c4.DeleteVirtioBlk(ctx, &pb.DeleteVirtioBlkRequest{Name: "VirtioBlk8"})
+	rv2, err := c4.DeleteVirtioBlk(ctx, &pb.DeleteVirtioBlkRequest{Name: virtioBlkResourceID})
 	if err != nil {
 		return err
 	}
