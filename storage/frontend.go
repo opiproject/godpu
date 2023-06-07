@@ -178,7 +178,7 @@ func executeVirtioBlk(ctx context.Context, c4 pb.FrontendVirtioBlkServiceClient)
 			}
 			newResourceID = parsed.String()
 		}
-		fullname := newResourceID // TODO: fmt.Sprintf("//storage.opiproject.org/volumes/%s", newResourceID)
+		fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", newResourceID)
 		if rv1.Name != fullname {
 			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rv1.Name, fullname)
 		}
