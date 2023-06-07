@@ -54,49 +54,51 @@ func executeVirtioScsiLun(ctx context.Context, c6 pb.FrontendVirtioScsiServiceCl
 	log.Printf("=======================================")
 	log.Printf("Testing VirtioScsiLun")
 	log.Printf("=======================================")
-	const name = "opi-virtio-scsi8"
+	const resourceID = "opi-virtio-scsi8"
 	// pre create: controller
-	rss1, err := c6.CreateVirtioScsiController(ctx, &pb.CreateVirtioScsiControllerRequest{VirtioScsiControllerId: name, VirtioScsiController: &pb.VirtioScsiController{Name: ""}})
+	rss1, err := c6.CreateVirtioScsiController(ctx, &pb.CreateVirtioScsiControllerRequest{VirtioScsiControllerId: resourceID, VirtioScsiController: &pb.VirtioScsiController{Name: ""}})
 	if err != nil {
 		return err
 	}
-	if rss1.Name != name {
-		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rss1.Name, name)
+	ctrlrName := fmt.Sprintf("//storage.opiproject.org/volumes/%s", resourceID)
+	if rss1.Name != ctrlrName {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rss1.Name, ctrlrName)
 	}
-	rl1, err := c6.CreateVirtioScsiLun(ctx, &pb.CreateVirtioScsiLunRequest{VirtioScsiLunId: name, VirtioScsiLun: &pb.VirtioScsiLun{Name: "", TargetId: &pbc.ObjectKey{Value: name}, VolumeId: &pbc.ObjectKey{Value: "Malloc1"}}})
+	rl1, err := c6.CreateVirtioScsiLun(ctx, &pb.CreateVirtioScsiLunRequest{VirtioScsiLunId: resourceID, VirtioScsiLun: &pb.VirtioScsiLun{Name: "", TargetId: &pbc.ObjectKey{Value: resourceID}, VolumeId: &pbc.ObjectKey{Value: "Malloc1"}}})
 	if err != nil {
 		return err
 	}
-	if rl1.Name != name {
-		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rl1.Name, name)
+	fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", resourceID)
+	if rl1.Name != fullname {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rl1.Name, fullname)
 	}
 	log.Printf("Added VirtioScsiLun: %v", rl1)
-	rl3, err := c6.UpdateVirtioScsiLun(ctx, &pb.UpdateVirtioScsiLunRequest{VirtioScsiLun: &pb.VirtioScsiLun{Name: name, TargetId: &pbc.ObjectKey{Value: name}, VolumeId: &pbc.ObjectKey{Value: "Malloc1"}}})
+	rl3, err := c6.UpdateVirtioScsiLun(ctx, &pb.UpdateVirtioScsiLunRequest{VirtioScsiLun: &pb.VirtioScsiLun{Name: rl1.Name, TargetId: &pbc.ObjectKey{Value: resourceID}, VolumeId: &pbc.ObjectKey{Value: "Malloc1"}}})
 	if err != nil {
 		return err
 	}
 	log.Printf("Updated VirtioScsiLun: %v", rl3)
-	rl4, err := c6.ListVirtioScsiLuns(ctx, &pb.ListVirtioScsiLunsRequest{Parent: name})
+	rl4, err := c6.ListVirtioScsiLuns(ctx, &pb.ListVirtioScsiLunsRequest{Parent: rl1.Name})
 	if err != nil {
 		return err
 	}
 	log.Printf("Listed VirtioScsiLun: %v", rl4)
-	rl5, err := c6.GetVirtioScsiLun(ctx, &pb.GetVirtioScsiLunRequest{Name: name})
+	rl5, err := c6.GetVirtioScsiLun(ctx, &pb.GetVirtioScsiLunRequest{Name: rl1.Name})
 	if err != nil {
 		return err
 	}
 	log.Printf("Got VirtioScsiLun: %v", rl5.VolumeId.Value)
-	rl6, err := c6.VirtioScsiLunStats(ctx, &pb.VirtioScsiLunStatsRequest{ControllerId: &pbc.ObjectKey{Value: name}})
+	rl6, err := c6.VirtioScsiLunStats(ctx, &pb.VirtioScsiLunStatsRequest{ControllerId: &pbc.ObjectKey{Value: rl1.Name}})
 	if err != nil {
 		return err
 	}
 	log.Printf("Stats VirtioScsiLun: %v", rl6.Stats)
-	rl2, err := c6.DeleteVirtioScsiLun(ctx, &pb.DeleteVirtioScsiLunRequest{Name: name})
+	rl2, err := c6.DeleteVirtioScsiLun(ctx, &pb.DeleteVirtioScsiLunRequest{Name: rl1.Name})
 	if err != nil {
 		return err
 	}
 	log.Printf("Deleted VirtioScsiLun: %v -> %v", rl1, rl2)
-	rss2, err := c6.DeleteVirtioScsiController(ctx, &pb.DeleteVirtioScsiControllerRequest{Name: name})
+	rss2, err := c6.DeleteVirtioScsiController(ctx, &pb.DeleteVirtioScsiControllerRequest{Name: rl1.Name})
 	if err != nil {
 		return err
 	}
@@ -124,7 +126,7 @@ func executeVirtioScsiController(ctx context.Context, c5 pb.FrontendVirtioScsiSe
 			}
 			newResourceID = parsed.String()
 		}
-		fullname := newResourceID // TODO: fmt.Sprintf("//storage.opiproject.org/volumes/%s", newResourceID)
+		fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", newResourceID)
 		if rss1.Name != fullname {
 			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rss1.Name, fullname)
 		}
