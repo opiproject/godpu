@@ -11,7 +11,7 @@ output:
 
 linters-settings:
   funlen:
-    lines: 120
+    lines: 150
     statements: 120
   dupl:
     threshold: 200
