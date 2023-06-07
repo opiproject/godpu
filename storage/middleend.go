@@ -13,7 +13,9 @@ import (
 	"github.com/google/uuid"
 	pc "github.com/opiproject/opi-api/common/v1/gen/go"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
+
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
 )
 
 // DoMiddleend executes the middle end code
@@ -64,6 +66,7 @@ func executeEncryptedVolume(ctx context.Context, c1 pb.MiddleendEncryptionServic
 		}
 		log.Printf("Added EncryptedVolume: %v", rs1)
 		rs3, err := c1.UpdateEncryptedVolume(ctx, &pb.UpdateEncryptedVolumeRequest{
+			UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"*"}},
 			EncryptedVolume: &pb.EncryptedVolume{
 				Name:     rs1.Name,
 				VolumeId: &pc.ObjectKey{Value: "Malloc1"},
@@ -133,6 +136,7 @@ func executeQosVolume(ctx context.Context, c2 pb.MiddleendQosVolumeServiceClient
 		}
 		log.Printf("Added QosVolume: %v", rs1)
 		rs3, err := c2.UpdateQosVolume(ctx, &pb.UpdateQosVolumeRequest{
+			UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"*"}},
 			QosVolume: &pb.QosVolume{
 				Name:     rs1.Name,
 				VolumeId: &pc.ObjectKey{Value: "Malloc1"},

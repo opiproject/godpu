@@ -14,7 +14,9 @@ import (
 	"github.com/google/uuid"
 	pbc "github.com/opiproject/opi-api/common/v1/gen/go"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
+
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
 )
 
 // DoFrontend executes the front end code
@@ -73,7 +75,9 @@ func executeVirtioScsiLun(ctx context.Context, c6 pb.FrontendVirtioScsiServiceCl
 		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rl1.Name, fullname)
 	}
 	log.Printf("Added VirtioScsiLun: %v", rl1)
-	rl3, err := c6.UpdateVirtioScsiLun(ctx, &pb.UpdateVirtioScsiLunRequest{VirtioScsiLun: &pb.VirtioScsiLun{Name: rl1.Name, TargetId: &pbc.ObjectKey{Value: resourceID}, VolumeId: &pbc.ObjectKey{Value: "Malloc1"}}})
+	rl3, err := c6.UpdateVirtioScsiLun(ctx, &pb.UpdateVirtioScsiLunRequest{
+		UpdateMask:    &fieldmaskpb.FieldMask{Paths: []string{"*"}},
+		VirtioScsiLun: &pb.VirtioScsiLun{Name: rl1.Name, TargetId: &pbc.ObjectKey{Value: resourceID}, VolumeId: &pbc.ObjectKey{Value: "Malloc1"}}})
 	if err != nil {
 		return err
 	}
@@ -131,7 +135,9 @@ func executeVirtioScsiController(ctx context.Context, c5 pb.FrontendVirtioScsiSe
 			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rss1.Name, fullname)
 		}
 		log.Printf("Added VirtioScsiController: %v", rss1)
-		rss3, err := c5.UpdateVirtioScsiController(ctx, &pb.UpdateVirtioScsiControllerRequest{VirtioScsiController: &pb.VirtioScsiController{Name: rss1.Name}})
+		rss3, err := c5.UpdateVirtioScsiController(ctx, &pb.UpdateVirtioScsiControllerRequest{
+			UpdateMask:           &fieldmaskpb.FieldMask{Paths: []string{"*"}},
+			VirtioScsiController: &pb.VirtioScsiController{Name: rss1.Name}})
 		if err != nil {
 			return err
 		}
@@ -185,7 +191,9 @@ func executeVirtioBlk(ctx context.Context, c4 pb.FrontendVirtioBlkServiceClient)
 			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rv1.Name, fullname)
 		}
 		log.Printf("Added VirtioBlk: %v", rv1)
-		rv3, err := c4.UpdateVirtioBlk(ctx, &pb.UpdateVirtioBlkRequest{VirtioBlk: &pb.VirtioBlk{Name: rv1.Name}})
+		rv3, err := c4.UpdateVirtioBlk(ctx, &pb.UpdateVirtioBlkRequest{
+			UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"*"}},
+			VirtioBlk:  &pb.VirtioBlk{Name: rv1.Name}})
 		if err != nil {
 			// UpdateVirtioBlk is not implemented, so no error here
 			log.Printf("could not update VirtioBlk: %v", err)
@@ -295,6 +303,7 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 		}
 		log.Printf("Added NvmeNamespace: %v", rn1)
 		rn3, err := c2.UpdateNvmeNamespace(ctx, &pb.UpdateNvmeNamespaceRequest{
+			UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"*"}},
 			NvmeNamespace: &pb.NvmeNamespace{
 				Name: rn1.Name,
 				Spec: &pb.NvmeNamespaceSpec{
@@ -401,6 +410,7 @@ func executeNvmeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 		}
 		log.Printf("Added NvmeController: %v", rc1)
 		rc3, err := c2.UpdateNvmeController(ctx, &pb.UpdateNvmeControllerRequest{
+			UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"*"}},
 			NvmeController: &pb.NvmeController{
 				Name: rc1.Name,
 				Spec: &pb.NvmeControllerSpec{
@@ -483,6 +493,7 @@ func executeNvmeSubsystem(ctx context.Context, c1 pb.FrontendNvmeServiceClient) 
 		}
 		log.Printf("Added NvmeSubsystem: %v", rs1)
 		rs3, err := c1.UpdateNvmeSubsystem(ctx, &pb.UpdateNvmeSubsystemRequest{
+			UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"*"}},
 			NvmeSubsystem: &pb.NvmeSubsystem{
 				Name: rs1.Name,
 				Spec: &pb.NvmeSubsystemSpec{
