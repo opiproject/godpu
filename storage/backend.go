@@ -14,7 +14,9 @@ import (
 	"github.com/google/uuid"
 	pc "github.com/opiproject/opi-api/common/v1/gen/go"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
+
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
 )
 
 // DoBackend executes the back end code
@@ -134,7 +136,9 @@ func executeNullDebug(ctx context.Context, c1 pb.NullDebugServiceClient) error {
 		}
 		log.Printf("Added Null: %v", rs1)
 		// continue
-		rs3, err := c1.UpdateNullDebug(ctx, &pb.UpdateNullDebugRequest{NullDebug: &pb.NullDebug{Name: rs1.Name}})
+		rs3, err := c1.UpdateNullDebug(ctx, &pb.UpdateNullDebugRequest{
+			UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"*"}},
+			NullDebug:  &pb.NullDebug{Name: rs1.Name}})
 		if err != nil {
 			return err
 		}
@@ -191,7 +195,9 @@ func executeAioController(ctx context.Context, c2 pb.AioControllerServiceClient)
 		}
 		log.Printf("Added Aio: %v", ra1)
 		// continue
-		ra3, err := c2.UpdateAioController(ctx, &pb.UpdateAioControllerRequest{AioController: &pb.AioController{Name: ra1.Name, Filename: "/tmp/aio_bdev_file"}})
+		ra3, err := c2.UpdateAioController(ctx, &pb.UpdateAioControllerRequest{
+			UpdateMask:    &fieldmaskpb.FieldMask{Paths: []string{"*"}},
+			AioController: &pb.AioController{Name: ra1.Name, Filename: "/tmp/aio_bdev_file"}})
 		if err != nil {
 			return err
 		}
