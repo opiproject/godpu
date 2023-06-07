@@ -231,8 +231,9 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 	if err != nil {
 		return err
 	}
-	if rs1.Name != "namespace-test-ss" {
-		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Name, "namespace-test-ss")
+	ssName := fmt.Sprintf("//storage.opiproject.org/volumes/%s", "namespace-test-ss")
+	if rs1.Name != ssName {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Name, ssName)
 	}
 	log.Printf("Added NvmeSubsystem: %v", rs1)
 
@@ -251,8 +252,9 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 	if err != nil {
 		return err
 	}
-	if rc1.Name != "namespace-test-ctrler" {
-		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rc1.Name, "namespace-test-ctrler")
+	ctrlrName := fmt.Sprintf("//storage.opiproject.org/volumes/%s", "namespace-test-ctrler")
+	if rc1.Name != ctrlrName {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rc1.Name, ctrlrName)
 	}
 	log.Printf("Added NvmeController: %v", rc1)
 
@@ -285,7 +287,7 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 			}
 			newResourceID = parsed.String()
 		}
-		fullname := newResourceID // TODO: fmt.Sprintf("//storage.opiproject.org/volumes/%s", newResourceID)
+		fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", newResourceID)
 		if rn1.Name != fullname {
 			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rn1.Name, fullname)
 		}
@@ -358,8 +360,9 @@ func executeNvmeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 	if err != nil {
 		return err
 	}
-	if rs1.Name != "controller-test-ss" {
-		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Name, "controller-test-ss")
+	ssName := fmt.Sprintf("//storage.opiproject.org/volumes/%s", "controller-test-ss")
+	if rs1.Name != ssName {
+		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Name, ssName)
 	}
 	log.Printf("Added NvmeSubsystem: %v", rs1)
 
@@ -390,7 +393,7 @@ func executeNvmeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 			}
 			newResourceID = parsed.String()
 		}
-		fullname := newResourceID // TODO: fmt.Sprintf("//storage.opiproject.org/volumes/%s", newResourceID)
+		fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", newResourceID)
 		if rc1.Name != fullname {
 			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rc1.Name, fullname)
 		}
@@ -472,7 +475,7 @@ func executeNvmeSubsystem(ctx context.Context, c1 pb.FrontendNvmeServiceClient) 
 			}
 			newResourceID = parsed.String()
 		}
-		fullname := newResourceID // TODO: fmt.Sprintf("//storage.opiproject.org/volumes/%s", newResourceID)
+		fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", newResourceID)
 		if rs1.Name != fullname {
 			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Name, fullname)
 		}
