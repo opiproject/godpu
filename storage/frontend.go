@@ -142,7 +142,7 @@ func executeVirtioScsiController(ctx context.Context, c5 pb.FrontendVirtioScsiSe
 			return err
 		}
 		log.Printf("Updated VirtioScsiController: %v", rss3)
-		rss4, err := c5.ListVirtioScsiControllers(ctx, &pb.ListVirtioScsiControllersRequest{})
+		rss4, err := c5.ListVirtioScsiControllers(ctx, &pb.ListVirtioScsiControllersRequest{Parent: "todo"})
 		if err != nil {
 			return err
 		}
@@ -199,7 +199,7 @@ func executeVirtioBlk(ctx context.Context, c4 pb.FrontendVirtioBlkServiceClient)
 			log.Printf("could not update VirtioBlk: %v", err)
 		}
 		log.Printf("Updated VirtioBlk: %v", rv3)
-		rv4, err := c4.ListVirtioBlks(ctx, &pb.ListVirtioBlksRequest{})
+		rv4, err := c4.ListVirtioBlks(ctx, &pb.ListVirtioBlksRequest{Parent: "todo"})
 		if err != nil {
 			return err
 		}
@@ -503,7 +503,7 @@ func executeNvmeSubsystem(ctx context.Context, c1 pb.FrontendNvmeServiceClient) 
 			log.Printf("could not update Nvme subsystem: %v", err)
 		}
 		log.Printf("Updated UpdateNvmeSubsystem: %v", rs3)
-		rs4, err := c1.ListNvmeSubsystems(ctx, &pb.ListNvmeSubsystemsRequest{})
+		rs4, err := c1.ListNvmeSubsystems(ctx, &pb.ListNvmeSubsystemsRequest{Parent: "todo"})
 		if err != nil {
 			return err
 		}

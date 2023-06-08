@@ -84,7 +84,7 @@ func executeNVMfRemoteController(ctx context.Context, c4 pb.NVMfRemoteController
 			return err
 		}
 		log.Printf("Reset NVMf: %v", rr2)
-		rr3, err := c4.ListNVMfRemoteControllers(ctx, &pb.ListNVMfRemoteControllersRequest{})
+		rr3, err := c4.ListNVMfRemoteControllers(ctx, &pb.ListNVMfRemoteControllersRequest{Parent: "todo"})
 		if err != nil {
 			return err
 		}
@@ -143,7 +143,7 @@ func executeNullDebug(ctx context.Context, c1 pb.NullDebugServiceClient) error {
 			return err
 		}
 		log.Printf("Updated Null: %v", rs3)
-		rs4, err := c1.ListNullDebugs(ctx, &pb.ListNullDebugsRequest{})
+		rs4, err := c1.ListNullDebugs(ctx, &pb.ListNullDebugsRequest{Parent: "todo"})
 		if err != nil {
 			return err
 		}
@@ -202,7 +202,7 @@ func executeAioController(ctx context.Context, c2 pb.AioControllerServiceClient)
 			return err
 		}
 		log.Printf("Updated Aio: %v", ra3)
-		ra4, err := c2.ListAioControllers(ctx, &pb.ListAioControllersRequest{})
+		ra4, err := c2.ListAioControllers(ctx, &pb.ListAioControllersRequest{Parent: "todo"})
 		if err != nil {
 			return err
 		}

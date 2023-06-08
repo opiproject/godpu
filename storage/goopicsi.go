@@ -88,7 +88,7 @@ func NvmeControllerList() ([]NvmeConnection, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	response, err := client.ListNVMfRemoteControllers(ctx, &pb.ListNVMfRemoteControllersRequest{})
+	response, err := client.ListNVMfRemoteControllers(ctx, &pb.ListNVMfRemoteControllersRequest{Parent: "todo"})
 	if err != nil {
 		log.Printf("could not list the connections to Remote NVMf controller: %v", err)
 		return []NvmeConnection{}, err
@@ -239,7 +239,7 @@ func CreateNvmeNamespace(id string, subSystemID string, nguid string, hostID int
 	defer cancel()
 
 	client1 := pb.NewNullDebugServiceClient(conn)
-	response, err := client1.ListNullDebugs(ctx, &pb.ListNullDebugsRequest{})
+	response, err := client1.ListNullDebugs(ctx, &pb.ListNullDebugsRequest{Parent: "todo"})
 
 	if err != nil {
 		log.Println(err)

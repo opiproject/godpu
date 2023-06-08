@@ -78,7 +78,7 @@ func executeEncryptedVolume(ctx context.Context, c1 pb.MiddleendEncryptionServic
 			return err
 		}
 		log.Printf("Updated EncryptedVolume: %v", rs3)
-		rs4, err := c1.ListEncryptedVolumes(ctx, &pb.ListEncryptedVolumesRequest{})
+		rs4, err := c1.ListEncryptedVolumes(ctx, &pb.ListEncryptedVolumesRequest{Parent: "todo"})
 		if err != nil {
 			return err
 		}
@@ -149,7 +149,7 @@ func executeQosVolume(ctx context.Context, c2 pb.MiddleendQosVolumeServiceClient
 			return err
 		}
 		log.Printf("Updated QosVolume: %v", rs3)
-		rs4, err := c2.ListQosVolumes(ctx, &pb.ListQosVolumesRequest{})
+		rs4, err := c2.ListQosVolumes(ctx, &pb.ListQosVolumesRequest{Parent: "todo"})
 		if err != nil {
 			return err
 		}
