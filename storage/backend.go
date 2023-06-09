@@ -10,6 +10,7 @@ import (
 	"log"
 	"net"
 	"path"
+	"time"
 
 	"github.com/google/uuid"
 	pc "github.com/opiproject/opi-api/common/v1/gen/go"
@@ -51,7 +52,7 @@ func executeNVMfRemoteController(ctx context.Context, c4 pb.NVMfRemoteController
 	}
 
 	// testing with and without {resource}_id field
-	for _, resourceID := range []string{"opi-nvme8"} {
+	for _, resourceID := range []string{"opi-nvme8", ""} {
 		rr0, err := c4.CreateNVMfRemoteController(ctx, &pb.CreateNVMfRemoteControllerRequest{
 			NvMfRemoteControllerId: resourceID,
 			NvMfRemoteController: &pb.NVMfRemoteController{
@@ -104,6 +105,9 @@ func executeNVMfRemoteController(ctx context.Context, c4 pb.NVMfRemoteController
 			return err
 		}
 		log.Printf("Disconnected NVMf: %v -> %v", rr0, rr1)
+
+		// wait for some time for the backend to delete above objects
+		time.Sleep(time.Second)
 	}
 	return nil
 }
