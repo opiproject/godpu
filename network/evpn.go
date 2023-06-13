@@ -12,7 +12,7 @@ import (
 	grpcOpi "github.com/opiproject/godpu/grpc"
 	pb "github.com/opiproject/opi-api/network/cloud/v1alpha1/gen/go"
 	"google.golang.org/grpc"
-	// "google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // PbEvpnClientGetter defines the function type used to retrieve an evpn protobuf client
@@ -28,7 +28,8 @@ type EvpnClient interface {
 	// CreateSubnet(ctx context.Context) (*pb.Subnet, error)
 	// DeleteSubnet(ctx context.Context) (*emptypb.Empty, error)
 	CreateInterface(ctx context.Context) (*pb.Interface, error)
-	// DeleteInterface(ctx context.Context) (*emptypb.Empty, error)
+	GetInterface(ctx context.Context) (*pb.Interface, error)
+	DeleteInterface(ctx context.Context) (*emptypb.Empty, error)
 }
 
 // New creates an evpn client for use with OPI server at the given address
@@ -70,9 +71,61 @@ func (c evpnClientImpl) CreateInterface(ctx context.Context) (*pb.Interface, err
 
 	client := c.getEvpnClient(conn)
 
-	data, err := client.CreateInterface(ctx, &pb.CreateInterfaceRequest{})
+	data, err := client.CreateInterface(ctx, &pb.CreateInterfaceRequest{
+		Parent:      "todo",
+		InterfaceId: "testinterface",
+		Interface: &pb.Interface{
+			Spec: &pb.InterfaceSpec{
+				Ifid: 11,
+			},
+		},
+	})
+	if err != nil {
+		log.Printf("error creating evpn: %s\n", err)
+		return nil, err
+	}
+
+	return data, nil
+}
+
+// GetInterface creates an interface an OPI server
+func (c evpnClientImpl) GetInterface(ctx context.Context) (*pb.Interface, error) {
+	conn, closer, err := c.NewConn()
+	if err != nil {
+		log.Printf("error creating connection: %s\n", err)
+		return nil, err
+	}
+	defer closer()
+
+	client := c.getEvpnClient(conn)
+
+	data, err := client.GetInterface(ctx, &pb.GetInterfaceRequest{
+		Name: "//network.opiproject.org/vpc/testinterface",
+	})
 	if err != nil {
 		log.Printf("error getting evpn: %s\n", err)
+		return nil, err
+	}
+
+	return data, nil
+}
+
+// DeleteInterface creates an interface an OPI server
+func (c evpnClientImpl) DeleteInterface(ctx context.Context) (*emptypb.Empty, error) {
+	conn, closer, err := c.NewConn()
+	if err != nil {
+		log.Printf("error creating connection: %s\n", err)
+		return nil, err
+	}
+	defer closer()
+
+	client := c.getEvpnClient(conn)
+
+	data, err := client.DeleteInterface(ctx, &pb.DeleteInterfaceRequest{
+		Name: "//network.opiproject.org/vpc/testinterface",
+	})
+	if err != nil {
+		log.Printf("error deleting evpn: %s\n", err)
 		return nil, err
 	}
 
