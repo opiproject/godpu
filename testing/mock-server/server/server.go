@@ -126,6 +126,30 @@ func (s *GoopCSI) DeleteNVMfPath(_ context2.Context, request *pb.DeleteNVMfPathR
 	return out, err
 }
 
+// UpdateNVMfPath updates mock NVMf Remote Path
+func (s *GoopCSI) UpdateNVMfPath(_ context2.Context, _ *pb.UpdateNVMfPathRequest) (*pb.NVMfPath, error) {
+	// TODO implement me
+	panic("implement me")
+}
+
+// ListNVMfPaths Lists mock NVMfRemote Paths
+func (s *GoopCSI) ListNVMfPaths(_ context2.Context, _ *pb.ListNVMfPathsRequest) (*pb.ListNVMfPathsResponse, error) {
+	// TODO implement me
+	panic("implement me")
+}
+
+// GetNVMfPath Gets an NVMf Remote Path
+func (s *GoopCSI) GetNVMfPath(_ context2.Context, _ *pb.GetNVMfPathRequest) (*pb.NVMfPath, error) {
+	// TODO implement me
+	panic("implement me")
+}
+
+// NVMfPathStats gets mock stats
+func (s *GoopCSI) NVMfPathStats(_ context2.Context, _ *pb.NVMfPathStatsRequest) (*pb.NVMfPathStatsResponse, error) {
+	// TODO implement me
+	panic("implement me")
+}
+
 // CreateNvmeSubsystem creates mock Nvme subsystem
 func (s *GoopCSI) CreateNvmeSubsystem(_ context.Context, request *pb.CreateNvmeSubsystemRequest) (*pb.NvmeSubsystem, error) {
 	out := &pb.NvmeSubsystem{}
