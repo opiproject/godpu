@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2022-2023 Dell Inc, or its subsidiaries.
+// Copyright (C) 2023 Intel Corporation
 
 // Package cmd implements the CLI commands
 package cmd
@@ -39,7 +40,7 @@ func NewStorageTestCommand() *cobra.Command {
 			}
 			defer closer()
 
-			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			defer cancel()
 
 			log.Printf("==============================================================================")
