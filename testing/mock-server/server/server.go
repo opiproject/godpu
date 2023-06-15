@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2021-2023 Dell Inc, or its subsidiaries.
+// Copyright (C) 2023 Intel Corporation
 
 // Package server implements mock gRPC services
 package server
@@ -103,6 +104,26 @@ func (s *GoopCSI) NVMfRemoteControllerReset(_ context2.Context, _ *pb.NVMfRemote
 func (s *GoopCSI) NVMfRemoteControllerStats(_ context2.Context, _ *pb.NVMfRemoteControllerStatsRequest) (*pb.NVMfRemoteControllerStatsResponse, error) {
 	// TODO implement me
 	panic("implement me")
+}
+
+// ListNVMfRemoteNamespaces lists mock remote nvmf namespaces
+func (s *GoopCSI) ListNVMfRemoteNamespaces(context2.Context, *pb.ListNVMfRemoteNamespacesRequest) (*pb.ListNVMfRemoteNamespacesResponse, error) {
+	// TODO implement me
+	panic("implement me")
+}
+
+// CreateNVMfPath creates mock nvmf path
+func (s *GoopCSI) CreateNVMfPath(_ context2.Context, request *pb.CreateNVMfPathRequest) (*pb.NVMfPath, error) {
+	out := &pb.NVMfPath{}
+	err := FindStub("NVMfRemoteControllerServiceServer", "CreateNVMfPath", request, out)
+	return out, err
+}
+
+// DeleteNVMfPath deletes mock nvmf path
+func (s *GoopCSI) DeleteNVMfPath(_ context2.Context, request *pb.DeleteNVMfPathRequest) (*emptypb.Empty, error) {
+	out := &emptypb.Empty{}
+	err := FindStub("NVMfRemoteControllerServiceServer", "DeleteNVMfPath", request, out)
+	return out, err
 }
 
 // CreateNvmeSubsystem creates mock Nvme subsystem

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2022-2023 Dell Inc, or its subsidiaries.
+// Copyright (C) 2023 Intel Corporation
 
 // Package storage implements the go library for OPI to be used in storage, for example, CSI drivers
 package storage
@@ -54,13 +55,8 @@ func NvmeControllerConnect(id string, trAddr string, subnqn string, trSvcID int6
 	// we will connect if there is no connection established
 	if data == nil { // This means we are unable to get a connection with this ID
 		request := &pb.CreateNVMfRemoteControllerRequest{NvMfRemoteControllerId: id, NvMfRemoteController: &pb.NVMfRemoteController{
-			Name:    id,
-			Traddr:  trAddr,
-			Subnqn:  subnqn,
-			Trsvcid: trSvcID,
-			Hostnqn: hostnqn,
-			Trtype:  pb.NvmeTransportType_NVME_TRANSPORT_TCP,
-			Adrfam:  pb.NvmeAddressFamily_NVMF_ADRFAM_IPV4,
+			Name:      id,
+			Multipath: pb.NvmeMultipath_NVME_MULTIPATH_DISABLE,
 		}}
 		response, err := client.CreateNVMfRemoteController(ctx, request)
 		if err != nil {
@@ -68,9 +64,31 @@ func NvmeControllerConnect(id string, trAddr string, subnqn string, trSvcID int6
 			return err
 		}
 		log.Printf("Connected: %v", response)
+
+		pathResponse, err := client.CreateNVMfPath(ctx, &pb.CreateNVMfPathRequest{
+			NvMfPathId: nvmfControllerToPathResourceID(id),
+			NvMfPath: &pb.NVMfPath{
+				ControllerId: &pbc.ObjectKey{Value: response.Name},
+				Traddr:       trAddr,
+				Subnqn:       subnqn,
+				Trsvcid:      trSvcID,
+				Hostnqn:      hostnqn,
+				Trtype:       pb.NvmeTransportType_NVME_TRANSPORT_TCP,
+				Adrfam:       pb.NvmeAddressFamily_NVMF_ADRFAM_IPV4,
+			},
+		})
+		if err != nil {
+			log.Printf("could not connect to Remote NVMf path: %v", err)
+			_, _ = client.DeleteNVMfRemoteController(ctx, &pb.DeleteNVMfRemoteControllerRequest{
+				Name: response.Name,
+			})
+			return err
+		}
+		log.Printf("Connected: %v", pathResponse)
+
 		return nil
 	}
-	log.Printf("Remote NVMf controller is already connected with SubNQN: %v", data.Subnqn)
+	log.Printf("Remote NVMf controller is already connected")
 
 	return nil
 }
@@ -94,10 +112,11 @@ func NvmeControllerList() ([]NvmeConnection, error) {
 		return []NvmeConnection{}, err
 	}
 	nvmeConnections := make([]NvmeConnection, 0)
-	for _, connection := range response.NvMfRemoteControllers {
+	for range response.NvMfRemoteControllers {
 		nvmeConnections = append(nvmeConnections, NvmeConnection{
-			id:     "",
-			subnqn: connection.Subnqn,
+			id: "",
+			// TODO: fetch NVMf paths to fill when OPI API is extended with List/Get calls
+			subnqn: "",
 			traddr: "",
 		})
 	}
@@ -117,12 +136,13 @@ func NvmeControllerGet(id string) (string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	response, err := client.GetNVMfRemoteController(ctx, &pb.GetNVMfRemoteControllerRequest{Name: id})
+	_, err := client.GetNVMfRemoteController(ctx, &pb.GetNVMfRemoteControllerRequest{Name: id})
 	if err != nil {
 		log.Printf("could not list the connection to Remote NVMf controller corresponding to the given ID: %v", err)
 		return "", err
 	}
-	return response.Subnqn, nil
+	// TODO: fetch nqn in NVMf path when OPI API is extended with List/Get calls
+	return "", err
 }
 
 // NvmeControllerDisconnect disconnects remote NVMf controller connection
@@ -147,6 +167,14 @@ func NvmeControllerDisconnect(id string) error {
 
 	// we will disconnect if there is a connection
 	if data != nil {
+		_, err := client.DeleteNVMfPath(ctx, &pb.DeleteNVMfPathRequest{
+			Name: nvmfControllerToPathResourceID(id),
+		})
+		if err != nil {
+			log.Printf("could not disconnect Remote NVMf path: %v", err)
+			return err
+		}
+
 		response, err := client.DeleteNVMfRemoteController(ctx, &pb.DeleteNVMfRemoteControllerRequest{Name: id})
 		if err != nil {
 			log.Printf("could not disconnect Remote NVMf controller: %v", err)
@@ -155,7 +183,7 @@ func NvmeControllerDisconnect(id string) error {
 		log.Printf("disconnected: %v", response)
 		return nil
 	}
-	log.Printf("Remote NVMf controller disconnected successfully: %v", data.Subnqn)
+	log.Printf("Remote NVMf controller disconnected successfully")
 	defer disconnectConnection()
 	return nil
 }
@@ -325,4 +353,8 @@ func disconnectConnection() {
 		log.Fatalf("Failed to close connection: %v", err)
 	}
 	log.Println("GRPC connection closed successfully")
+}
+
+func nvmfControllerToPathResourceID(resourceID string) string {
+	return resourceID + "path"
 }
