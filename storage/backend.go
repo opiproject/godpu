@@ -61,6 +61,8 @@ func executeNVMfRemoteController(ctx context.Context, c4 pb.NVMfRemoteController
 			NvMfRemoteControllerId: resourceID,
 			NvMfRemoteController: &pb.NVMfRemoteController{
 				Multipath: pb.NvmeMultipath_NVME_MULTIPATH_MULTIPATH,
+				Hdgst:     false,
+				Ddgst:     false,
 			}})
 		if err != nil {
 			return err
@@ -127,6 +129,8 @@ func executeNVMfPath(ctx context.Context, c5 pb.NVMfRemoteControllerServiceClien
 		NvMfRemoteControllerId: ctrlrResourceID,
 		NvMfRemoteController: &pb.NVMfRemoteController{
 			Multipath: pb.NvmeMultipath_NVME_MULTIPATH_MULTIPATH,
+			Hdgst:     false,
+			Ddgst:     false,
 		}})
 	if err != nil {
 		return err
@@ -200,6 +204,8 @@ func executeNVMfRemoteNamespace(ctx context.Context, c6 pb.NVMfRemoteControllerS
 		NvMfRemoteControllerId: ctrlrResourceID,
 		NvMfRemoteController: &pb.NVMfRemoteController{
 			Multipath: pb.NvmeMultipath_NVME_MULTIPATH_MULTIPATH,
+			Hdgst:     false,
+			Ddgst:     false,
 		}})
 	if err != nil {
 		return err
