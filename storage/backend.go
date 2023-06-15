@@ -163,7 +163,28 @@ func executeNVMfPath(ctx context.Context, c5 pb.NVMfRemoteControllerServiceClien
 			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", np0.Name, fullname)
 		}
 		log.Printf("Created NVMf path: %v", np0)
-
+		np3, err := c5.UpdateNVMfPath(ctx, &pb.UpdateNVMfPathRequest{
+			UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"*"}},
+			NvMfPath:   &pb.NVMfPath{Name: np0.Name}})
+		if err != nil {
+			return err
+		}
+		log.Printf("Updated NVMf path: %v", np3)
+		np4, err := c5.ListNVMfPaths(ctx, &pb.ListNVMfPathsRequest{Parent: "todo"})
+		if err != nil {
+			return err
+		}
+		log.Printf("Listed NVMf path: %v", np4)
+		np5, err := c5.GetNVMfPath(ctx, &pb.GetNVMfPathRequest{Name: np0.Name})
+		if err != nil {
+			return err
+		}
+		log.Printf("Got NVMf path: %s", np5.Name)
+		np6, err := c5.NVMfPathStats(ctx, &pb.NVMfPathStatsRequest{Id: &pc.ObjectKey{Value: np0.Name}})
+		if err != nil {
+			return err
+		}
+		log.Printf("Stats NVMf path: %s", np6.Stats)
 		np1, err := c5.DeleteNVMfPath(ctx, &pb.DeleteNVMfPathRequest{
 			Name: np0.Name,
 		})
