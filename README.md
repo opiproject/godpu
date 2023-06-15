@@ -59,3 +59,13 @@ import (
         "github.com/opiproject/godpu"
 )
 ```
+
+## Tests
+
+Test your APIs even if unmerged using your private fork like this:
+
+```bash
+chmod a+w go.*
+docker run --rm -it -v `pwd`:/app -w /app golang:alpine go mod edit -replace github.com/opiproject/opi-api@main=github.com/YOURUSERNAME/opi-api@main
+docker run --rm -it -e GO111MODULE=on -v `pwd`:/app -w /app golang:alpine go get -u github.com/YOURUSERNAME/opi-api/storage/v1alpha1/gen/go@a98ca449468a
+```
