@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2022-2023 Dell Inc, or its subsidiaries.
+// Copyright (C) 2023 Intel Corporation
 
 // Package storage implements the go library for OPI to be used in storage, for example, CSI drivers
 package storage
@@ -30,6 +31,10 @@ func DoBackend(ctx context.Context, conn grpc.ClientConnInterface) error {
 	if err != nil {
 		return err
 	}
+	err = executeNVMfPath(ctx, nvme)
+	if err != nil {
+		return err
+	}
 	err = executeNullDebug(ctx, null)
 	if err != nil {
 		return err
@@ -46,22 +51,13 @@ func executeNVMfRemoteController(ctx context.Context, c4 pb.NVMfRemoteController
 	log.Printf("Testing NewNVMfRemoteControllerServiceClient")
 	log.Printf("=======================================")
 
-	addr, err := net.LookupIP("spdk")
-	if err != nil {
-		return err
-	}
-
 	// testing with and without {resource}_id field
 	for _, resourceID := range []string{"opi-nvme8", ""} {
 		rr0, err := c4.CreateNVMfRemoteController(ctx, &pb.CreateNVMfRemoteControllerRequest{
 			NvMfRemoteControllerId: resourceID,
 			NvMfRemoteController: &pb.NVMfRemoteController{
-				Trtype:  pb.NvmeTransportType_NVME_TRANSPORT_TCP,
-				Adrfam:  pb.NvmeAddressFamily_NVMF_ADRFAM_IPV4,
-				Traddr:  addr[0].String(),
-				Trsvcid: 4444,
-				Subnqn:  "nqn.2016-06.io.spdk:cnode1",
-				Hostnqn: "nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c"}})
+				Multipath: pb.NvmeMultipath_NVME_MULTIPATH_MULTIPATH,
+			}})
 		if err != nil {
 			return err
 		}
@@ -78,7 +74,7 @@ func executeNVMfRemoteController(ctx context.Context, c4 pb.NVMfRemoteController
 		if rr0.Name != fullname {
 			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rr0.Name, fullname)
 		}
-		log.Printf("Connected NVMf: %v", rr0)
+		log.Printf("Created NVMf controller: %v", rr0)
 		// continue
 		rr2, err := c4.NVMfRemoteControllerReset(ctx, &pb.NVMfRemoteControllerResetRequest{Id: &pc.ObjectKey{Value: rr0.Name}})
 		if err != nil {
@@ -104,11 +100,84 @@ func executeNVMfRemoteController(ctx context.Context, c4 pb.NVMfRemoteController
 		if err != nil {
 			return err
 		}
-		log.Printf("Disconnected NVMf: %v -> %v", rr0, rr1)
+		log.Printf("Deleted NVMf controller: %v -> %v", rr0, rr1)
 
 		// wait for some time for the backend to delete above objects
 		time.Sleep(time.Second)
 	}
+	return nil
+}
+
+func executeNVMfPath(ctx context.Context, c5 pb.NVMfRemoteControllerServiceClient) error {
+	log.Printf("=======================================")
+	log.Printf("Testing NewNVMfPathClient")
+	log.Printf("=======================================")
+
+	addr, err := net.LookupIP("spdk")
+	if err != nil {
+		return err
+	}
+
+	ctrlrResourceID := "opi-nvme8"
+	rr0, err := c5.CreateNVMfRemoteController(ctx, &pb.CreateNVMfRemoteControllerRequest{
+		NvMfRemoteControllerId: ctrlrResourceID,
+		NvMfRemoteController: &pb.NVMfRemoteController{
+			Multipath: pb.NvmeMultipath_NVME_MULTIPATH_MULTIPATH,
+		}})
+	if err != nil {
+		return err
+	}
+	log.Printf("Created NVMf controller: %v", rr0)
+
+	for _, resourceID := range []string{"opi-nvme8-path", ""} {
+		np0, err := c5.CreateNVMfPath(ctx, &pb.CreateNVMfPathRequest{
+			NvMfPathId: resourceID,
+			NvMfPath: &pb.NVMfPath{
+				Trtype:       pb.NvmeTransportType_NVME_TRANSPORT_TCP,
+				Adrfam:       pb.NvmeAddressFamily_NVMF_ADRFAM_IPV4,
+				Traddr:       addr[0].String(),
+				Trsvcid:      4444,
+				Subnqn:       "nqn.2016-06.io.spdk:cnode1",
+				Hostnqn:      "nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c",
+				ControllerId: &pc.ObjectKey{Value: rr0.Name},
+			}})
+		if err != nil {
+			return err
+		}
+		log.Printf("Created NVMf path: %v", np0)
+
+		newResourceID := resourceID
+		if resourceID == "" {
+			parsed, err := uuid.Parse(path.Base(np0.Name))
+			if err != nil {
+				return err
+			}
+			newResourceID = parsed.String()
+		}
+		fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", newResourceID)
+		if np0.Name != fullname {
+			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", np0.Name, fullname)
+		}
+		log.Printf("Created NVMf path: %v", np0)
+
+		np1, err := c5.DeleteNVMfPath(ctx, &pb.DeleteNVMfPathRequest{
+			Name: np0.Name,
+		})
+		if err != nil {
+			return err
+		}
+		log.Printf("Deleted NVMf path: %v -> %v", np0, np1)
+
+		// wait for some time for the backend to delete above objects
+		time.Sleep(time.Second)
+	}
+
+	rr1, err := c5.DeleteNVMfRemoteController(ctx, &pb.DeleteNVMfRemoteControllerRequest{Name: rr0.Name})
+	if err != nil {
+		return err
+	}
+	log.Printf("Deleted NVMf controller: %v -> %v", rr0, rr1)
+
 	return nil
 }
 
