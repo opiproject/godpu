@@ -1,0 +1,10 @@
+{
+    "service": "NVMfRemoteControllerServiceServer",
+    "method": "CreateNVMfPath",
+    "input": {
+        "contains": {}
+    },
+    "output": {
+        "data": {}
+    }
+}

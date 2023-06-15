@@ -1,0 +1,10 @@
+{
+    "service": "NVMfRemoteControllerServiceServer",
+    "method": "DeleteNVMfPath",
+    "input": {
+        "contains": {}
+    },
+    "output": {
+        "data": {}
+    }
+}
