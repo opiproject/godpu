@@ -35,6 +35,10 @@ func DoBackend(ctx context.Context, conn grpc.ClientConnInterface) error {
 	if err != nil {
 		return err
 	}
+	err = executeNVMfRemoteNamespace(ctx, nvme)
+	if err != nil {
+		return err
+	}
 	err = executeNullDebug(ctx, null)
 	if err != nil {
 		return err
@@ -173,6 +177,72 @@ func executeNVMfPath(ctx context.Context, c5 pb.NVMfRemoteControllerServiceClien
 	}
 
 	rr1, err := c5.DeleteNVMfRemoteController(ctx, &pb.DeleteNVMfRemoteControllerRequest{Name: rr0.Name})
+	if err != nil {
+		return err
+	}
+	log.Printf("Deleted NVMf controller: %v -> %v", rr0, rr1)
+
+	return nil
+}
+
+func executeNVMfRemoteNamespace(ctx context.Context, c6 pb.NVMfRemoteControllerServiceClient) error {
+	log.Printf("=======================================")
+	log.Printf("Testing NewNVMfRemoteNamespace")
+	log.Printf("=======================================")
+
+	addr, err := net.LookupIP("spdk")
+	if err != nil {
+		return err
+	}
+
+	ctrlrResourceID := "opi-nvme8"
+	rr0, err := c6.CreateNVMfRemoteController(ctx, &pb.CreateNVMfRemoteControllerRequest{
+		NvMfRemoteControllerId: ctrlrResourceID,
+		NvMfRemoteController: &pb.NVMfRemoteController{
+			Multipath: pb.NvmeMultipath_NVME_MULTIPATH_MULTIPATH,
+		}})
+	if err != nil {
+		return err
+	}
+	log.Printf("Created NVMf controller: %v", rr0)
+
+	pathResourceID := "opi-nvme-path42"
+	np0, err := c6.CreateNVMfPath(ctx, &pb.CreateNVMfPathRequest{
+		NvMfPathId: pathResourceID,
+		NvMfPath: &pb.NVMfPath{
+			Trtype:       pb.NvmeTransportType_NVME_TRANSPORT_TCP,
+			Adrfam:       pb.NvmeAddressFamily_NVMF_ADRFAM_IPV4,
+			Traddr:       addr[0].String(),
+			Trsvcid:      4444,
+			Subnqn:       "nqn.2016-06.io.spdk:cnode1",
+			Hostnqn:      "nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c",
+			ControllerId: &pc.ObjectKey{Value: rr0.Name},
+		}})
+	if err != nil {
+		return err
+	}
+	log.Printf("Created NVMf path: %v", np0)
+
+	ns0, err := c6.ListNVMfRemoteNamespaces(ctx, &pb.ListNVMfRemoteNamespacesRequest{
+		Parent: rr0.Name,
+	})
+	if err != nil {
+		return err
+	}
+	log.Printf("List NVMf remote namespaces: %v", ns0)
+
+	np1, err := c6.DeleteNVMfPath(ctx, &pb.DeleteNVMfPathRequest{
+		Name: np0.Name,
+	})
+	if err != nil {
+		return err
+	}
+	log.Printf("Deleted NVMf path: %v -> %v", np0, np1)
+
+	// wait for some time for the backend to delete above objects
+	time.Sleep(time.Second)
+
+	rr1, err := c6.DeleteNVMfRemoteController(ctx, &pb.DeleteNVMfRemoteControllerRequest{Name: rr0.Name})
 	if err != nil {
 		return err
 	}
