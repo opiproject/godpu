@@ -32,11 +32,39 @@ func NewEvpnCommand() *cobra.Command {
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()
 
-			data, err := evpnClient.CreateInterface(ctx)
+			// create all
+			obj0, err := evpnClient.CreateInterface(ctx)
 			if err != nil {
-				log.Fatalf("could not test evpn: %v", err)
+				log.Fatalf("could not create interface: %v", err)
 			}
-			log.Printf("%s", data)
+			log.Printf("%s", obj0)
+			obj1, err := evpnClient.CreateVpc(ctx)
+			if err != nil {
+				log.Fatalf("could not create vpc: %v", err)
+			}
+			log.Printf("%s", obj1)
+			// get all
+			obj2, err := evpnClient.GetInterface(ctx)
+			if err != nil {
+				log.Fatalf("could not get interface: %v", err)
+			}
+			log.Printf("%s", obj2)
+			obj3, err := evpnClient.GetVpc(ctx)
+			if err != nil {
+				log.Fatalf("could not get vpc: %v", err)
+			}
+			log.Printf("%s", obj3)
+			// delete all
+			obj4, err := evpnClient.DeleteInterface(ctx)
+			if err != nil {
+				log.Fatalf("could not delete interface: %v", err)
+			}
+			log.Printf("%s", obj4)
+			obj5, err := evpnClient.DeleteVpc(ctx)
+			if err != nil {
+				log.Fatalf("could not delete vpc: %v", err)
+			}
+			log.Printf("%s", obj5)
 		},
 	}
 	flags := cmd.Flags()

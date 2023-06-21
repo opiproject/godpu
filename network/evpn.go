@@ -30,6 +30,9 @@ type EvpnClient interface {
 	CreateInterface(ctx context.Context) (*pb.Interface, error)
 	GetInterface(ctx context.Context) (*pb.Interface, error)
 	DeleteInterface(ctx context.Context) (*emptypb.Empty, error)
+	CreateVpc(ctx context.Context) (*pb.Vpc, error)
+	GetVpc(ctx context.Context) (*pb.Vpc, error)
+	DeleteVpc(ctx context.Context) (*emptypb.Empty, error)
 }
 
 // New creates an evpn client for use with OPI server at the given address
@@ -100,7 +103,7 @@ func (c evpnClientImpl) GetInterface(ctx context.Context) (*pb.Interface, error)
 	client := c.getEvpnClient(conn)
 
 	data, err := client.GetInterface(ctx, &pb.GetInterfaceRequest{
-		Name: "//network.opiproject.org/vpc/testinterface",
+		Name: "//network.opiproject.org/interfaces/testinterface",
 	})
 	if err != nil {
 		log.Printf("error getting evpn: %s\n", err)
@@ -122,7 +125,79 @@ func (c evpnClientImpl) DeleteInterface(ctx context.Context) (*emptypb.Empty, er
 	client := c.getEvpnClient(conn)
 
 	data, err := client.DeleteInterface(ctx, &pb.DeleteInterfaceRequest{
-		Name: "//network.opiproject.org/vpc/testinterface",
+		Name: "//network.opiproject.org/interfaces/testinterface",
+	})
+	if err != nil {
+		log.Printf("error deleting evpn: %s\n", err)
+		return nil, err
+	}
+
+	return data, nil
+}
+
+// CreateVpc creates an Vpc an OPI server
+func (c evpnClientImpl) CreateVpc(ctx context.Context) (*pb.Vpc, error) {
+	conn, closer, err := c.NewConn()
+	if err != nil {
+		log.Printf("error creating connection: %s\n", err)
+		return nil, err
+	}
+	defer closer()
+
+	client := c.getEvpnClient(conn)
+
+	data, err := client.CreateVpc(ctx, &pb.CreateVpcRequest{
+		Parent: "todo",
+		VpcId:  "testVpc",
+		Vpc: &pb.Vpc{
+			Spec: &pb.VpcSpec{
+				V4RouteTableNameRef: "1000",
+			},
+		},
+	})
+	if err != nil {
+		log.Printf("error creating evpn: %s\n", err)
+		return nil, err
+	}
+
+	return data, nil
+}
+
+// GetVpc creates an Vpc an OPI server
+func (c evpnClientImpl) GetVpc(ctx context.Context) (*pb.Vpc, error) {
+	conn, closer, err := c.NewConn()
+	if err != nil {
+		log.Printf("error creating connection: %s\n", err)
+		return nil, err
+	}
+	defer closer()
+
+	client := c.getEvpnClient(conn)
+
+	data, err := client.GetVpc(ctx, &pb.GetVpcRequest{
+		Name: "//network.opiproject.org/vpcs/testVpc",
+	})
+	if err != nil {
+		log.Printf("error getting evpn: %s\n", err)
+		return nil, err
+	}
+
+	return data, nil
+}
+
+// DeleteVpc creates an Vpc an OPI server
+func (c evpnClientImpl) DeleteVpc(ctx context.Context) (*emptypb.Empty, error) {
+	conn, closer, err := c.NewConn()
+	if err != nil {
+		log.Printf("error creating connection: %s\n", err)
+		return nil, err
+	}
+	defer closer()
+
+	client := c.getEvpnClient(conn)
+
+	data, err := client.DeleteVpc(ctx, &pb.DeleteVpcRequest{
+		Name: "//network.opiproject.org/vpcs/testVpc",
 	})
 	if err != nil {
 		log.Printf("error deleting evpn: %s\n", err)
