@@ -2,6 +2,7 @@
 
 [![Linters](https://github.com/opiproject/godpu/actions/workflows/linters.yml/badge.svg)](https://github.com/opiproject/godpu/actions/workflows/linters.yml)
 [![CodeQL](https://github.com/opiproject/godpu/actions/workflows/codeql.yml/badge.svg)](https://github.com/opiproject/godpu/actions/workflows/codeql.yml)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/opiproject/godpu/badge)](https://securityscorecards.dev/viewer/?platform=github.com&org=opiproject&repo=godpu)
 [![Go](https://github.com/opiproject/godpu/actions/workflows/go.yml/badge.svg)](https://github.com/opiproject/godpu/actions/workflows/go.yml)
 [![Docker](https://github.com/opiproject/godpu/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/opiproject/godpu/actions/workflows/docker-publish.yml)
 [![License](https://img.shields.io/github/license/opiproject/godpu?style=flat-square&color=blue&label=License)](https://github.com/opiproject/godpu/blob/master/LICENSE)
