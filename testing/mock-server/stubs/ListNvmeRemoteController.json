@@ -1,12 +1,12 @@
 {
-    "service": "NVMfRemoteControllerServiceServer",
-    "method": "ListNVMfRemoteControllers",
+    "service": "NvmeRemoteControllerServiceServer",
+    "method": "ListNvmeRemoteControllers",
     "input": {
         "contains": {}
     },
     "output": {
         "data": {
-            "nvmfRemoteControllers": [
+            "nvmeRemoteControllers": [
                 {
                     "id": {"value": "12"}
                 },

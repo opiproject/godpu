@@ -58,7 +58,7 @@ func RunServer() {
 	MockServer := grpc.NewServer()
 
 	pb.RegisterFrontendNvmeServiceServer(MockServer, &server.GoopCSI{})
-	pb.RegisterNVMfRemoteControllerServiceServer(MockServer, &server.GoopCSI{})
+	pb.RegisterNvmeRemoteControllerServiceServer(MockServer, &server.GoopCSI{})
 	pb.RegisterNullDebugServiceServer(MockServer, &server.GoopCSI{})
 
 	fmt.Printf("Serving gRPC on %s\n", csiAddress)

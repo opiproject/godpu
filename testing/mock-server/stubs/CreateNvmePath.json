@@ -1,6 +1,6 @@
 {
-    "service": "NVMfRemoteControllerServiceServer",
-    "method": "CreateNVMfPath",
+    "service": "NvmeRemoteControllerServiceServer",
+    "method": "CreateNvmePath",
     "input": {
         "contains": {}
     },

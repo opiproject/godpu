@@ -1,6 +1,6 @@
 {
-    "service": "NVMfRemoteControllerServiceServer",
-    "method": "DeleteNVMfRemoteController",
+    "service": "NvmeRemoteControllerServiceServer",
+    "method": "DeleteNvmeRemoteController",
     "input": {
         "contains": {
             "name": "12"

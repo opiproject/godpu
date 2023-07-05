@@ -26,14 +26,14 @@ var (
 	address = "localhost:50051"
 )
 
-// NvmeConnection defines remote NVMf connection
+// NvmeConnection defines remote Nvme connection
 type NvmeConnection struct {
 	id     string
 	subnqn string
 	traddr string
 }
 
-// NvmeControllerConnect Connects to remote NVMf controller
+// NvmeControllerConnect Connects to remote Nvme controller
 func NvmeControllerConnect(id string, trAddr string, subnqn string, trSvcID int64, hostnqn string) error {
 	if conn == nil {
 		err := dialConnection()
@@ -42,11 +42,11 @@ func NvmeControllerConnect(id string, trAddr string, subnqn string, trSvcID int6
 		}
 	}
 
-	client := pb.NewNVMfRemoteControllerServiceClient(conn)
+	client := pb.NewNvmeRemoteControllerServiceClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	data, err := client.GetNVMfRemoteController(ctx, &pb.GetNVMfRemoteControllerRequest{Name: id})
+	data, err := client.GetNvmeRemoteController(ctx, &pb.GetNvmeRemoteControllerRequest{Name: id})
 	if err != nil {
 		log.Println(err)
 	}
@@ -54,32 +54,32 @@ func NvmeControllerConnect(id string, trAddr string, subnqn string, trSvcID int6
 
 	// we will connect if there is no connection established
 	if data == nil { // This means we are unable to get a connection with this ID
-		request := &pb.CreateNVMfRemoteControllerRequest{NvMfRemoteControllerId: id, NvMfRemoteController: &pb.NVMfRemoteController{
+		request := &pb.CreateNvmeRemoteControllerRequest{NvmeRemoteControllerId: id, NvmeRemoteController: &pb.NvmeRemoteController{
 			Name:      id,
 			Multipath: pb.NvmeMultipath_NVME_MULTIPATH_DISABLE,
 		}}
-		response, err := client.CreateNVMfRemoteController(ctx, request)
+		response, err := client.CreateNvmeRemoteController(ctx, request)
 		if err != nil {
-			log.Printf("could not connect to Remote NVMf controller: %v", err)
+			log.Printf("could not connect to Remote Nvme controller: %v", err)
 			return err
 		}
 		log.Printf("Connected: %v", response)
 
-		pathResponse, err := client.CreateNVMfPath(ctx, &pb.CreateNVMfPathRequest{
-			NvMfPathId: nvmfControllerToPathResourceID(id),
-			NvMfPath: &pb.NVMfPath{
+		pathResponse, err := client.CreateNvmePath(ctx, &pb.CreateNvmePathRequest{
+			NvmePathId: nvmeControllerToPathResourceID(id),
+			NvmePath: &pb.NvmePath{
 				ControllerId: &pbc.ObjectKey{Value: response.Name},
 				Traddr:       trAddr,
 				Subnqn:       subnqn,
 				Trsvcid:      trSvcID,
 				Hostnqn:      hostnqn,
 				Trtype:       pb.NvmeTransportType_NVME_TRANSPORT_TCP,
-				Adrfam:       pb.NvmeAddressFamily_NVMF_ADRFAM_IPV4,
+				Adrfam:       pb.NvmeAddressFamily_NVME_ADRFAM_IPV4,
 			},
 		})
 		if err != nil {
-			log.Printf("could not connect to Remote NVMf path: %v", err)
-			_, _ = client.DeleteNVMfRemoteController(ctx, &pb.DeleteNVMfRemoteControllerRequest{
+			log.Printf("could not connect to Remote Nvme path: %v", err)
+			_, _ = client.DeleteNvmeRemoteController(ctx, &pb.DeleteNvmeRemoteControllerRequest{
 				Name: response.Name,
 			})
 			return err
@@ -88,12 +88,12 @@ func NvmeControllerConnect(id string, trAddr string, subnqn string, trSvcID int6
 
 		return nil
 	}
-	log.Printf("Remote NVMf controller is already connected")
+	log.Printf("Remote Nvme controller is already connected")
 
 	return nil
 }
 
-// NvmeControllerList lists all the connections to the remote NVMf controller
+// NvmeControllerList lists all the connections to the remote Nvme controller
 func NvmeControllerList() ([]NvmeConnection, error) {
 	if conn == nil {
 		err := dialConnection()
@@ -102,20 +102,20 @@ func NvmeControllerList() ([]NvmeConnection, error) {
 		}
 	}
 
-	client := pb.NewNVMfRemoteControllerServiceClient(conn)
+	client := pb.NewNvmeRemoteControllerServiceClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	response, err := client.ListNVMfRemoteControllers(ctx, &pb.ListNVMfRemoteControllersRequest{Parent: "todo"})
+	response, err := client.ListNvmeRemoteControllers(ctx, &pb.ListNvmeRemoteControllersRequest{Parent: "todo"})
 	if err != nil {
-		log.Printf("could not list the connections to Remote NVMf controller: %v", err)
+		log.Printf("could not list the connections to Remote Nvme controller: %v", err)
 		return []NvmeConnection{}, err
 	}
 	nvmeConnections := make([]NvmeConnection, 0)
-	for range response.NvMfRemoteControllers {
+	for range response.NvmeRemoteControllers {
 		nvmeConnections = append(nvmeConnections, NvmeConnection{
 			id: "",
-			// TODO: fetch NVMf paths to fill when OPI API is extended with List/Get calls
+			// TODO: fetch Nvme paths to fill when OPI API is extended with List/Get calls
 			subnqn: "",
 			traddr: "",
 		})
@@ -123,7 +123,7 @@ func NvmeControllerList() ([]NvmeConnection, error) {
 	return nvmeConnections, nil
 }
 
-// NvmeControllerGet lists the connection to the remote NVMf controller corresponding to the given ID
+// NvmeControllerGet lists the connection to the remote Nvme controller corresponding to the given ID
 func NvmeControllerGet(id string) (string, error) {
 	if conn == nil {
 		err := dialConnection()
@@ -132,20 +132,20 @@ func NvmeControllerGet(id string) (string, error) {
 		}
 	}
 
-	client := pb.NewNVMfRemoteControllerServiceClient(conn)
+	client := pb.NewNvmeRemoteControllerServiceClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	_, err := client.GetNVMfRemoteController(ctx, &pb.GetNVMfRemoteControllerRequest{Name: id})
+	_, err := client.GetNvmeRemoteController(ctx, &pb.GetNvmeRemoteControllerRequest{Name: id})
 	if err != nil {
-		log.Printf("could not list the connection to Remote NVMf controller corresponding to the given ID: %v", err)
+		log.Printf("could not list the connection to Remote Nvme controller corresponding to the given ID: %v", err)
 		return "", err
 	}
-	// TODO: fetch nqn in NVMf path when OPI API is extended with List/Get calls
+	// TODO: fetch nqn in Nvme path when OPI API is extended with List/Get calls
 	return "", err
 }
 
-// NvmeControllerDisconnect disconnects remote NVMf controller connection
+// NvmeControllerDisconnect disconnects remote Nvme controller connection
 func NvmeControllerDisconnect(id string) error {
 	if conn == nil {
 		err := dialConnection()
@@ -154,11 +154,11 @@ func NvmeControllerDisconnect(id string) error {
 		}
 	}
 
-	client := pb.NewNVMfRemoteControllerServiceClient(conn)
+	client := pb.NewNvmeRemoteControllerServiceClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	data, err := client.GetNVMfRemoteController(ctx, &pb.GetNVMfRemoteControllerRequest{Name: id})
+	data, err := client.GetNvmeRemoteController(ctx, &pb.GetNvmeRemoteControllerRequest{Name: id})
 	if err != nil {
 		log.Println(err)
 		return err
@@ -167,23 +167,23 @@ func NvmeControllerDisconnect(id string) error {
 
 	// we will disconnect if there is a connection
 	if data != nil {
-		_, err := client.DeleteNVMfPath(ctx, &pb.DeleteNVMfPathRequest{
-			Name: nvmfControllerToPathResourceID(id),
+		_, err := client.DeleteNvmePath(ctx, &pb.DeleteNvmePathRequest{
+			Name: nvmeControllerToPathResourceID(id),
 		})
 		if err != nil {
-			log.Printf("could not disconnect Remote NVMf path: %v", err)
+			log.Printf("could not disconnect Remote Nvme path: %v", err)
 			return err
 		}
 
-		response, err := client.DeleteNVMfRemoteController(ctx, &pb.DeleteNVMfRemoteControllerRequest{Name: id})
+		response, err := client.DeleteNvmeRemoteController(ctx, &pb.DeleteNvmeRemoteControllerRequest{Name: id})
 		if err != nil {
-			log.Printf("could not disconnect Remote NVMf controller: %v", err)
+			log.Printf("could not disconnect Remote Nvme controller: %v", err)
 			return err
 		}
 		log.Printf("disconnected: %v", response)
 		return nil
 	}
-	log.Printf("Remote NVMf controller disconnected successfully")
+	log.Printf("Remote Nvme controller disconnected successfully")
 	defer disconnectConnection()
 	return nil
 }
@@ -355,6 +355,6 @@ func disconnectConnection() {
 	log.Println("GRPC connection closed successfully")
 }
 
-func nvmfControllerToPathResourceID(resourceID string) string {
+func nvmeControllerToPathResourceID(resourceID string) string {
 	return resourceID + "path"
 }

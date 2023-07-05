@@ -60,92 +60,92 @@ func (s *GoopCSI) NullDebugStats(_ context2.Context, _ *pb.NullDebugStatsRequest
 	panic("implement me")
 }
 
-// CreateNVMfRemoteController creates a mock NVMf Remote controller
-func (s *GoopCSI) CreateNVMfRemoteController(_ context2.Context, request *pb.CreateNVMfRemoteControllerRequest) (*pb.NVMfRemoteController, error) {
-	out := &pb.NVMfRemoteController{}
-	err := FindStub("NVMfRemoteControllerServiceServer", "CreateNVMfRemoteController", request, out)
+// CreateNvmeRemoteController creates a mock Nvme Remote controller
+func (s *GoopCSI) CreateNvmeRemoteController(_ context2.Context, request *pb.CreateNvmeRemoteControllerRequest) (*pb.NvmeRemoteController, error) {
+	out := &pb.NvmeRemoteController{}
+	err := FindStub("NvmeRemoteControllerServiceServer", "CreateNvmeRemoteController", request, out)
 	return out, err
 }
 
-// DeleteNVMfRemoteController deletes a mock NVMfRemote Controller
-func (s *GoopCSI) DeleteNVMfRemoteController(_ context2.Context, request *pb.DeleteNVMfRemoteControllerRequest) (*emptypb.Empty, error) {
+// DeleteNvmeRemoteController deletes a mock NvmeRemote Controller
+func (s *GoopCSI) DeleteNvmeRemoteController(_ context2.Context, request *pb.DeleteNvmeRemoteControllerRequest) (*emptypb.Empty, error) {
 	out := &emptypb.Empty{}
-	err := FindStub("NVMfRemoteControllerServiceServer", "DeleteNVMfRemoteController", request, out)
+	err := FindStub("NvmeRemoteControllerServiceServer", "DeleteNvmeRemoteController", request, out)
 	return out, err
 }
 
-// UpdateNVMfRemoteController updates mock NVMf Remote Controller
-func (s *GoopCSI) UpdateNVMfRemoteController(_ context2.Context, _ *pb.UpdateNVMfRemoteControllerRequest) (*pb.NVMfRemoteController, error) {
+// UpdateNvmeRemoteController updates mock Nvme Remote Controller
+func (s *GoopCSI) UpdateNvmeRemoteController(_ context2.Context, _ *pb.UpdateNvmeRemoteControllerRequest) (*pb.NvmeRemoteController, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-// ListNVMfRemoteControllers Lists mock NVMfRemote Controllers
-func (s *GoopCSI) ListNVMfRemoteControllers(_ context2.Context, request *pb.ListNVMfRemoteControllersRequest) (*pb.ListNVMfRemoteControllersResponse, error) {
-	out := &pb.ListNVMfRemoteControllersResponse{}
-	err := FindStub("NVMfRemoteControllerServiceServer", "ListNVMfRemoteControllers", request, out)
+// ListNvmeRemoteControllers Lists mock NvmeRemote Controllers
+func (s *GoopCSI) ListNvmeRemoteControllers(_ context2.Context, request *pb.ListNvmeRemoteControllersRequest) (*pb.ListNvmeRemoteControllersResponse, error) {
+	out := &pb.ListNvmeRemoteControllersResponse{}
+	err := FindStub("NvmeRemoteControllerServiceServer", "ListNvmeRemoteControllers", request, out)
 	return out, err
 }
 
-// GetNVMfRemoteController Gets an NVMf Remote controller
-func (s *GoopCSI) GetNVMfRemoteController(_ context2.Context, request *pb.GetNVMfRemoteControllerRequest) (*pb.NVMfRemoteController, error) {
-	out := &pb.NVMfRemoteController{}
-	err := FindStub("NVMfRemoteControllerServiceServer", "GetNVMfRemoteController", request, out)
+// GetNvmeRemoteController Gets an Nvme Remote controller
+func (s *GoopCSI) GetNvmeRemoteController(_ context2.Context, request *pb.GetNvmeRemoteControllerRequest) (*pb.NvmeRemoteController, error) {
+	out := &pb.NvmeRemoteController{}
+	err := FindStub("NvmeRemoteControllerServiceServer", "GetNvmeRemoteController", request, out)
 	return out, err
 }
 
-// NVMfRemoteControllerReset Resets mock Remote Controller
-func (s *GoopCSI) NVMfRemoteControllerReset(_ context2.Context, _ *pb.NVMfRemoteControllerResetRequest) (*emptypb.Empty, error) {
+// NvmeRemoteControllerReset Resets mock Remote Controller
+func (s *GoopCSI) NvmeRemoteControllerReset(_ context2.Context, _ *pb.NvmeRemoteControllerResetRequest) (*emptypb.Empty, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-// NVMfRemoteControllerStats gets mock stats
-func (s *GoopCSI) NVMfRemoteControllerStats(_ context2.Context, _ *pb.NVMfRemoteControllerStatsRequest) (*pb.NVMfRemoteControllerStatsResponse, error) {
+// NvmeRemoteControllerStats gets mock stats
+func (s *GoopCSI) NvmeRemoteControllerStats(_ context2.Context, _ *pb.NvmeRemoteControllerStatsRequest) (*pb.NvmeRemoteControllerStatsResponse, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-// ListNVMfRemoteNamespaces lists mock remote nvmf namespaces
-func (s *GoopCSI) ListNVMfRemoteNamespaces(context2.Context, *pb.ListNVMfRemoteNamespacesRequest) (*pb.ListNVMfRemoteNamespacesResponse, error) {
+// ListNvmeRemoteNamespaces lists mock remote nvme namespaces
+func (s *GoopCSI) ListNvmeRemoteNamespaces(context2.Context, *pb.ListNvmeRemoteNamespacesRequest) (*pb.ListNvmeRemoteNamespacesResponse, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-// CreateNVMfPath creates mock nvmf path
-func (s *GoopCSI) CreateNVMfPath(_ context2.Context, request *pb.CreateNVMfPathRequest) (*pb.NVMfPath, error) {
-	out := &pb.NVMfPath{}
-	err := FindStub("NVMfRemoteControllerServiceServer", "CreateNVMfPath", request, out)
+// CreateNvmePath creates mock nvme path
+func (s *GoopCSI) CreateNvmePath(_ context2.Context, request *pb.CreateNvmePathRequest) (*pb.NvmePath, error) {
+	out := &pb.NvmePath{}
+	err := FindStub("NvmeRemoteControllerServiceServer", "CreateNvmePath", request, out)
 	return out, err
 }
 
-// DeleteNVMfPath deletes mock nvmf path
-func (s *GoopCSI) DeleteNVMfPath(_ context2.Context, request *pb.DeleteNVMfPathRequest) (*emptypb.Empty, error) {
+// DeleteNvmePath deletes mock nvme path
+func (s *GoopCSI) DeleteNvmePath(_ context2.Context, request *pb.DeleteNvmePathRequest) (*emptypb.Empty, error) {
 	out := &emptypb.Empty{}
-	err := FindStub("NVMfRemoteControllerServiceServer", "DeleteNVMfPath", request, out)
+	err := FindStub("NvmeRemoteControllerServiceServer", "DeleteNvmePath", request, out)
 	return out, err
 }
 
-// UpdateNVMfPath updates mock NVMf Remote Path
-func (s *GoopCSI) UpdateNVMfPath(_ context2.Context, _ *pb.UpdateNVMfPathRequest) (*pb.NVMfPath, error) {
+// UpdateNvmePath updates mock Nvme Remote Path
+func (s *GoopCSI) UpdateNvmePath(_ context2.Context, _ *pb.UpdateNvmePathRequest) (*pb.NvmePath, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-// ListNVMfPaths Lists mock NVMfRemote Paths
-func (s *GoopCSI) ListNVMfPaths(_ context2.Context, _ *pb.ListNVMfPathsRequest) (*pb.ListNVMfPathsResponse, error) {
+// ListNvmePaths Lists mock NvmeRemote Paths
+func (s *GoopCSI) ListNvmePaths(_ context2.Context, _ *pb.ListNvmePathsRequest) (*pb.ListNvmePathsResponse, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-// GetNVMfPath Gets an NVMf Remote Path
-func (s *GoopCSI) GetNVMfPath(_ context2.Context, _ *pb.GetNVMfPathRequest) (*pb.NVMfPath, error) {
+// GetNvmePath Gets an Nvme Remote Path
+func (s *GoopCSI) GetNvmePath(_ context2.Context, _ *pb.GetNvmePathRequest) (*pb.NvmePath, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-// NVMfPathStats gets mock stats
-func (s *GoopCSI) NVMfPathStats(_ context2.Context, _ *pb.NVMfPathStatsRequest) (*pb.NVMfPathStatsResponse, error) {
+// NvmePathStats gets mock stats
+func (s *GoopCSI) NvmePathStats(_ context2.Context, _ *pb.NvmePathStatsRequest) (*pb.NvmePathStatsResponse, error) {
 	// TODO implement me
 	panic("implement me")
 }
