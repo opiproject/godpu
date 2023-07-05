@@ -1,6 +1,6 @@
 {
-    "service": "NVMfRemoteControllerServiceServer",
-    "method": "GetNVMfRemoteController",
+    "service": "NvmeRemoteControllerServiceServer",
+    "method": "GetNvmeRemoteController",
     "input": {
         "contains": {
             "name": "12"

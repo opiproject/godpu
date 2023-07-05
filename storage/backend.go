@@ -23,15 +23,15 @@ import (
 
 // DoBackend executes the back end code
 func DoBackend(ctx context.Context, conn grpc.ClientConnInterface) error {
-	nvme := pb.NewNVMfRemoteControllerServiceClient(conn)
+	nvme := pb.NewNvmeRemoteControllerServiceClient(conn)
 	null := pb.NewNullDebugServiceClient(conn)
 	aio := pb.NewAioControllerServiceClient(conn)
 
-	err := executeNVMfRemoteController(ctx, nvme)
+	err := executeNvmeRemoteController(ctx, nvme)
 	if err != nil {
 		return err
 	}
-	err = executeNVMfPath(ctx, nvme)
+	err = executeNvmePath(ctx, nvme)
 	if err != nil {
 		return err
 	}
@@ -46,16 +46,16 @@ func DoBackend(ctx context.Context, conn grpc.ClientConnInterface) error {
 	return nil
 }
 
-func executeNVMfRemoteController(ctx context.Context, c4 pb.NVMfRemoteControllerServiceClient) error {
+func executeNvmeRemoteController(ctx context.Context, c4 pb.NvmeRemoteControllerServiceClient) error {
 	log.Printf("=======================================")
-	log.Printf("Testing NewNVMfRemoteControllerServiceClient")
+	log.Printf("Testing NewNvmeRemoteControllerServiceClient")
 	log.Printf("=======================================")
 
 	// testing with and without {resource}_id field
 	for _, resourceID := range []string{"opi-nvme8", ""} {
-		rr0, err := c4.CreateNVMfRemoteController(ctx, &pb.CreateNVMfRemoteControllerRequest{
-			NvMfRemoteControllerId: resourceID,
-			NvMfRemoteController: &pb.NVMfRemoteController{
+		rr0, err := c4.CreateNvmeRemoteController(ctx, &pb.CreateNvmeRemoteControllerRequest{
+			NvmeRemoteControllerId: resourceID,
+			NvmeRemoteController: &pb.NvmeRemoteController{
 				Multipath: pb.NvmeMultipath_NVME_MULTIPATH_MULTIPATH,
 				Hdgst:     false,
 				Ddgst:     false,
@@ -76,33 +76,33 @@ func executeNVMfRemoteController(ctx context.Context, c4 pb.NVMfRemoteController
 		if rr0.Name != fullname {
 			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rr0.Name, fullname)
 		}
-		log.Printf("Created NVMf controller: %v", rr0)
+		log.Printf("Created Nvme controller: %v", rr0)
 		// continue
-		rr2, err := c4.NVMfRemoteControllerReset(ctx, &pb.NVMfRemoteControllerResetRequest{Id: &pc.ObjectKey{Value: rr0.Name}})
+		rr2, err := c4.NvmeRemoteControllerReset(ctx, &pb.NvmeRemoteControllerResetRequest{Id: &pc.ObjectKey{Value: rr0.Name}})
 		if err != nil {
 			return err
 		}
-		log.Printf("Reset NVMf: %v", rr2)
-		rr3, err := c4.ListNVMfRemoteControllers(ctx, &pb.ListNVMfRemoteControllersRequest{Parent: "todo"})
+		log.Printf("Reset Nvme: %v", rr2)
+		rr3, err := c4.ListNvmeRemoteControllers(ctx, &pb.ListNvmeRemoteControllersRequest{Parent: "todo"})
 		if err != nil {
 			return err
 		}
-		log.Printf("List NVMf: %v", rr3)
-		rr4, err := c4.GetNVMfRemoteController(ctx, &pb.GetNVMfRemoteControllerRequest{Name: rr0.Name})
+		log.Printf("List Nvme: %v", rr3)
+		rr4, err := c4.GetNvmeRemoteController(ctx, &pb.GetNvmeRemoteControllerRequest{Name: rr0.Name})
 		if err != nil {
 			return err
 		}
-		log.Printf("Got NVMf: %v", rr4)
-		rr5, err := c4.NVMfRemoteControllerStats(ctx, &pb.NVMfRemoteControllerStatsRequest{Id: &pc.ObjectKey{Value: rr0.Name}})
+		log.Printf("Got Nvme: %v", rr4)
+		rr5, err := c4.NvmeRemoteControllerStats(ctx, &pb.NvmeRemoteControllerStatsRequest{Id: &pc.ObjectKey{Value: rr0.Name}})
 		if err != nil {
 			return err
 		}
-		log.Printf("Stats NVMf: %v", rr5)
-		rr1, err := c4.DeleteNVMfRemoteController(ctx, &pb.DeleteNVMfRemoteControllerRequest{Name: rr0.Name})
+		log.Printf("Stats Nvme: %v", rr5)
+		rr1, err := c4.DeleteNvmeRemoteController(ctx, &pb.DeleteNvmeRemoteControllerRequest{Name: rr0.Name})
 		if err != nil {
 			return err
 		}
-		log.Printf("Deleted NVMf controller: %v -> %v", rr0, rr1)
+		log.Printf("Deleted Nvme controller: %v -> %v", rr0, rr1)
 
 		// wait for some time for the backend to delete above objects
 		time.Sleep(time.Second)
@@ -110,9 +110,9 @@ func executeNVMfRemoteController(ctx context.Context, c4 pb.NVMfRemoteController
 	return nil
 }
 
-func executeNVMfPath(ctx context.Context, c5 pb.NVMfRemoteControllerServiceClient) error {
+func executeNvmePath(ctx context.Context, c5 pb.NvmeRemoteControllerServiceClient) error {
 	log.Printf("=======================================")
-	log.Printf("Testing NewNVMfPathClient")
+	log.Printf("Testing NewNvmePathClient")
 	log.Printf("=======================================")
 
 	addr, err := net.LookupIP("spdk")
@@ -121,9 +121,9 @@ func executeNVMfPath(ctx context.Context, c5 pb.NVMfRemoteControllerServiceClien
 	}
 
 	ctrlrResourceID := "opi-nvme8"
-	rr0, err := c5.CreateNVMfRemoteController(ctx, &pb.CreateNVMfRemoteControllerRequest{
-		NvMfRemoteControllerId: ctrlrResourceID,
-		NvMfRemoteController: &pb.NVMfRemoteController{
+	rr0, err := c5.CreateNvmeRemoteController(ctx, &pb.CreateNvmeRemoteControllerRequest{
+		NvmeRemoteControllerId: ctrlrResourceID,
+		NvmeRemoteController: &pb.NvmeRemoteController{
 			Multipath: pb.NvmeMultipath_NVME_MULTIPATH_MULTIPATH,
 			Hdgst:     false,
 			Ddgst:     false,
@@ -131,14 +131,14 @@ func executeNVMfPath(ctx context.Context, c5 pb.NVMfRemoteControllerServiceClien
 	if err != nil {
 		return err
 	}
-	log.Printf("Created NVMf controller: %v", rr0)
+	log.Printf("Created Nvme controller: %v", rr0)
 
 	for _, resourceID := range []string{"opi-nvme8-path", ""} {
-		np0, err := c5.CreateNVMfPath(ctx, &pb.CreateNVMfPathRequest{
-			NvMfPathId: resourceID,
-			NvMfPath: &pb.NVMfPath{
+		np0, err := c5.CreateNvmePath(ctx, &pb.CreateNvmePathRequest{
+			NvmePathId: resourceID,
+			NvmePath: &pb.NvmePath{
 				Trtype:       pb.NvmeTransportType_NVME_TRANSPORT_TCP,
-				Adrfam:       pb.NvmeAddressFamily_NVMF_ADRFAM_IPV4,
+				Adrfam:       pb.NvmeAddressFamily_NVME_ADRFAM_IPV4,
 				Traddr:       addr[0].String(),
 				Trsvcid:      4444,
 				Subnqn:       "nqn.2016-06.io.spdk:cnode1",
@@ -148,7 +148,7 @@ func executeNVMfPath(ctx context.Context, c5 pb.NVMfRemoteControllerServiceClien
 		if err != nil {
 			return err
 		}
-		log.Printf("Created NVMf path: %v", np0)
+		log.Printf("Created Nvme path: %v", np0)
 
 		newResourceID := resourceID
 		if resourceID == "" {
@@ -162,46 +162,46 @@ func executeNVMfPath(ctx context.Context, c5 pb.NVMfRemoteControllerServiceClien
 		if np0.Name != fullname {
 			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", np0.Name, fullname)
 		}
-		log.Printf("Created NVMf path: %v", np0)
-		np3, err := c5.UpdateNVMfPath(ctx, &pb.UpdateNVMfPathRequest{
+		log.Printf("Created Nvme path: %v", np0)
+		np3, err := c5.UpdateNvmePath(ctx, &pb.UpdateNvmePathRequest{
 			UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"*"}},
-			NvMfPath:   &pb.NVMfPath{Name: np0.Name}})
+			NvmePath:   &pb.NvmePath{Name: np0.Name}})
 		if err != nil {
 			return err
 		}
-		log.Printf("Updated NVMf path: %v", np3)
-		np4, err := c5.ListNVMfPaths(ctx, &pb.ListNVMfPathsRequest{Parent: "todo"})
+		log.Printf("Updated Nvme path: %v", np3)
+		np4, err := c5.ListNvmePaths(ctx, &pb.ListNvmePathsRequest{Parent: "todo"})
 		if err != nil {
 			return err
 		}
-		log.Printf("Listed NVMf path: %v", np4)
-		np5, err := c5.GetNVMfPath(ctx, &pb.GetNVMfPathRequest{Name: np0.Name})
+		log.Printf("Listed Nvme path: %v", np4)
+		np5, err := c5.GetNvmePath(ctx, &pb.GetNvmePathRequest{Name: np0.Name})
 		if err != nil {
 			return err
 		}
-		log.Printf("Got NVMf path: %s", np5.Name)
-		np6, err := c5.NVMfPathStats(ctx, &pb.NVMfPathStatsRequest{Id: &pc.ObjectKey{Value: np0.Name}})
+		log.Printf("Got Nvme path: %s", np5.Name)
+		np6, err := c5.NvmePathStats(ctx, &pb.NvmePathStatsRequest{Id: &pc.ObjectKey{Value: np0.Name}})
 		if err != nil {
 			return err
 		}
-		log.Printf("Stats NVMf path: %s", np6.Stats)
-		np1, err := c5.DeleteNVMfPath(ctx, &pb.DeleteNVMfPathRequest{
+		log.Printf("Stats Nvme path: %s", np6.Stats)
+		np1, err := c5.DeleteNvmePath(ctx, &pb.DeleteNvmePathRequest{
 			Name: np0.Name,
 		})
 		if err != nil {
 			return err
 		}
-		log.Printf("Deleted NVMf path: %v -> %v", np0, np1)
+		log.Printf("Deleted Nvme path: %v -> %v", np0, np1)
 
 		// wait for some time for the backend to delete above objects
 		time.Sleep(time.Second)
 	}
 
-	rr1, err := c5.DeleteNVMfRemoteController(ctx, &pb.DeleteNVMfRemoteControllerRequest{Name: rr0.Name})
+	rr1, err := c5.DeleteNvmeRemoteController(ctx, &pb.DeleteNvmeRemoteControllerRequest{Name: rr0.Name})
 	if err != nil {
 		return err
 	}
-	log.Printf("Deleted NVMf controller: %v -> %v", rr0, rr1)
+	log.Printf("Deleted Nvme controller: %v -> %v", rr0, rr1)
 
 	return nil
 }
