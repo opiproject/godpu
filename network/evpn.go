@@ -227,6 +227,7 @@ func (c evpnClientImpl) CreateTunnel(ctx context.Context) (*pb.Tunnel, error) {
 		TunnelId: "testTunnel",
 		Tunnel: &pb.Tunnel{
 			Spec: &pb.TunnelSpec{
+				VpcNameRef: "//network.opiproject.org/subnets/testbridge",
 				LocalIp: &pc.IPAddress{
 					Af:     pc.IpAf_IP_AF_INET,
 					V4OrV6: &pc.IPAddress_V4Addr{V4Addr: 336860161},
