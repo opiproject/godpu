@@ -43,6 +43,11 @@ func NewEvpnCommand() *cobra.Command {
 				log.Fatalf("could not create vpc: %v", err)
 			}
 			log.Printf("%s", obj1)
+			obj11, err := evpnClient.CreateTunnel(ctx)
+			if err != nil {
+				log.Fatalf("could not create vpc: %v", err)
+			}
+			log.Printf("%s", obj11)
 			// get all
 			obj2, err := evpnClient.GetInterface(ctx)
 			if err != nil {
@@ -54,6 +59,11 @@ func NewEvpnCommand() *cobra.Command {
 				log.Fatalf("could not get vpc: %v", err)
 			}
 			log.Printf("%s", obj3)
+			obj33, err := evpnClient.GetTunnel(ctx)
+			if err != nil {
+				log.Fatalf("could not get vpc: %v", err)
+			}
+			log.Printf("%s", obj33)
 			// delete all
 			obj4, err := evpnClient.DeleteInterface(ctx)
 			if err != nil {
@@ -65,6 +75,11 @@ func NewEvpnCommand() *cobra.Command {
 				log.Fatalf("could not delete vpc: %v", err)
 			}
 			log.Printf("%s", obj5)
+			obj55, err := evpnClient.DeleteTunnel(ctx)
+			if err != nil {
+				log.Fatalf("could not delete vpc: %v", err)
+			}
+			log.Printf("%s", obj55)
 		},
 	}
 	flags := cmd.Flags()
