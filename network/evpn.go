@@ -11,6 +11,7 @@ import (
 
 	grpcOpi "github.com/opiproject/godpu/grpc"
 	pb "github.com/opiproject/opi-api/network/cloud/v1alpha1/gen/go"
+	pc "github.com/opiproject/opi-api/network/opinetcommon/v1alpha1/gen/go"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
@@ -33,6 +34,9 @@ type EvpnClient interface {
 	CreateVpc(ctx context.Context) (*pb.Vpc, error)
 	GetVpc(ctx context.Context) (*pb.Vpc, error)
 	DeleteVpc(ctx context.Context) (*emptypb.Empty, error)
+	CreateTunnel(ctx context.Context) (*pb.Tunnel, error)
+	GetTunnel(ctx context.Context) (*pb.Tunnel, error)
+	DeleteTunnel(ctx context.Context) (*emptypb.Empty, error)
 }
 
 // New creates an evpn client for use with OPI server at the given address
@@ -198,6 +202,87 @@ func (c evpnClientImpl) DeleteVpc(ctx context.Context) (*emptypb.Empty, error) {
 
 	data, err := client.DeleteVpc(ctx, &pb.DeleteVpcRequest{
 		Name: "//network.opiproject.org/vpcs/testVpc",
+	})
+	if err != nil {
+		log.Printf("error deleting evpn: %s\n", err)
+		return nil, err
+	}
+
+	return data, nil
+}
+
+// CreateTunnel creates an Tunnel an OPI server
+func (c evpnClientImpl) CreateTunnel(ctx context.Context) (*pb.Tunnel, error) {
+	conn, closer, err := c.NewConn()
+	if err != nil {
+		log.Printf("error creating connection: %s\n", err)
+		return nil, err
+	}
+	defer closer()
+
+	client := c.getEvpnClient(conn)
+
+	data, err := client.CreateTunnel(ctx, &pb.CreateTunnelRequest{
+		Parent:   "todo",
+		TunnelId: "testTunnel",
+		Tunnel: &pb.Tunnel{
+			Spec: &pb.TunnelSpec{
+				LocalIp: &pc.IPAddress{
+					Af:     pc.IpAf_IP_AF_INET,
+					V4OrV6: &pc.IPAddress_V4Addr{V4Addr: 336860161},
+				},
+				Encap: &pc.Encap{
+					Type: pc.EncapType_ENCAP_TYPE_VXLAN,
+					Value: &pc.EncapVal{
+						Val: &pc.EncapVal_Vnid{Vnid: 100},
+					},
+				},
+			},
+		},
+	})
+	if err != nil {
+		log.Printf("error creating evpn: %s\n", err)
+		return nil, err
+	}
+
+	return data, nil
+}
+
+// GetTunnel creates an Tunnel an OPI server
+func (c evpnClientImpl) GetTunnel(ctx context.Context) (*pb.Tunnel, error) {
+	conn, closer, err := c.NewConn()
+	if err != nil {
+		log.Printf("error creating connection: %s\n", err)
+		return nil, err
+	}
+	defer closer()
+
+	client := c.getEvpnClient(conn)
+
+	data, err := client.GetTunnel(ctx, &pb.GetTunnelRequest{
+		Name: "//network.opiproject.org/tunnels/testTunnel",
+	})
+	if err != nil {
+		log.Printf("error getting evpn: %s\n", err)
+		return nil, err
+	}
+
+	return data, nil
+}
+
+// DeleteTunnel creates an Tunnel an OPI server
+func (c evpnClientImpl) DeleteTunnel(ctx context.Context) (*emptypb.Empty, error) {
+	conn, closer, err := c.NewConn()
+	if err != nil {
+		log.Printf("error creating connection: %s\n", err)
+		return nil, err
+	}
+	defer closer()
+
+	client := c.getEvpnClient(conn)
+
+	data, err := client.DeleteTunnel(ctx, &pb.DeleteTunnelRequest{
+		Name: "//network.opiproject.org/tunnels/testTunnel",
 	})
 	if err != nil {
 		log.Printf("error deleting evpn: %s\n", err)
