@@ -127,6 +127,7 @@ func executeNvmePath(ctx context.Context, c5 pb.NvmeRemoteControllerServiceClien
 			Multipath: pb.NvmeMultipath_NVME_MULTIPATH_MULTIPATH,
 			Hdgst:     false,
 			Ddgst:     false,
+			Psk:       []byte{},
 		}})
 	if err != nil {
 		return err
