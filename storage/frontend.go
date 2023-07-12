@@ -415,12 +415,12 @@ func executeNvmeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 				Name: rc1.Name,
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pbc.ObjectKey{Value: rs1.Name},
-					PcieId:           &pb.PciEndpoint{PhysicalFunction: 1, VirtualFunction: 2, PortId: 3},
-					MaxNsq:           5,
-					MaxNcq:           6,
-					Sqes:             7,
-					Cqes:             8,
-					NvmeControllerId: 2}}})
+					PcieId:           &pb.PciEndpoint{PhysicalFunction: 3, VirtualFunction: 2, PortId: 1},
+					MaxNsq:           8,
+					MaxNcq:           7,
+					Sqes:             6,
+					Cqes:             5,
+					NvmeControllerId: 1}}})
 		if err != nil {
 			return err
 		}
