@@ -5,7 +5,14 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: read
+
 jobs:
   release-docker:
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
     uses: ./.github/workflows/docker-publish.yaml
     secrets: inherit
