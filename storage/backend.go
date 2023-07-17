@@ -31,7 +31,7 @@ func DoBackend(ctx context.Context, conn grpc.ClientConnInterface) error {
 	if err != nil {
 		return err
 	}
-	err = executeNvmePath(ctx, nvme)
+	err = executeNvmePath(ctx, nvme, false)
 	if err != nil {
 		return err
 	}
@@ -110,14 +110,21 @@ func executeNvmeRemoteController(ctx context.Context, c4 pb.NvmeRemoteController
 	return nil
 }
 
-func executeNvmePath(ctx context.Context, c5 pb.NvmeRemoteControllerServiceClient) error {
+func executeNvmePath(ctx context.Context, c5 pb.NvmeRemoteControllerServiceClient, tls_enabled bool) error {
 	log.Printf("=======================================")
-	log.Printf("Testing NewNvmePathClient")
+	log.Printf("Testing NewNvmePathClient TLS=%v", tls_enabled)
 	log.Printf("=======================================")
 
 	addr, err := net.LookupIP("spdk")
 	if err != nil {
 		return err
+	}
+
+	port := 4444
+	psk := []byte{}
+	if tls_enabled {
+		port = 5555
+		psk = []byte("NVMeTLSkey-1:01:MDAxMTIyMzM0NDU1NjY3Nzg4OTlhYWJiY2NkZGVlZmZwJEiQ:")
 	}
 
 	ctrlrResourceID := "opi-nvme8"
@@ -127,7 +134,7 @@ func executeNvmePath(ctx context.Context, c5 pb.NvmeRemoteControllerServiceClien
 			Multipath: pb.NvmeMultipath_NVME_MULTIPATH_MULTIPATH,
 			Hdgst:     false,
 			Ddgst:     false,
-			Psk:       []byte{},
+			Psk:       psk,
 		}})
 	if err != nil {
 		return err
@@ -141,7 +148,7 @@ func executeNvmePath(ctx context.Context, c5 pb.NvmeRemoteControllerServiceClien
 				Trtype:       pb.NvmeTransportType_NVME_TRANSPORT_TCP,
 				Adrfam:       pb.NvmeAddressFamily_NVME_ADRFAM_IPV4,
 				Traddr:       addr[0].String(),
-				Trsvcid:      4444,
+				Trsvcid:      int64(port),
 				Subnqn:       "nqn.2016-06.io.spdk:cnode1",
 				Hostnqn:      "nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c",
 				ControllerId: &pc.ObjectKey{Value: rr0.Name},
