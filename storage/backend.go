@@ -34,6 +34,10 @@ func DoBackend(ctx context.Context, conn grpc.ClientConnInterface) error {
 	if err != nil {
 		return err
 	}
+	err = executeNvmePath(ctx, nvme, true)
+	if err != nil {
+		return err
+	}
 	err = executeNullVolume(ctx, null)
 	if err != nil {
 		return err
