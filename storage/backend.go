@@ -110,9 +110,9 @@ func executeNvmeRemoteController(ctx context.Context, c4 pb.NvmeRemoteController
 	return nil
 }
 
-func executeNvmePath(ctx context.Context, c5 pb.NvmeRemoteControllerServiceClient, tls_enabled bool) error {
+func executeNvmePath(ctx context.Context, c5 pb.NvmeRemoteControllerServiceClient, tlsEnabled bool) error {
 	log.Printf("=======================================")
-	log.Printf("Testing NewNvmePathClient TLS=%v", tls_enabled)
+	log.Printf("Testing NewNvmePathClient TLS=%v", tlsEnabled)
 	log.Printf("=======================================")
 
 	addr, err := net.LookupIP("spdk")
@@ -122,7 +122,7 @@ func executeNvmePath(ctx context.Context, c5 pb.NvmeRemoteControllerServiceClien
 
 	port := 4444
 	psk := []byte{}
-	if tls_enabled {
+	if tlsEnabled {
 		port = 5555
 		psk = []byte("NVMeTLSkey-1:01:MDAxMTIyMzM0NDU1NjY3Nzg4OTlhYWJiY2NkZGVlZmZwJEiQ:")
 	}
