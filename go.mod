@@ -8,7 +8,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/onsi/ginkgo/v2 v2.11.0
-	github.com/onsi/gomega v1.27.8
+	github.com/onsi/gomega v1.27.9
 	github.com/opiproject/opi-api v0.0.0-20230721161716-ea8314a63ccb
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
