@@ -37,6 +37,8 @@ github.com/opiproject/opi-api v0.0.0-20230712141241-3ccebf87270b h1:/t1mBhxyV8Ob
 github.com/opiproject/opi-api v0.0.0-20230712141241-3ccebf87270b/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
 github.com/opiproject/opi-api v0.0.0-20230713203751-f1f72eaaee0e h1:dFlwXYeXuRPKe5w40eDYMpc3+1zCQDXS+9W/5LWCnbU=
 github.com/opiproject/opi-api v0.0.0-20230713203751-f1f72eaaee0e/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
+github.com/opiproject/opi-api v0.0.0-20230721161716-ea8314a63ccb h1:N8wK6C6A7Y4fr9SECSvTTUMhcD2xZ6t2W+/NO9vy768=
+github.com/opiproject/opi-api v0.0.0-20230721161716-ea8314a63ccb/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
