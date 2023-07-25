@@ -24,8 +24,8 @@ import (
 // DoBackend executes the back end code
 func DoBackend(ctx context.Context, conn grpc.ClientConnInterface) error {
 	nvme := pb.NewNvmeRemoteControllerServiceClient(conn)
-	null := pb.NewNullDebugServiceClient(conn)
-	aio := pb.NewAioControllerServiceClient(conn)
+	null := pb.NewNullVolumeServiceClient(conn)
+	aio := pb.NewAioVolumeServiceClient(conn)
 
 	err := executeNvmeRemoteController(ctx, nvme)
 	if err != nil {
@@ -35,11 +35,11 @@ func DoBackend(ctx context.Context, conn grpc.ClientConnInterface) error {
 	if err != nil {
 		return err
 	}
-	err = executeNullDebug(ctx, null)
+	err = executeNullVolume(ctx, null)
 	if err != nil {
 		return err
 	}
-	err = executeAioController(ctx, aio)
+	err = executeAioVolume(ctx, aio)
 	if err != nil {
 		return err
 	}
@@ -214,16 +214,16 @@ func executeNvmePath(ctx context.Context, c5 pb.NvmeRemoteControllerServiceClien
 	return nil
 }
 
-func executeNullDebug(ctx context.Context, c1 pb.NullDebugServiceClient) error {
+func executeNullVolume(ctx context.Context, c1 pb.NullVolumeServiceClient) error {
 	log.Printf("=======================================")
-	log.Printf("Testing NewNullDebugServiceClient")
+	log.Printf("Testing NewNullVolumeServiceClient")
 	log.Printf("=======================================")
 
 	// testing with and without {resource}_id field
 	for _, resourceID := range []string{"opi-null9", ""} {
-		rs1, err := c1.CreateNullDebug(ctx, &pb.CreateNullDebugRequest{
-			NullDebugId: resourceID,
-			NullDebug:   &pb.NullDebug{BlockSize: 512, BlocksCount: 64}})
+		rs1, err := c1.CreateNullVolume(ctx, &pb.CreateNullVolumeRequest{
+			NullVolumeId: resourceID,
+			NullVolume:   &pb.NullVolume{BlockSize: 512, BlocksCount: 64}})
 		if err != nil {
 			return err
 		}
@@ -242,29 +242,29 @@ func executeNullDebug(ctx context.Context, c1 pb.NullDebugServiceClient) error {
 		}
 		log.Printf("Added Null: %v", rs1)
 		// continue
-		rs3, err := c1.UpdateNullDebug(ctx, &pb.UpdateNullDebugRequest{
+		rs3, err := c1.UpdateNullVolume(ctx, &pb.UpdateNullVolumeRequest{
 			UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"*"}},
-			NullDebug:  &pb.NullDebug{Name: rs1.Name}})
+			NullVolume: &pb.NullVolume{Name: rs1.Name}})
 		if err != nil {
 			return err
 		}
 		log.Printf("Updated Null: %v", rs3)
-		rs4, err := c1.ListNullDebugs(ctx, &pb.ListNullDebugsRequest{Parent: "todo"})
+		rs4, err := c1.ListNullVolumes(ctx, &pb.ListNullVolumesRequest{Parent: "todo"})
 		if err != nil {
 			return err
 		}
 		log.Printf("Listed Null: %v", rs4)
-		rs5, err := c1.GetNullDebug(ctx, &pb.GetNullDebugRequest{Name: rs1.Name})
+		rs5, err := c1.GetNullVolume(ctx, &pb.GetNullVolumeRequest{Name: rs1.Name})
 		if err != nil {
 			return err
 		}
 		log.Printf("Got Null: %s", rs5.Name)
-		rs6, err := c1.NullDebugStats(ctx, &pb.NullDebugStatsRequest{Handle: &pc.ObjectKey{Value: rs1.Name}})
+		rs6, err := c1.NullVolumeStats(ctx, &pb.NullVolumeStatsRequest{Handle: &pc.ObjectKey{Value: rs1.Name}})
 		if err != nil {
 			return err
 		}
 		log.Printf("Stats Null: %s", rs6.Stats)
-		rs2, err := c1.DeleteNullDebug(ctx, &pb.DeleteNullDebugRequest{Name: rs1.Name})
+		rs2, err := c1.DeleteNullVolume(ctx, &pb.DeleteNullVolumeRequest{Name: rs1.Name})
 		if err != nil {
 			return err
 		}
@@ -273,16 +273,16 @@ func executeNullDebug(ctx context.Context, c1 pb.NullDebugServiceClient) error {
 	return nil
 }
 
-func executeAioController(ctx context.Context, c2 pb.AioControllerServiceClient) error {
+func executeAioVolume(ctx context.Context, c2 pb.AioVolumeServiceClient) error {
 	log.Printf("=======================================")
-	log.Printf("Testing NewAioControllerServiceClient")
+	log.Printf("Testing NewAioVolumeServiceClient")
 	log.Printf("=======================================")
 
 	// testing with and without {resource}_id field
 	for _, resourceID := range []string{"opi-aio4", ""} {
-		ra1, err := c2.CreateAioController(ctx, &pb.CreateAioControllerRequest{
-			AioControllerId: resourceID,
-			AioController:   &pb.AioController{BlockSize: 512, BlocksCount: 12, Filename: "/tmp/aio_bdev_file"}})
+		ra1, err := c2.CreateAioVolume(ctx, &pb.CreateAioVolumeRequest{
+			AioVolumeId: resourceID,
+			AioVolume:   &pb.AioVolume{BlockSize: 512, BlocksCount: 12, Filename: "/tmp/aio_bdev_file"}})
 		if err != nil {
 			return err
 		}
@@ -301,29 +301,29 @@ func executeAioController(ctx context.Context, c2 pb.AioControllerServiceClient)
 		}
 		log.Printf("Added Aio: %v", ra1)
 		// continue
-		ra3, err := c2.UpdateAioController(ctx, &pb.UpdateAioControllerRequest{
-			UpdateMask:    &fieldmaskpb.FieldMask{Paths: []string{"*"}},
-			AioController: &pb.AioController{Name: ra1.Name, Filename: "/tmp/aio_bdev_file"}})
+		ra3, err := c2.UpdateAioVolume(ctx, &pb.UpdateAioVolumeRequest{
+			UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"*"}},
+			AioVolume:  &pb.AioVolume{Name: ra1.Name, Filename: "/tmp/aio_bdev_file"}})
 		if err != nil {
 			return err
 		}
 		log.Printf("Updated Aio: %v", ra3)
-		ra4, err := c2.ListAioControllers(ctx, &pb.ListAioControllersRequest{Parent: "todo"})
+		ra4, err := c2.ListAioVolumes(ctx, &pb.ListAioVolumesRequest{Parent: "todo"})
 		if err != nil {
 			return err
 		}
 		log.Printf("Listed Aio: %v", ra4)
-		ra5, err := c2.GetAioController(ctx, &pb.GetAioControllerRequest{Name: ra1.Name})
+		ra5, err := c2.GetAioVolume(ctx, &pb.GetAioVolumeRequest{Name: ra1.Name})
 		if err != nil {
 			return err
 		}
 		log.Printf("Got Aio: %s", ra5.Name)
-		ra6, err := c2.AioControllerStats(ctx, &pb.AioControllerStatsRequest{Handle: &pc.ObjectKey{Value: ra1.Name}})
+		ra6, err := c2.AioVolumeStats(ctx, &pb.AioVolumeStatsRequest{Handle: &pc.ObjectKey{Value: ra1.Name}})
 		if err != nil {
 			return err
 		}
 		log.Printf("Stats Aio: %s", ra6.Stats)
-		ra2, err := c2.DeleteAioController(ctx, &pb.DeleteAioControllerRequest{Name: ra1.Name})
+		ra2, err := c2.DeleteAioVolume(ctx, &pb.DeleteAioVolumeRequest{Name: ra1.Name})
 		if err != nil {
 			return err
 		}

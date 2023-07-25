@@ -1,13 +1,13 @@
 {
-    "service": "NullDebugServiceServer",
-    "method": "ListNullDebugs",
+    "service": "NullVolumeServiceServer",
+    "method": "ListNullVolumes",
     "input": {
         "contains": {
         }
     },
     "output": {
         "data": {
-            "NullDebugs": [{
+            "NullVolumes": [{
                     "Handle": {"Value":"12"},
                     "Uuid": {"Value": "12"}
                 }]

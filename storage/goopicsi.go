@@ -266,15 +266,15 @@ func CreateNvmeNamespace(id string, subSystemID string, nguid string, hostID int
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	client1 := pb.NewNullDebugServiceClient(conn)
-	response, err := client1.ListNullDebugs(ctx, &pb.ListNullDebugsRequest{Parent: "todo"})
+	client1 := pb.NewNullVolumeServiceClient(conn)
+	response, err := client1.ListNullVolumes(ctx, &pb.ListNullVolumesRequest{Parent: "todo"})
 
 	if err != nil {
 		log.Println(err)
 		return "", err
 	}
 
-	volumeData := response.NullDebugs
+	volumeData := response.NullVolumes
 	volumeID := ""
 	for _, data := range volumeData {
 		uuid := strings.ReplaceAll(data.Uuid.Value, "-", "")
