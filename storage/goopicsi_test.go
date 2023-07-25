@@ -59,7 +59,7 @@ func RunServer() {
 
 	pb.RegisterFrontendNvmeServiceServer(MockServer, &server.GoopCSI{})
 	pb.RegisterNvmeRemoteControllerServiceServer(MockServer, &server.GoopCSI{})
-	pb.RegisterNullDebugServiceServer(MockServer, &server.GoopCSI{})
+	pb.RegisterNullVolumeServiceServer(MockServer, &server.GoopCSI{})
 
 	fmt.Printf("Serving gRPC on %s\n", csiAddress)
 	errChan := make(chan error)

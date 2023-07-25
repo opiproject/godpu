@@ -23,39 +23,39 @@ import (
 // GoopCSI mock gRPC server to implement mock service calls
 type GoopCSI struct{}
 
-// CreateNullDebug creates a mock NullDebug
-func (s *GoopCSI) CreateNullDebug(_ context2.Context, _ *pb.CreateNullDebugRequest) (*pb.NullDebug, error) {
+// CreateNullVolume creates a mock NullVolume
+func (s *GoopCSI) CreateNullVolume(_ context2.Context, _ *pb.CreateNullVolumeRequest) (*pb.NullVolume, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-// DeleteNullDebug Deletes a mock NullDebug
-func (s *GoopCSI) DeleteNullDebug(_ context2.Context, _ *pb.DeleteNullDebugRequest) (*emptypb.Empty, error) {
+// DeleteNullVolume Deletes a mock NullVolume
+func (s *GoopCSI) DeleteNullVolume(_ context2.Context, _ *pb.DeleteNullVolumeRequest) (*emptypb.Empty, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-// UpdateNullDebug Updated mock NullDebug
-func (s *GoopCSI) UpdateNullDebug(_ context2.Context, _ *pb.UpdateNullDebugRequest) (*pb.NullDebug, error) {
+// UpdateNullVolume Updated mock NullVolume
+func (s *GoopCSI) UpdateNullVolume(_ context2.Context, _ *pb.UpdateNullVolumeRequest) (*pb.NullVolume, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-// ListNullDebugs Lists mock nullDebugs
-func (s *GoopCSI) ListNullDebugs(_ context2.Context, request *pb.ListNullDebugsRequest) (*pb.ListNullDebugsResponse, error) {
-	out := &pb.ListNullDebugsResponse{}
-	err := FindStub("NullDebugServiceServer", "ListNullDebugs", request, out)
+// ListNullVolumes Lists mock nullDebugs
+func (s *GoopCSI) ListNullVolumes(_ context2.Context, request *pb.ListNullVolumesRequest) (*pb.ListNullVolumesResponse, error) {
+	out := &pb.ListNullVolumesResponse{}
+	err := FindStub("NullVolumeServiceServer", "ListNullVolumes", request, out)
 	return out, err
 }
 
-// GetNullDebug Gets mock NullDebug
-func (s *GoopCSI) GetNullDebug(_ context2.Context, _ *pb.GetNullDebugRequest) (*pb.NullDebug, error) {
+// GetNullVolume Gets mock NullVolume
+func (s *GoopCSI) GetNullVolume(_ context2.Context, _ *pb.GetNullVolumeRequest) (*pb.NullVolume, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-// NullDebugStats gets mock NullDebugStats
-func (s *GoopCSI) NullDebugStats(_ context2.Context, _ *pb.NullDebugStatsRequest) (*pb.NullDebugStatsResponse, error) {
+// NullVolumeStats gets mock NullVolumeStats
+func (s *GoopCSI) NullVolumeStats(_ context2.Context, _ *pb.NullVolumeStatsRequest) (*pb.NullVolumeStatsResponse, error) {
 	// TODO implement me
 	panic("implement me")
 }
