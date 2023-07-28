@@ -78,7 +78,7 @@ func executeNvmeRemoteController(ctx context.Context, c4 pb.NvmeRemoteController
 		}
 		log.Printf("Created Nvme controller: %v", rr0)
 		// continue
-		rr2, err := c4.NvmeRemoteControllerReset(ctx, &pb.NvmeRemoteControllerResetRequest{Id: &pc.ObjectKey{Value: rr0.Name}})
+		rr2, err := c4.NvmeRemoteControllerReset(ctx, &pb.NvmeRemoteControllerResetRequest{Name: rr0.Name})
 		if err != nil {
 			return err
 		}
@@ -93,7 +93,7 @@ func executeNvmeRemoteController(ctx context.Context, c4 pb.NvmeRemoteController
 			return err
 		}
 		log.Printf("Got Nvme: %v", rr4)
-		rr5, err := c4.NvmeRemoteControllerStats(ctx, &pb.NvmeRemoteControllerStatsRequest{Id: &pc.ObjectKey{Value: rr0.Name}})
+		rr5, err := c4.NvmeRemoteControllerStats(ctx, &pb.NvmeRemoteControllerStatsRequest{Name: rr0.Name})
 		if err != nil {
 			return err
 		}
@@ -145,13 +145,13 @@ func executeNvmePath(ctx context.Context, c5 pb.NvmeRemoteControllerServiceClien
 		np0, err := c5.CreateNvmePath(ctx, &pb.CreateNvmePathRequest{
 			NvmePathId: resourceID,
 			NvmePath: &pb.NvmePath{
-				Trtype:       pb.NvmeTransportType_NVME_TRANSPORT_TCP,
-				Adrfam:       pb.NvmeAddressFamily_NVME_ADRFAM_IPV4,
-				Traddr:       addr[0].String(),
-				Trsvcid:      int64(port),
-				Subnqn:       "nqn.2016-06.io.spdk:cnode1",
-				Hostnqn:      "nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c",
-				ControllerId: &pc.ObjectKey{Value: rr0.Name},
+				Trtype:            pb.NvmeTransportType_NVME_TRANSPORT_TCP,
+				Adrfam:            pb.NvmeAddressFamily_NVME_ADRFAM_IPV4,
+				Traddr:            addr[0].String(),
+				Trsvcid:           int64(port),
+				Subnqn:            "nqn.2016-06.io.spdk:cnode1",
+				Hostnqn:           "nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c",
+				ControllerNameRef: rr0.Name,
 			}})
 		if err != nil {
 			return err
@@ -188,7 +188,7 @@ func executeNvmePath(ctx context.Context, c5 pb.NvmeRemoteControllerServiceClien
 			return err
 		}
 		log.Printf("Got Nvme path: %s", np5.Name)
-		np6, err := c5.NvmePathStats(ctx, &pb.NvmePathStatsRequest{Id: &pc.ObjectKey{Value: np0.Name}})
+		np6, err := c5.NvmePathStats(ctx, &pb.NvmePathStatsRequest{Name: np0.Name})
 		if err != nil {
 			return err
 		}

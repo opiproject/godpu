@@ -15,7 +15,6 @@ import (
 
 	"github.com/google/uuid"
 
-	pbc "github.com/opiproject/opi-api/common/v1/gen/go"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -68,13 +67,13 @@ func NvmeControllerConnect(id string, trAddr string, subnqn string, trSvcID int6
 		pathResponse, err := client.CreateNvmePath(ctx, &pb.CreateNvmePathRequest{
 			NvmePathId: nvmeControllerToPathResourceID(id),
 			NvmePath: &pb.NvmePath{
-				ControllerId: &pbc.ObjectKey{Value: response.Name},
-				Traddr:       trAddr,
-				Subnqn:       subnqn,
-				Trsvcid:      trSvcID,
-				Hostnqn:      hostnqn,
-				Trtype:       pb.NvmeTransportType_NVME_TRANSPORT_TCP,
-				Adrfam:       pb.NvmeAddressFamily_NVME_ADRFAM_IPV4,
+				ControllerNameRef: response.Name,
+				Traddr:            trAddr,
+				Subnqn:            subnqn,
+				Trsvcid:           trSvcID,
+				Hostnqn:           hostnqn,
+				Trtype:            pb.NvmeTransportType_NVME_TRANSPORT_TCP,
+				Adrfam:            pb.NvmeAddressFamily_NVME_ADRFAM_IPV4,
 			},
 		})
 		if err != nil {
@@ -238,8 +237,8 @@ func ExposeRemoteNvme(subsystemNQN string, maxNamespaces int64) (string, string,
 			NvmeController: &pb.NvmeController{
 				Name: controllerID,
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemId:   &pbc.ObjectKey{Value: subsystemID},
-					MaxNamespaces: int32(maxNamespaces),
+					SubsystemNameRef: subsystemID,
+					MaxNamespaces:    int32(maxNamespaces),
 				},
 			},
 		})
@@ -291,9 +290,9 @@ func CreateNvmeNamespace(id string, subSystemID string, nguid string, hostID int
 		NvmeNamespace: &pb.NvmeNamespace{
 			Name: id,
 			Spec: &pb.NvmeNamespaceSpec{
-				SubsystemId: &pbc.ObjectKey{Value: subSystemID},
-				VolumeId:    &pbc.ObjectKey{Value: volumeID},
-				HostNsid:    hostID,
+				SubsystemNameRef: subSystemID,
+				VolumeNameRef:    volumeID,
+				HostNsid:         hostID,
 			},
 		},
 	})

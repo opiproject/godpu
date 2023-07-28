@@ -252,7 +252,7 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 		NvmeControllerId: "namespace-test-ctrler",
 		NvmeController: &pb.NvmeController{
 			Spec: &pb.NvmeControllerSpec{
-				SubsystemId:      &pbc.ObjectKey{Value: rs1.Name},
+				SubsystemNameRef: rs1.Name,
 				PcieId:           &pb.PciEndpoint{PhysicalFunction: 1, VirtualFunction: 2, PortId: 3},
 				MaxNsq:           5,
 				MaxNcq:           6,
@@ -279,12 +279,12 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 			NvmeNamespaceId: resourceID,
 			NvmeNamespace: &pb.NvmeNamespace{
 				Spec: &pb.NvmeNamespaceSpec{
-					SubsystemId: &pbc.ObjectKey{Value: rs1.Name},
-					VolumeId:    &pbc.ObjectKey{Value: "Malloc1"},
-					Uuid:        &pbc.Uuid{Value: "1b4e28ba-2fa1-11d2-883f-b9a761bde3fb"},
-					Nguid:       "1b4e28ba-2fa1-11d2-883f-b9a761bde3fb",
-					Eui64:       1967554867335598546,
-					HostNsid:    1}}})
+					SubsystemNameRef: rs1.Name,
+					VolumeNameRef:    "Malloc1",
+					Uuid:             &pbc.Uuid{Value: "1b4e28ba-2fa1-11d2-883f-b9a761bde3fb"},
+					Nguid:            "1b4e28ba-2fa1-11d2-883f-b9a761bde3fb",
+					Eui64:            1967554867335598546,
+					HostNsid:         1}}})
 		if err != nil {
 			return err
 		}
@@ -307,12 +307,12 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 			NvmeNamespace: &pb.NvmeNamespace{
 				Name: rn1.Name,
 				Spec: &pb.NvmeNamespaceSpec{
-					SubsystemId: &pbc.ObjectKey{Value: rs1.Name},
-					VolumeId:    &pbc.ObjectKey{Value: "Malloc1"},
-					Uuid:        &pbc.Uuid{Value: "1b4e28ba-2fa1-11d2-883f-b9a761bde3fb"},
-					Nguid:       "1b4e28ba-2fa1-11d2-883f-b9a761bde3fb",
-					Eui64:       1967554867335598546,
-					HostNsid:    1}}})
+					SubsystemNameRef: rs1.Name,
+					VolumeNameRef:    "Malloc1",
+					Uuid:             &pbc.Uuid{Value: "1b4e28ba-2fa1-11d2-883f-b9a761bde3fb"},
+					Nguid:            "1b4e28ba-2fa1-11d2-883f-b9a761bde3fb",
+					Eui64:            1967554867335598546,
+					HostNsid:         1}}})
 		if err != nil {
 			return err
 		}
@@ -327,7 +327,7 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 			return err
 		}
 		log.Printf("Got NvmeNamespace: %v", rn5.Name)
-		rn6, err := c2.NvmeNamespaceStats(ctx, &pb.NvmeNamespaceStatsRequest{NamespaceId: &pbc.ObjectKey{Value: rn1.Name}})
+		rn6, err := c2.NvmeNamespaceStats(ctx, &pb.NvmeNamespaceStatsRequest{Name: rn1.Name})
 		if err != nil {
 			return err
 		}
@@ -385,7 +385,7 @@ func executeNvmeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 			NvmeControllerId: resourceID,
 			NvmeController: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemId:      &pbc.ObjectKey{Value: rs1.Name},
+					SubsystemNameRef: rs1.Name,
 					PcieId:           &pb.PciEndpoint{PhysicalFunction: 1, VirtualFunction: 2, PortId: 3},
 					MaxNsq:           5,
 					MaxNcq:           6,
@@ -414,7 +414,7 @@ func executeNvmeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 			NvmeController: &pb.NvmeController{
 				Name: rc1.Name,
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemId:      &pbc.ObjectKey{Value: rs1.Name},
+					SubsystemNameRef: rs1.Name,
 					PcieId:           &pb.PciEndpoint{PhysicalFunction: 3, VirtualFunction: 2, PortId: 1},
 					MaxNsq:           8,
 					MaxNcq:           7,
@@ -438,7 +438,7 @@ func executeNvmeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 		}
 		log.Printf("Got NvmeController: %s", rc5.Name)
 
-		rc6, err := c2.NvmeControllerStats(ctx, &pb.NvmeControllerStatsRequest{Id: &pbc.ObjectKey{Value: rc1.Name}})
+		rc6, err := c2.NvmeControllerStats(ctx, &pb.NvmeControllerStatsRequest{Name: rc1.Name})
 		if err != nil {
 			return err
 		}
@@ -514,7 +514,7 @@ func executeNvmeSubsystem(ctx context.Context, c1 pb.FrontendNvmeServiceClient) 
 		}
 		log.Printf("Got UpdateNvmeSubsystem: %s", rs5.Spec.Nqn)
 		rs6, err := c1.NvmeSubsystemStats(ctx, &pb.NvmeSubsystemStatsRequest{
-			SubsystemId: &pbc.ObjectKey{Value: rs1.Name}})
+			SubsystemNameRef: rs1.Name})
 		if err != nil {
 			return err
 		}
