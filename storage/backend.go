@@ -172,7 +172,7 @@ func executeNvmePath(ctx context.Context, c5 pb.NvmeRemoteControllerServiceClien
 		log.Printf("Created Nvme path: %v", np0)
 		np3, err := c5.UpdateNvmePath(ctx, &pb.UpdateNvmePathRequest{
 			UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"*"}},
-			NvmePath:   &pb.NvmePath{Name: np0.Name}})
+			NvmePath:   &pb.NvmePath{Name: np0.Name, ControllerNameRef: rr0.Name}})
 		if err != nil {
 			return err
 		}
