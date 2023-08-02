@@ -92,7 +92,7 @@ func executeVirtioScsiLun(ctx context.Context, c6 pb.FrontendVirtioScsiServiceCl
 		return err
 	}
 	log.Printf("Got VirtioScsiLun: %v", rl5.VolumeId.Value)
-	rl6, err := c6.VirtioScsiLunStats(ctx, &pb.VirtioScsiLunStatsRequest{ControllerId: &pbc.ObjectKey{Value: rl1.Name}})
+	rl6, err := c6.StatsVirtioScsiLun(ctx, &pb.StatsVirtioScsiLunRequest{Name: rl1.Name})
 	if err != nil {
 		return err
 	}
@@ -152,7 +152,7 @@ func executeVirtioScsiController(ctx context.Context, c5 pb.FrontendVirtioScsiSe
 			return err
 		}
 		log.Printf("Got VirtioScsiController: %s", rss5.Name)
-		rss6, err := c5.VirtioScsiControllerStats(ctx, &pb.VirtioScsiControllerStatsRequest{ControllerId: &pbc.ObjectKey{Value: rss1.Name}})
+		rss6, err := c5.StatsVirtioScsiController(ctx, &pb.StatsVirtioScsiControllerRequest{Name: rss1.Name})
 		if err != nil {
 			return err
 		}
@@ -173,7 +173,7 @@ func executeVirtioBlk(ctx context.Context, c4 pb.FrontendVirtioBlkServiceClient)
 
 	// testing with and without {resource}_id field
 	for _, resourceID := range []string{"opi-virtio-blk8", ""} {
-		rv1, err := c4.CreateVirtioBlk(ctx, &pb.CreateVirtioBlkRequest{VirtioBlkId: resourceID, VirtioBlk: &pb.VirtioBlk{Name: "", VolumeId: &pbc.ObjectKey{Value: "Malloc1"}}})
+		rv1, err := c4.CreateVirtioBlk(ctx, &pb.CreateVirtioBlkRequest{VirtioBlkId: resourceID, VirtioBlk: &pb.VirtioBlk{Name: "", VolumeNameRef: "Malloc1"}})
 		if err != nil {
 			return err
 		}
@@ -209,7 +209,7 @@ func executeVirtioBlk(ctx context.Context, c4 pb.FrontendVirtioBlkServiceClient)
 			return err
 		}
 		log.Printf("Got VirtioBlk: %v", rv5.Name)
-		rv6, err := c4.VirtioBlkStats(ctx, &pb.VirtioBlkStatsRequest{ControllerId: &pbc.ObjectKey{Value: rv1.Name}})
+		rv6, err := c4.StatsVirtioBlk(ctx, &pb.StatsVirtioBlkRequest{Name: rv1.Name})
 		if err != nil {
 			// VirtioBlkStats is not implemented, so no error here
 			log.Printf("could not stats VirtioBlk: %v", err)
@@ -327,7 +327,7 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 			return err
 		}
 		log.Printf("Got NvmeNamespace: %v", rn5.Name)
-		rn6, err := c2.NvmeNamespaceStats(ctx, &pb.NvmeNamespaceStatsRequest{Name: rn1.Name})
+		rn6, err := c2.StatsNvmeNamespace(ctx, &pb.StatsNvmeNamespaceRequest{Name: rn1.Name})
 		if err != nil {
 			return err
 		}
@@ -438,7 +438,7 @@ func executeNvmeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 		}
 		log.Printf("Got NvmeController: %s", rc5.Name)
 
-		rc6, err := c2.NvmeControllerStats(ctx, &pb.NvmeControllerStatsRequest{Name: rc1.Name})
+		rc6, err := c2.StatsNvmeController(ctx, &pb.StatsNvmeControllerRequest{Name: rc1.Name})
 		if err != nil {
 			return err
 		}
@@ -513,8 +513,7 @@ func executeNvmeSubsystem(ctx context.Context, c1 pb.FrontendNvmeServiceClient) 
 			return err
 		}
 		log.Printf("Got UpdateNvmeSubsystem: %s", rs5.Spec.Nqn)
-		rs6, err := c1.NvmeSubsystemStats(ctx, &pb.NvmeSubsystemStatsRequest{
-			SubsystemNameRef: rs1.Name})
+		rs6, err := c1.StatsNvmeSubsystem(ctx, &pb.StatsNvmeSubsystemRequest{Name: rs1.Name})
 		if err != nil {
 			return err
 		}

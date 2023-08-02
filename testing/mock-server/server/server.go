@@ -54,8 +54,8 @@ func (s *GoopCSI) GetNullVolume(_ context2.Context, _ *pb.GetNullVolumeRequest) 
 	panic("implement me")
 }
 
-// NullVolumeStats gets mock NullVolumeStats
-func (s *GoopCSI) NullVolumeStats(_ context2.Context, _ *pb.NullVolumeStatsRequest) (*pb.NullVolumeStatsResponse, error) {
+// StatsNullVolume gets mock StatsNullVolume
+func (s *GoopCSI) StatsNullVolume(_ context2.Context, _ *pb.StatsNullVolumeRequest) (*pb.StatsNullVolumeResponse, error) {
 	// TODO implement me
 	panic("implement me")
 }
@@ -94,14 +94,14 @@ func (s *GoopCSI) GetNvmeRemoteController(_ context2.Context, request *pb.GetNvm
 	return out, err
 }
 
-// NvmeRemoteControllerReset Resets mock Remote Controller
-func (s *GoopCSI) NvmeRemoteControllerReset(_ context2.Context, _ *pb.NvmeRemoteControllerResetRequest) (*emptypb.Empty, error) {
+// ResetNvmeRemoteController Resets mock Remote Controller
+func (s *GoopCSI) ResetNvmeRemoteController(_ context2.Context, _ *pb.ResetNvmeRemoteControllerRequest) (*emptypb.Empty, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-// NvmeRemoteControllerStats gets mock stats
-func (s *GoopCSI) NvmeRemoteControllerStats(_ context2.Context, _ *pb.NvmeRemoteControllerStatsRequest) (*pb.NvmeRemoteControllerStatsResponse, error) {
+// StatsNvmeRemoteController gets mock stats
+func (s *GoopCSI) StatsNvmeRemoteController(_ context2.Context, _ *pb.StatsNvmeRemoteControllerRequest) (*pb.StatsNvmeRemoteControllerResponse, error) {
 	// TODO implement me
 	panic("implement me")
 }
@@ -144,8 +144,8 @@ func (s *GoopCSI) GetNvmePath(_ context2.Context, _ *pb.GetNvmePathRequest) (*pb
 	panic("implement me")
 }
 
-// NvmePathStats gets mock stats
-func (s *GoopCSI) NvmePathStats(_ context2.Context, _ *pb.NvmePathStatsRequest) (*pb.NvmePathStatsResponse, error) {
+// StatsNvmePath gets mock stats
+func (s *GoopCSI) StatsNvmePath(_ context2.Context, _ *pb.StatsNvmePathRequest) (*pb.StatsNvmePathResponse, error) {
 	// TODO implement me
 	panic("implement me")
 }
@@ -182,8 +182,8 @@ func (s *GoopCSI) GetNvmeSubsystem(_ context.Context, request *pb.GetNvmeSubsyst
 	return out, err
 }
 
-// NvmeSubsystemStats gets mock subsystem stats
-func (s *GoopCSI) NvmeSubsystemStats(_ context.Context, _ *pb.NvmeSubsystemStatsRequest) (*pb.NvmeSubsystemStatsResponse, error) {
+// StatsNvmeSubsystem gets mock subsystem stats
+func (s *GoopCSI) StatsNvmeSubsystem(_ context.Context, _ *pb.StatsNvmeSubsystemRequest) (*pb.StatsNvmeSubsystemResponse, error) {
 	// TODO implement me
 	panic("implement me")
 }
@@ -219,8 +219,8 @@ func (s *GoopCSI) GetNvmeController(_ context.Context, request *pb.GetNvmeContro
 	return out, err
 }
 
-// NvmeControllerStats gets mock stats
-func (s *GoopCSI) NvmeControllerStats(_ context.Context, _ *pb.NvmeControllerStatsRequest) (*pb.NvmeControllerStatsResponse, error) {
+// StatsNvmeController gets mock stats
+func (s *GoopCSI) StatsNvmeController(_ context.Context, _ *pb.StatsNvmeControllerRequest) (*pb.StatsNvmeControllerResponse, error) {
 	// TODO implement me
 	panic("implement me")
 }
@@ -257,8 +257,8 @@ func (s *GoopCSI) GetNvmeNamespace(_ context.Context, _ *pb.GetNvmeNamespaceRequ
 	panic("implement me")
 }
 
-// NvmeNamespaceStats gets mock namespace stats
-func (s *GoopCSI) NvmeNamespaceStats(_ context.Context, _ *pb.NvmeNamespaceStatsRequest) (*pb.NvmeNamespaceStatsResponse, error) {
+// StatsNvmeNamespace gets mock namespace stats
+func (s *GoopCSI) StatsNvmeNamespace(_ context.Context, _ *pb.StatsNvmeNamespaceRequest) (*pb.StatsNvmeNamespaceResponse, error) {
 	// TODO implement me
 	panic("implement me")
 }

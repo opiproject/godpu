@@ -43,9 +43,9 @@ func executeEncryptedVolume(ctx context.Context, c1 pb.MiddleendEncryptionServic
 		rs1, err := c1.CreateEncryptedVolume(ctx, &pb.CreateEncryptedVolumeRequest{
 			EncryptedVolumeId: resourceID,
 			EncryptedVolume: &pb.EncryptedVolume{
-				VolumeId: &pc.ObjectKey{Value: "Malloc1"},
-				Key:      []byte("0123456789abcdef0123456789abcdee"),
-				Cipher:   pb.EncryptionType_ENCRYPTION_TYPE_AES_XTS_128,
+				VolumeNameRef: "Malloc1",
+				Key:           []byte("0123456789abcdef0123456789abcdee"),
+				Cipher:        pb.EncryptionType_ENCRYPTION_TYPE_AES_XTS_128,
 			},
 		})
 		if err != nil {
@@ -68,10 +68,10 @@ func executeEncryptedVolume(ctx context.Context, c1 pb.MiddleendEncryptionServic
 		rs3, err := c1.UpdateEncryptedVolume(ctx, &pb.UpdateEncryptedVolumeRequest{
 			UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"*"}},
 			EncryptedVolume: &pb.EncryptedVolume{
-				Name:     rs1.Name,
-				VolumeId: &pc.ObjectKey{Value: "Malloc1"},
-				Key:      []byte("0123456789abcdef0123456789abcdff"),
-				Cipher:   pb.EncryptionType_ENCRYPTION_TYPE_AES_XTS_128,
+				Name:          rs1.Name,
+				VolumeNameRef: "Malloc1",
+				Key:           []byte("0123456789abcdef0123456789abcdff"),
+				Cipher:        pb.EncryptionType_ENCRYPTION_TYPE_AES_XTS_128,
 			},
 		})
 		if err != nil {
@@ -88,7 +88,7 @@ func executeEncryptedVolume(ctx context.Context, c1 pb.MiddleendEncryptionServic
 			return err
 		}
 		log.Printf("Got EncryptedVolume: %s", rs5.Name)
-		rs6, err := c1.EncryptedVolumeStats(ctx, &pb.EncryptedVolumeStatsRequest{EncryptedVolumeId: &pc.ObjectKey{Value: rs1.Name}})
+		rs6, err := c1.StatsEncryptedVolume(ctx, &pb.StatsEncryptedVolumeRequest{Name: rs1.Name})
 		if err != nil {
 			return err
 		}
@@ -159,7 +159,7 @@ func executeQosVolume(ctx context.Context, c2 pb.MiddleendQosVolumeServiceClient
 			return err
 		}
 		log.Printf("Got QosVolume: %v", rs5.Name)
-		rs6, err := c2.QosVolumeStats(ctx, &pb.QosVolumeStatsRequest{VolumeId: &pc.ObjectKey{Value: rs1.Name}})
+		rs6, err := c2.StatsQosVolume(ctx, &pb.StatsQosVolumeRequest{Name: rs1.Name})
 		if err != nil {
 			return err
 		}

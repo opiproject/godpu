@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	pc "github.com/opiproject/opi-api/common/v1/gen/go"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 
 	"google.golang.org/grpc"
@@ -78,7 +77,7 @@ func executeNvmeRemoteController(ctx context.Context, c4 pb.NvmeRemoteController
 		}
 		log.Printf("Created Nvme controller: %v", rr0)
 		// continue
-		rr2, err := c4.NvmeRemoteControllerReset(ctx, &pb.NvmeRemoteControllerResetRequest{Name: rr0.Name})
+		rr2, err := c4.ResetNvmeRemoteController(ctx, &pb.ResetNvmeRemoteControllerRequest{Name: rr0.Name})
 		if err != nil {
 			return err
 		}
@@ -93,7 +92,7 @@ func executeNvmeRemoteController(ctx context.Context, c4 pb.NvmeRemoteController
 			return err
 		}
 		log.Printf("Got Nvme: %v", rr4)
-		rr5, err := c4.NvmeRemoteControllerStats(ctx, &pb.NvmeRemoteControllerStatsRequest{Name: rr0.Name})
+		rr5, err := c4.StatsNvmeRemoteController(ctx, &pb.StatsNvmeRemoteControllerRequest{Name: rr0.Name})
 		if err != nil {
 			return err
 		}
@@ -188,7 +187,7 @@ func executeNvmePath(ctx context.Context, c5 pb.NvmeRemoteControllerServiceClien
 			return err
 		}
 		log.Printf("Got Nvme path: %s", np5.Name)
-		np6, err := c5.NvmePathStats(ctx, &pb.NvmePathStatsRequest{Name: np0.Name})
+		np6, err := c5.StatsNvmePath(ctx, &pb.StatsNvmePathRequest{Name: np0.Name})
 		if err != nil {
 			return err
 		}
@@ -259,7 +258,7 @@ func executeNullVolume(ctx context.Context, c1 pb.NullVolumeServiceClient) error
 			return err
 		}
 		log.Printf("Got Null: %s", rs5.Name)
-		rs6, err := c1.NullVolumeStats(ctx, &pb.NullVolumeStatsRequest{Handle: &pc.ObjectKey{Value: rs1.Name}})
+		rs6, err := c1.StatsNullVolume(ctx, &pb.StatsNullVolumeRequest{Name: rs1.Name})
 		if err != nil {
 			return err
 		}
@@ -318,7 +317,7 @@ func executeAioVolume(ctx context.Context, c2 pb.AioVolumeServiceClient) error {
 			return err
 		}
 		log.Printf("Got Aio: %s", ra5.Name)
-		ra6, err := c2.AioVolumeStats(ctx, &pb.AioVolumeStatsRequest{Handle: &pc.ObjectKey{Value: ra1.Name}})
+		ra6, err := c2.StatsAioVolume(ctx, &pb.StatsAioVolumeRequest{Name: ra1.Name})
 		if err != nil {
 			return err
 		}
