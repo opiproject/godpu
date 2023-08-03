@@ -39,5 +39,6 @@ func newCommand() *cobra.Command {
 	c.AddCommand(cmd.NewTestCommand())
 	c.AddCommand(cmd.NewStatsCommand())
 	c.AddCommand(cmd.NewStorageTestCommand())
+	c.AddCommand(cmd.NewEvpnCommand())
 	return c
 }
