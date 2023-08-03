@@ -11,7 +11,6 @@ import (
 	"path"
 
 	"github.com/google/uuid"
-	pc "github.com/opiproject/opi-api/common/v1/gen/go"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 
 	"google.golang.org/grpc"
@@ -112,7 +111,7 @@ func executeQosVolume(ctx context.Context, c2 pb.MiddleendQosVolumeServiceClient
 		rs1, err := c2.CreateQosVolume(ctx, &pb.CreateQosVolumeRequest{
 			QosVolumeId: resourceID,
 			QosVolume: &pb.QosVolume{
-				VolumeId: &pc.ObjectKey{Value: "Malloc1"},
+				VolumeNameRef: "Malloc1",
 				MaxLimit: &pb.QosLimit{
 					RwBandwidthMbs: 2,
 				},
@@ -138,8 +137,8 @@ func executeQosVolume(ctx context.Context, c2 pb.MiddleendQosVolumeServiceClient
 		rs3, err := c2.UpdateQosVolume(ctx, &pb.UpdateQosVolumeRequest{
 			UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"*"}},
 			QosVolume: &pb.QosVolume{
-				Name:     rs1.Name,
-				VolumeId: &pc.ObjectKey{Value: "Malloc1"},
+				Name:          rs1.Name,
+				VolumeNameRef: "Malloc1",
 				MaxLimit: &pb.QosLimit{
 					RdBandwidthMbs: 2,
 				},
