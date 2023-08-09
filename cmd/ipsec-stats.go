@@ -6,6 +6,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/opiproject/godpu/ipsec"
 	"github.com/spf13/cobra"
@@ -28,5 +29,25 @@ func NewStatsCommand() *cobra.Command {
 	}
 	flags := cmd.Flags()
 	flags.StringVar(&addr, "addr", "localhost:50151", "address or OPI gRPC server")
+	return cmd
+}
+
+// NewIPSecCommand tests the  inventory
+func NewIPSecCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "ipsec",
+		Aliases: []string{"g"},
+		Short:   "Tests ipsec functionality",
+		Args:    cobra.NoArgs,
+		Run: func(cmd *cobra.Command, args []string) {
+			err := cmd.Help()
+			if err != nil {
+				log.Fatalf("[ERROR] %s", err.Error())
+			}
+		},
+	}
+
+	cmd.AddCommand(NewStatsCommand())
+	cmd.AddCommand(NewTestCommand())
 	return cmd
 }

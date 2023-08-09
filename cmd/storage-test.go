@@ -22,7 +22,7 @@ func NewStorageTestCommand() *cobra.Command {
 		addr string
 	)
 	cmd := &cobra.Command{
-		Use:     "storagetest",
+		Use:     "test",
 		Aliases: []string{"s"},
 		Short:   "Test storage functionality",
 		Args:    cobra.NoArgs,
@@ -70,5 +70,24 @@ func NewStorageTestCommand() *cobra.Command {
 	}
 	flags := cmd.Flags()
 	flags.StringVar(&addr, "addr", "localhost:50151", "address or OPI gRPC server")
+	return cmd
+}
+
+// NewStorageCommand tests the storage functionality
+func NewStorageCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "storage",
+		Aliases: []string{"g"},
+		Short:   "Tests storage functionality",
+		Args:    cobra.NoArgs,
+		Run: func(cmd *cobra.Command, args []string) {
+			err := cmd.Help()
+			if err != nil {
+				log.Fatalf("[ERROR] %s", err.Error())
+			}
+		},
+	}
+
+	cmd.AddCommand(NewStorageTestCommand())
 	return cmd
 }
