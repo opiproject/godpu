@@ -43,3 +43,23 @@ func NewGetCommand() *cobra.Command {
 	flags.StringVar(&addr, "addr", "localhost:50151", "address of OPI gRPC server")
 	return cmd
 }
+
+// NewInventoryCommand tests the  inventory
+func NewInventoryCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "inventory",
+		Aliases: []string{"g"},
+		Short:   "Tests inventory functionality",
+		Args:    cobra.NoArgs,
+		Run: func(cmd *cobra.Command, args []string) {
+			err := cmd.Help()
+			if err != nil {
+				log.Fatalf("[ERROR] %s", err.Error())
+			}
+		},
+	}
+
+	cmd.AddCommand(NewGetCommand())
+
+	return cmd
+}

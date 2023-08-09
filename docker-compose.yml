@@ -73,7 +73,7 @@ services:
     depends_on:
       opi-smbios-server:
         condition: service_healthy
-    command: get --addr opi-smbios-server:50051
+    command: inventory get --addr opi-smbios-server:50051
 
   opi-test:
     build:
@@ -83,7 +83,7 @@ services:
     depends_on:
       opi-spdk-server:
         condition: service_healthy
-    command: storagetest --addr opi-spdk-server:50051
+    command: storage test --addr opi-spdk-server:50051
 
 networks:
   opi:
