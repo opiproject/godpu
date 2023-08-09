@@ -65,6 +65,26 @@ services:
     healthcheck:
       test: grpcurl -plaintext localhost:50051 list || exit 1
 
+  opi-evpn-server:
+    image: docker.io/opiproject/opi-evpn-bridge:main
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - opi
+    command: /opi-evpn-bridge -port=50151
+    healthcheck:
+      test: grpcurl -plaintext localhost:50151 list || exit 1
+
+  opi-test-evpn:
+    build:
+      context: .
+    networks:
+      - opi
+    depends_on:
+      opi-evpn-server:
+        condition: service_healthy
+    command: evpn create-vrf --name blue --vni 100 --vtep 10.0.0.100/24 --loopback 10.100.0.1/24 --addr opi-evpn-server:50151
+
   opi-test-smbios:
     build:
       context: .
