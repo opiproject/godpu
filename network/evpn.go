@@ -74,6 +74,10 @@ type EvpnClient interface {
 	UpdateSvi(ctx context.Context, name string, updateMask []string, allowMissing bool) (*pb.Svi, error)
 }
 
+func resourceIDToFullName(container string, resourceID string) string {
+	return fmt.Sprintf("//network.opiproject.org/%s/%s", container, resourceID)
+}
+
 // NewLogicalBridge creates an evpn Logical Bridge client for use with OPI server at the given address
 func NewLogicalBridge(addr string) (EvpnClient, error) {
 	c, err := grpcOpi.New(addr)
@@ -274,8 +278,8 @@ func (c evpnClientImpl) CreateLogicalBridge(ctx context.Context, name string, vl
 	client := c.getEvpnLogicalBridgeClient(conn)
 
 	data, err := client.CreateLogicalBridge(ctx, &pb.CreateLogicalBridgeRequest{
+		LogicalBridgeId: name,
 		LogicalBridge: &pb.LogicalBridge{
-			Name: name,
 			Spec: &pb.LogicalBridgeSpec{
 				VlanId: vlanID,
 				Vni:    vni,
@@ -302,7 +306,7 @@ func (c evpnClientImpl) DeleteLogicalBridge(ctx context.Context, name string, al
 	client := c.getEvpnLogicalBridgeClient(conn)
 
 	data, err := client.DeleteLogicalBridge(ctx, &pb.DeleteLogicalBridgeRequest{
-		Name:         name,
+		Name:         resourceIDToFullName("bridges", name),
 		AllowMissing: allowMissing,
 	})
 	if err != nil {
@@ -325,7 +329,7 @@ func (c evpnClientImpl) GetLogicalBridge(ctx context.Context, name string) (*pb.
 	client := c.getEvpnLogicalBridgeClient(conn)
 
 	data, err := client.GetLogicalBridge(ctx, &pb.GetLogicalBridgeRequest{
-		Name: name,
+		Name: resourceIDToFullName("bridges", name),
 	})
 	if err != nil {
 		log.Printf("error getting logical bridge: %s\n", err)
@@ -369,7 +373,7 @@ func (c evpnClientImpl) UpdateLogicalBridge(ctx context.Context, name string, up
 
 	client := c.getEvpnLogicalBridgeClient(conn)
 	Bridge := &pb.LogicalBridge{
-		Name: name,
+		Name: resourceIDToFullName("bridges", name),
 	}
 	data, err := client.UpdateLogicalBridge(ctx, &pb.UpdateLogicalBridgeRequest{
 		LogicalBridge: Bridge,
@@ -403,8 +407,8 @@ func (c evpnClientImpl) CreateBridgePort(ctx context.Context, name string, mac s
 		typeOfPort = pb.BridgePortType_UNKNOWN
 	}
 	data, err := client.CreateBridgePort(ctx, &pb.CreateBridgePortRequest{
+		BridgePortId: name,
 		BridgePort: &pb.BridgePort{
-			Name: name,
 			Spec: &pb.BridgePortSpec{
 				MacAddress:     []byte(mac),
 				Ptype:          typeOfPort,
@@ -431,7 +435,7 @@ func (c evpnClientImpl) DeleteBridgePort(ctx context.Context, name string, allow
 
 	client := c.getEvpnBridgePortClient(conn)
 	data, err := client.DeleteBridgePort(ctx, &pb.DeleteBridgePortRequest{
-		Name:         name,
+		Name:         resourceIDToFullName("ports", name),
 		AllowMissing: allowMissing,
 	})
 	if err != nil {
@@ -453,7 +457,7 @@ func (c evpnClientImpl) GetBridgePort(ctx context.Context, name string) (*pb.Bri
 
 	client := c.getEvpnBridgePortClient(conn)
 	data, err := client.GetBridgePort(ctx, &pb.GetBridgePortRequest{
-		Name: name,
+		Name: resourceIDToFullName("ports", name),
 	})
 	if err != nil {
 		log.Printf("error getting Bridge Port: %s\n", err)
@@ -496,7 +500,7 @@ func (c evpnClientImpl) UpdateBridgePort(ctx context.Context, name string, updat
 
 	client := c.getEvpnBridgePortClient(conn)
 	Port := &pb.BridgePort{
-		Name: name,
+		Name: resourceIDToFullName("ports", name),
 	}
 	data, err := client.UpdateBridgePort(ctx, &pb.UpdateBridgePortRequest{
 		BridgePort:   Port,
@@ -532,8 +536,8 @@ func (c evpnClientImpl) CreateVrf(ctx context.Context, name string, vni uint32, 
 		return nil, err
 	}
 	data, err := client.CreateVrf(ctx, &pb.CreateVrfRequest{
+		VrfId: name,
 		Vrf: &pb.Vrf{
-			Name: name,
 			Spec: &pb.VrfSpec{
 				Vni:              vni,
 				LoopbackIpPrefix: ipLoopback,
@@ -559,7 +563,7 @@ func (c evpnClientImpl) DeleteVrf(ctx context.Context, name string, allowMissing
 	defer closer()
 	client := c.getEvpnVRFClient(conn)
 	data, err := client.DeleteVrf(ctx, &pb.DeleteVrfRequest{
-		Name:         name,
+		Name:         resourceIDToFullName("vrfs", name),
 		AllowMissing: allowMissing,
 	})
 	if err != nil {
@@ -580,7 +584,7 @@ func (c evpnClientImpl) GetVrf(ctx context.Context, name string) (*pb.Vrf, error
 	defer closer()
 	client := c.getEvpnVRFClient(conn)
 	data, err := client.GetVrf(ctx, &pb.GetVrfRequest{
-		Name: name,
+		Name: resourceIDToFullName("vrfs", name),
 	})
 	if err != nil {
 		log.Printf("error getting vrf: %s\n", err)
@@ -621,7 +625,7 @@ func (c evpnClientImpl) UpdateVrf(ctx context.Context, name string, updateMask [
 	defer closer()
 	client := c.getEvpnVRFClient(conn)
 	vrf, err := client.GetVrf(ctx, &pb.GetVrfRequest{
-		Name: name,
+		Name: resourceIDToFullName("vrfs", name),
 	})
 	if err != nil {
 		log.Printf("error updating vrf: %s\n", err)
@@ -657,8 +661,8 @@ func (c evpnClientImpl) CreateSvi(ctx context.Context, name string, vrf string, 
 		return nil, err
 	}
 	data, err := client.CreateSvi(ctx, &pb.CreateSviRequest{
+		SviId: name,
 		Svi: &pb.Svi{
-			Name: name,
 			Spec: &pb.SviSpec{
 				Vrf:           vrf,
 				LogicalBridge: logicalBridge,
@@ -687,7 +691,7 @@ func (c evpnClientImpl) DeleteSvi(ctx context.Context, name string, allowMissing
 	defer closer()
 	client := c.getEvpnSVIClient(conn)
 	data, err := client.DeleteSvi(ctx, &pb.DeleteSviRequest{
-		Name:         name,
+		Name:         resourceIDToFullName("svis", name),
 		AllowMissing: allowMissing,
 	})
 	if err != nil {
@@ -708,7 +712,7 @@ func (c evpnClientImpl) GetSvi(ctx context.Context, name string) (*pb.Svi, error
 	defer closer()
 	client := c.getEvpnSVIClient(conn)
 	data, err := client.GetSvi(ctx, &pb.GetSviRequest{
-		Name: name,
+		Name: resourceIDToFullName("svis", name),
 	})
 	if err != nil {
 		log.Printf("error getting svi: %s\n", err)
@@ -749,7 +753,7 @@ func (c evpnClientImpl) UpdateSvi(ctx context.Context, name string, updateMask [
 	defer closer()
 	client := c.getEvpnSVIClient(conn)
 	svi, err := client.GetSvi(ctx, &pb.GetSviRequest{
-		Name: name,
+		Name: resourceIDToFullName("svis", name),
 	})
 	if err != nil {
 		log.Printf("error getting svi: %s\n", err)
