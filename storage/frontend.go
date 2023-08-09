@@ -14,9 +14,11 @@ import (
 	"github.com/google/uuid"
 	pbc "github.com/opiproject/opi-api/common/v1/gen/go"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
+	"google.golang.org/protobuf/proto"
 
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // DoFrontend executes the front end code
@@ -58,7 +60,15 @@ func executeVirtioScsiLun(ctx context.Context, c6 pb.FrontendVirtioScsiServiceCl
 	log.Printf("=======================================")
 	const resourceID = "opi-virtio-scsi8"
 	// pre create: controller
-	rss1, err := c6.CreateVirtioScsiController(ctx, &pb.CreateVirtioScsiControllerRequest{VirtioScsiControllerId: resourceID, VirtioScsiController: &pb.VirtioScsiController{Name: ""}})
+	rss1, err := c6.CreateVirtioScsiController(ctx, &pb.CreateVirtioScsiControllerRequest{
+		VirtioScsiControllerId: resourceID,
+		VirtioScsiController: &pb.VirtioScsiController{
+			Name: "",
+			PcieId: &pb.PciEndpoint{
+				PhysicalFunction: wrapperspb.Int32(1),
+				VirtualFunction:  wrapperspb.Int32(2),
+				PortId:           wrapperspb.Int32(3)},
+		}})
 	if err != nil {
 		return err
 	}
@@ -117,7 +127,15 @@ func executeVirtioScsiController(ctx context.Context, c5 pb.FrontendVirtioScsiSe
 
 	// testing with and without {resource}_id field
 	for _, resourceID := range []string{"opi-virtio-scsi8", ""} {
-		rss1, err := c5.CreateVirtioScsiController(ctx, &pb.CreateVirtioScsiControllerRequest{VirtioScsiControllerId: resourceID, VirtioScsiController: &pb.VirtioScsiController{Name: ""}})
+		rss1, err := c5.CreateVirtioScsiController(ctx, &pb.CreateVirtioScsiControllerRequest{
+			VirtioScsiControllerId: resourceID,
+			VirtioScsiController: &pb.VirtioScsiController{
+				Name: "",
+				PcieId: &pb.PciEndpoint{
+					PhysicalFunction: wrapperspb.Int32(1),
+					VirtualFunction:  wrapperspb.Int32(2),
+					PortId:           wrapperspb.Int32(3)},
+			}})
 		if err != nil {
 			return err
 		}
@@ -136,8 +154,14 @@ func executeVirtioScsiController(ctx context.Context, c5 pb.FrontendVirtioScsiSe
 		}
 		log.Printf("Added VirtioScsiController: %v", rss1)
 		rss3, err := c5.UpdateVirtioScsiController(ctx, &pb.UpdateVirtioScsiControllerRequest{
-			UpdateMask:           &fieldmaskpb.FieldMask{Paths: []string{"*"}},
-			VirtioScsiController: &pb.VirtioScsiController{Name: rss1.Name}})
+			UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"*"}},
+			VirtioScsiController: &pb.VirtioScsiController{
+				Name: rss1.Name,
+				PcieId: &pb.PciEndpoint{
+					PhysicalFunction: wrapperspb.Int32(1),
+					VirtualFunction:  wrapperspb.Int32(2),
+					PortId:           wrapperspb.Int32(3)},
+			}})
 		if err != nil {
 			return err
 		}
@@ -173,7 +197,16 @@ func executeVirtioBlk(ctx context.Context, c4 pb.FrontendVirtioBlkServiceClient)
 
 	// testing with and without {resource}_id field
 	for _, resourceID := range []string{"opi-virtio-blk8", ""} {
-		rv1, err := c4.CreateVirtioBlk(ctx, &pb.CreateVirtioBlkRequest{VirtioBlkId: resourceID, VirtioBlk: &pb.VirtioBlk{Name: "", VolumeNameRef: "Malloc1"}})
+		rv1, err := c4.CreateVirtioBlk(ctx, &pb.CreateVirtioBlkRequest{
+			VirtioBlkId: resourceID,
+			VirtioBlk: &pb.VirtioBlk{
+				Name:          "",
+				VolumeNameRef: "Malloc1",
+				PcieId: &pb.PciEndpoint{
+					PhysicalFunction: wrapperspb.Int32(1),
+					VirtualFunction:  wrapperspb.Int32(2),
+					PortId:           wrapperspb.Int32(3)},
+			}})
 		if err != nil {
 			return err
 		}
@@ -253,12 +286,15 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 		NvmeController: &pb.NvmeController{
 			Spec: &pb.NvmeControllerSpec{
 				SubsystemNameRef: rs1.Name,
-				PcieId:           &pb.PciEndpoint{PhysicalFunction: 1, VirtualFunction: 2, PortId: 3},
+				PcieId: &pb.PciEndpoint{
+					PhysicalFunction: wrapperspb.Int32(1),
+					VirtualFunction:  wrapperspb.Int32(2),
+					PortId:           wrapperspb.Int32(3)},
 				MaxNsq:           5,
 				MaxNcq:           6,
 				Sqes:             7,
 				Cqes:             8,
-				NvmeControllerId: 1}}})
+				NvmeControllerId: proto.Int32(1)}}})
 	if err != nil {
 		return err
 	}
@@ -386,12 +422,15 @@ func executeNvmeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 			NvmeController: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemNameRef: rs1.Name,
-					PcieId:           &pb.PciEndpoint{PhysicalFunction: 1, VirtualFunction: 2, PortId: 3},
+					PcieId: &pb.PciEndpoint{
+						PhysicalFunction: wrapperspb.Int32(1),
+						VirtualFunction:  wrapperspb.Int32(2),
+						PortId:           wrapperspb.Int32(3)},
 					MaxNsq:           5,
 					MaxNcq:           6,
 					Sqes:             7,
 					Cqes:             8,
-					NvmeControllerId: 1}}})
+					NvmeControllerId: proto.Int32(1)}}})
 		if err != nil {
 			return err
 		}
@@ -415,12 +454,15 @@ func executeNvmeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 				Name: rc1.Name,
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemNameRef: rs1.Name,
-					PcieId:           &pb.PciEndpoint{PhysicalFunction: 3, VirtualFunction: 2, PortId: 1},
+					PcieId: &pb.PciEndpoint{
+						PhysicalFunction: wrapperspb.Int32(3),
+						VirtualFunction:  wrapperspb.Int32(2),
+						PortId:           wrapperspb.Int32(1)},
 					MaxNsq:           8,
 					MaxNcq:           7,
 					Sqes:             6,
 					Cqes:             5,
-					NvmeControllerId: 1}}})
+					NvmeControllerId: proto.Int32(1)}}})
 		if err != nil {
 			return err
 		}
