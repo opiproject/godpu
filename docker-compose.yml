@@ -75,7 +75,7 @@ services:
     healthcheck:
       test: grpcurl -plaintext localhost:50151 list || exit 1
 
-  opi-test-evpn:
+  opi-evpn-test:
     build:
       context: .
     networks:
@@ -85,7 +85,7 @@ services:
         condition: service_healthy
     command: evpn create-vrf --name blue --vni 100 --vtep 10.0.0.100/24 --loopback 10.100.0.1/24 --addr opi-evpn-server:50151
 
-  opi-test-smbios:
+  opi-smbios-test:
     build:
       context: .
     networks:
@@ -95,7 +95,7 @@ services:
         condition: service_healthy
     command: inventory get --addr opi-smbios-server:50051
 
-  opi-test:
+  opi-storage-test:
     build:
       context: .
     networks:
@@ -104,6 +104,15 @@ services:
       opi-spdk-server:
         condition: service_healthy
     command: storage test --addr opi-spdk-server:50051
+
+  opi-test:
+    image: docker.io/library/alpine:3.18
+    networks:
+      - opi
+    depends_on:
+      - opi-evpn-test
+      - opi-smbios-test
+      - opi-storage-test
 
 networks:
   opi:
