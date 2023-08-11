@@ -76,7 +76,7 @@ func executeVirtioScsiLun(ctx context.Context, c6 pb.FrontendVirtioScsiServiceCl
 	if rss1.Name != ctrlrName {
 		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rss1.Name, ctrlrName)
 	}
-	rl1, err := c6.CreateVirtioScsiLun(ctx, &pb.CreateVirtioScsiLunRequest{VirtioScsiLunId: resourceID, VirtioScsiLun: &pb.VirtioScsiLun{Name: "", TargetId: &pbc.ObjectKey{Value: resourceID}, VolumeId: &pbc.ObjectKey{Value: "Malloc1"}}})
+	rl1, err := c6.CreateVirtioScsiLun(ctx, &pb.CreateVirtioScsiLunRequest{VirtioScsiLunId: resourceID, VirtioScsiLun: &pb.VirtioScsiLun{Name: "", TargetNameRef: resourceID, VolumeNameRef: "Malloc1"}})
 	if err != nil {
 		return err
 	}
@@ -87,7 +87,7 @@ func executeVirtioScsiLun(ctx context.Context, c6 pb.FrontendVirtioScsiServiceCl
 	log.Printf("Added VirtioScsiLun: %v", rl1)
 	rl3, err := c6.UpdateVirtioScsiLun(ctx, &pb.UpdateVirtioScsiLunRequest{
 		UpdateMask:    &fieldmaskpb.FieldMask{Paths: []string{"*"}},
-		VirtioScsiLun: &pb.VirtioScsiLun{Name: rl1.Name, TargetId: &pbc.ObjectKey{Value: resourceID}, VolumeId: &pbc.ObjectKey{Value: "Malloc1"}}})
+		VirtioScsiLun: &pb.VirtioScsiLun{Name: rl1.Name, TargetNameRef: resourceID, VolumeNameRef: "Malloc1"}})
 	if err != nil {
 		return err
 	}
@@ -101,7 +101,7 @@ func executeVirtioScsiLun(ctx context.Context, c6 pb.FrontendVirtioScsiServiceCl
 	if err != nil {
 		return err
 	}
-	log.Printf("Got VirtioScsiLun: %v", rl5.VolumeId.Value)
+	log.Printf("Got VirtioScsiLun: %v", rl5.VolumeNameRef)
 	rl6, err := c6.StatsVirtioScsiLun(ctx, &pb.StatsVirtioScsiLunRequest{Name: rl1.Name})
 	if err != nil {
 		return err
