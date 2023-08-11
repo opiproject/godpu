@@ -8,8 +8,6 @@ package network
 import (
 	"fmt"
 	"net"
-	"strconv"
-	"strings"
 
 	pc "github.com/opiproject/opi-api/network/opinetcommon/v1alpha1/gen/go"
 )
@@ -21,51 +19,29 @@ func ip4ToInt(ip net.IP) uint32 {
 
 // Function to parse IP address and prefix from a string of the form "IP/PREFIX"
 func parseIPAndPrefix(ipPrefixStr string) (*pc.IPPrefix, error) {
-	parts := strings.Split(ipPrefixStr, "/")
-	if len(parts) != 2 {
-		return nil, fmt.Errorf("invalid IP address with prefix: %s", ipPrefixStr)
-	}
-
-	ipAddress := parts[0]
-	prefixLength64, err := strconv.ParseInt(parts[1], 10, 32)
-
+	ip, ipnet, err := net.ParseCIDR(ipPrefixStr)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse prefix length: %s", err)
+		return nil, err
 	}
 
-	prefixLength := int32(prefixLength64)
+	prefixLength, _ := ipnet.Mask.Size()
+	addr := &pc.IPAddress{}
 
-	ip := net.ParseIP(ipAddress)
-	if ip == nil {
-		return nil, fmt.Errorf("invalid IP address: %s", ipAddress)
-	}
-
-	addressFamily := int32(0)
-	var ipv4Addr uint32
-	var ipv6Addr []byte
-	var addr *pc.IPAddress
 	if ip.To4() != nil {
-		addressFamily = 1 // IPv4
-		ipv4Addr = ip4ToInt(ip.To4())
-		addr = &pc.IPAddress{
-			Af: pc.IpAf(addressFamily),
-			V4OrV6: &pc.IPAddress_V4Addr{
-				V4Addr: ipv4Addr,
-			},
+		addr.Af = pc.IpAf_IP_AF_INET
+		addr.V4OrV6 = &pc.IPAddress_V4Addr{
+			V4Addr: ip4ToInt(ip.To4()),
 		}
 	} else {
-		addressFamily = 2 // IPv6
-		ipv6Addr = ip.To16()
-		addr = &pc.IPAddress{
-			Af: pc.IpAf(addressFamily),
-			V4OrV6: &pc.IPAddress_V6Addr{
-				V6Addr: ipv6Addr,
-			},
+		addr.Af = pc.IpAf_IP_AF_INET6
+		addr.V4OrV6 = &pc.IPAddress_V6Addr{
+			V6Addr: ip.To16(),
 		}
 	}
+
 	return &pc.IPPrefix{
 		Addr: addr,
-		Len:  prefixLength,
+		Len:  int32(prefixLength),
 	}, nil
 }
 
