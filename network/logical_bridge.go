@@ -30,7 +30,7 @@ func (c evpnClientImpl) CreateLogicalBridge(ctx context.Context, name string, vl
 		LogicalBridge: &pb.LogicalBridge{
 			Spec: &pb.LogicalBridgeSpec{
 				VlanId: vlanID,
-				Vni:    vni,
+				Vni:    &vni,
 			},
 		},
 	})

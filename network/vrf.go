@@ -38,7 +38,7 @@ func (c evpnClientImpl) CreateVrf(ctx context.Context, name string, vni uint32, 
 		VrfId: name,
 		Vrf: &pb.Vrf{
 			Spec: &pb.VrfSpec{
-				Vni:              vni,
+				Vni:              &vni,
 				LoopbackIpPrefix: ipLoopback,
 				VtepIpPrefix:     ipVtep,
 			},
