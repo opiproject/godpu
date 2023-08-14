@@ -47,15 +47,15 @@ func parseIPAndPrefix(ipPrefixStr string) (*pc.IPPrefix, error) {
 
 // Function to parse an array of IP prefixes from strings to pb.IPPrefix messages
 func parseIPPrefixes(ipPrefixesStr []string) ([]*pc.IPPrefix, error) {
-	const maxPrefixes = 10 // Update this to your expected maximum number of prefixes
-	var ipPrefixes = make([]*pc.IPPrefix, 0, maxPrefixes)
+	ipPrefixes := make([]*pc.IPPrefix, len(ipPrefixesStr))
 
-	for _, ipPrefixStr := range ipPrefixesStr {
+	for i, ipPrefixStr := range ipPrefixesStr {
 		ipPrefix, err := parseIPAndPrefix(ipPrefixStr)
 		if err != nil {
 			return nil, fmt.Errorf("failed to parse IP prefix: %v", err)
 		}
-		ipPrefixes = append(ipPrefixes, ipPrefix)
+		ipPrefixes[i] = ipPrefix
 	}
+
 	return ipPrefixes, nil
 }
