@@ -35,7 +35,7 @@ func CreateVRF() *cobra.Command {
 
 			vrf, err := evpnClient.CreateVrf(ctx, name, vni, loopback, vtep)
 			if err != nil {
-				log.Fatalf("failed to create logical bridge: %v", err)
+				log.Fatalf("failed to create vrf: %v", err)
 			}
 			log.Printf("Created VRF with \n name: %s\n operation status: %d\n vni : %d\n vtep ip : %s\n loopback ip: %s\n", vrf.GetName(), vrf.GetStatus().GetOperStatus(),
 				vrf.GetSpec().GetVni(), vrf.GetSpec().GetVtepIpPrefix(), vrf.GetSpec().GetLoopbackIpPrefix())
