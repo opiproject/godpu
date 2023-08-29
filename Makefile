@@ -66,3 +66,11 @@ mock-generate:
 	mockery --config=mocks/.mockery.yaml --name=VrfServiceClient --srcpkg=github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go
 	mockery --config=mocks/.mockery.yaml --name=BridgePortServiceClient --srcpkg=github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go
 	mockery --config=mocks/.mockery.yaml --name=LogicalBridgeServiceClient --srcpkg=github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go
+	mockery --config=mocks/.mockery.yaml --name=MiddleendEncryptionServiceClient --srcpkg=github.com/opiproject/opi-api/storage/v1alpha1/gen/go
+	mockery --config=mocks/.mockery.yaml --name=MiddleendQosVolumeServiceClient --srcpkg=github.com/opiproject/opi-api/storage/v1alpha1/gen/go
+	mockery --config=mocks/.mockery.yaml --name=NvmeRemoteControllerServiceClient --srcpkg=github.com/opiproject/opi-api/storage/v1alpha1/gen/go
+	mockery --config=mocks/.mockery.yaml --name=NullVolumeServiceClient --srcpkg=github.com/opiproject/opi-api/storage/v1alpha1/gen/go
+	mockery --config=mocks/.mockery.yaml --name=AioVolumeServiceClient --srcpkg=github.com/opiproject/opi-api/storage/v1alpha1/gen/go
+	mockery --config=mocks/.mockery.yaml --name=FrontendNvmeServiceClient --srcpkg=github.com/opiproject/opi-api/storage/v1alpha1/gen/go
+	mockery --config=mocks/.mockery.yaml --name=FrontendVirtioBlkServiceClient --srcpkg=github.com/opiproject/opi-api/storage/v1alpha1/gen/go
+	mockery --config=mocks/.mockery.yaml --name=FrontendVirtioScsiServiceClient --srcpkg=github.com/opiproject/opi-api/storage/v1alpha1/gen/go
