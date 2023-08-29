@@ -72,3 +72,10 @@ docker run --rm -it -v `pwd`:/app -w /app golang:alpine go mod edit -replace git
 docker run --rm -it -v `pwd`:/app -w /app golang:alpine go get -u github.com/YOURUSERNAME/opi-api/storage/v1alpha1/gen/go@a98ca449468a
 docker run --rm -it -v `pwd`:/app -w /app golang:alpine go mod tidy
 ```
+
+Generate mocks like this:
+
+```bash
+go install github.com/vektra/mockery/v2@latest
+make mock-generate
+```
