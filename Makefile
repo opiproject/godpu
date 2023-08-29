@@ -10,14 +10,18 @@ MAKEFLAGS += --silent
 go-compile: go-get go-build
 
 tools:
-	go install golang.org/x/tools/cmd/goimports
-	go install github.com/kisielk/errcheck
+
+	go get golang.org/x/tools/cmd/goimports
+	go get github.com/kisielk/errcheck
 	go get github.com/axw/gocov/gocov
 	go get github.com/matm/gocov-html
 	go get github.com/tools/godep
 	go get github.com/mitchellh/gox
 	go get github.com/onsi/ginkgo
 	go get -u golang.org/x/lint/golint
+	go install golang.org/x/tools/cmd/goimports
+	go install github.com/kisielk/errcheck
+	go install github.com/vektra/mockery/v2@latest
 
 go-build:
 	@echo "  >  Building binaries..."
@@ -57,3 +61,7 @@ mock-generate:
 
 	# Generate mocks for imported protobuf clients too
 	mockery --config=mocks/.mockery.yaml --name=InventorySvcClient --srcpkg=github.com/opiproject/opi-api/common/v1/gen/go
+	mockery --config=mocks/.mockery.yaml --name=SviServiceClient --srcpkg=github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go
+	mockery --config=mocks/.mockery.yaml --name=VrfServiceClient --srcpkg=github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go
+	mockery --config=mocks/.mockery.yaml --name=BridgePortServiceClient --srcpkg=github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go
+	mockery --config=mocks/.mockery.yaml --name=LogicalBridgeServiceClient --srcpkg=github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go
