@@ -9,6 +9,16 @@ MAKEFLAGS += --silent
 
 go-compile: go-get go-build
 
+tools:
+	go install golang.org/x/tools/cmd/goimports
+	go install github.com/kisielk/errcheck
+	go get github.com/axw/gocov/gocov
+	go get github.com/matm/gocov-html
+	go get github.com/tools/godep
+	go get github.com/mitchellh/gox
+	go get github.com/onsi/ginkgo
+	go get -u golang.org/x/lint/golint
+
 go-build:
 	@echo "  >  Building binaries..."
 	@CGO_ENABLED=0 go build -o ${PROJECTNAME} .
@@ -22,6 +32,21 @@ go-test:
 	# can replace with a recursive command ginkgo suites are defined for all packages
 	ginkgo grpc inventory
 	ginkgo grpc network
+
+go-vet:
+	@CGO_ENABLED=0 go vet -v ./...
+
+go-errors:
+	errcheck -ignoretests -blank ./...
+
+go-lint:
+	golint ./...
+
+go-imports:
+	goimports -l -w .
+
+go-fmt:
+	@CGO_ENABLED=0 go fmt ./...
 
 mock-generate:
 	@echo "  >  Starting mock code generation..."
