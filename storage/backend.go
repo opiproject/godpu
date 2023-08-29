@@ -172,7 +172,16 @@ func executeNvmePath(ctx context.Context, c5 pb.NvmeRemoteControllerServiceClien
 		log.Printf("Created Nvme path: %v", np0)
 		np3, err := c5.UpdateNvmePath(ctx, &pb.UpdateNvmePathRequest{
 			UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"*"}},
-			NvmePath:   &pb.NvmePath{Name: np0.Name, ControllerNameRef: rr0.Name}})
+			NvmePath: &pb.NvmePath{
+				Name:              np0.Name,
+				Trtype:            pb.NvmeTransportType_NVME_TRANSPORT_TCP,
+				Adrfam:            pb.NvmeAddressFamily_NVME_ADRFAM_IPV4,
+				Traddr:            addr[0].String(),
+				Trsvcid:           int64(port),
+				Subnqn:            "nqn.2016-06.io.spdk:cnode1",
+				Hostnqn:           "nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c",
+				ControllerNameRef: rr0.Name,
+			}})
 		if err != nil {
 			return err
 		}
@@ -243,7 +252,11 @@ func executeNullVolume(ctx context.Context, c1 pb.NullVolumeServiceClient) error
 		// continue
 		rs3, err := c1.UpdateNullVolume(ctx, &pb.UpdateNullVolumeRequest{
 			UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"*"}},
-			NullVolume: &pb.NullVolume{Name: rs1.Name}})
+			NullVolume: &pb.NullVolume{
+				Name:        rs1.Name,
+				BlockSize:   512,
+				BlocksCount: 128,
+			}})
 		if err != nil {
 			return err
 		}
