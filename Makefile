@@ -21,12 +21,14 @@ go-test:
 	@echo "  >  Running ginkgo test suites..."
 	# can replace with a recursive command ginkgo suites are defined for all packages
 	ginkgo grpc inventory
+	ginkgo grpc network
 
 mock-generate:
 	@echo "  >  Starting mock code generation..."
 	# Generate mocks for exported interfaces
 	mockery --config=mocks/.mockery.yaml --name=Connector --dir=grpc
 	mockery --config=mocks/.mockery.yaml --name=InvClient --dir=inventory
+	mockery --config=mocks/.mockery.yaml --name=EvpnClient --dir=network
 
 	# Generate mocks for imported protobuf clients too
 	mockery --config=mocks/.mockery.yaml --name=InventorySvcClient --srcpkg=github.com/opiproject/opi-api/common/v1/gen/go
