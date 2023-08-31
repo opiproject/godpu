@@ -2,7 +2,6 @@
 
 ## [0.2.0](https://github.com/opiproject/godpu/compare/v0.1.1...v0.2.0) (2023-08-31)
 
-
 ### Features
 
 * **evpn unit test:** adding auto generated mocks ([e63ade7](https://github.com/opiproject/godpu/commit/e63ade7f23a75a15c423c67e951d659a50766c5c))
@@ -13,7 +12,6 @@
 * **storage:** change id refs to name ([05c9949](https://github.com/opiproject/godpu/commit/05c9949f5ffb6c33db1f3fcfda8f21231a9523f9))
 * **storage:** renaming Aio and Null to Volume ([6586529](https://github.com/opiproject/godpu/commit/65865290c1a69467ec8a022abc30197b023fd467))
 * **storage:** required changes after annotations ([a3eccaf](https://github.com/opiproject/godpu/commit/a3eccafdb0b083fe1b4d248b08ab610f92d5cc54))
-
 
 ### Bug Fixes
 
