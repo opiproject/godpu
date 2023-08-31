@@ -14,5 +14,5 @@ jobs:
       contents: read
       packages: write
       id-token: write
-    uses: ./.github/workflows/docker-publish.yaml
+    uses: ./.github/workflows/docker-publish.yml
     secrets: inherit
