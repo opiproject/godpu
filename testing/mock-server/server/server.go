@@ -112,6 +112,12 @@ func (s *GoopCSI) ListNvmeRemoteNamespaces(context2.Context, *pb.ListNvmeRemoteN
 	panic("implement me")
 }
 
+// GetNvmeRemoteNamespace gets mock remote nvme namespace
+func (s *GoopCSI) GetNvmeRemoteNamespace(_ context2.Context, _ *pb.GetNvmeRemoteNamespaceRequest) (*pb.NvmeRemoteNamespace, error) {
+	// TODO implement me
+	panic("implement me")
+}
+
 // CreateNvmePath creates mock nvme path
 func (s *GoopCSI) CreateNvmePath(_ context2.Context, request *pb.CreateNvmePathRequest) (*pb.NvmePath, error) {
 	out := &pb.NvmePath{}
