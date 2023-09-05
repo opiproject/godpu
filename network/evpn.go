@@ -41,7 +41,7 @@ type evpnClientImpl struct {
 type EvpnClient interface {
 
 	// Logical Bridge interfaces
-	CreateLogicalBridge(ctx context.Context, name string, vlanID uint32, vni uint32) (*pb.LogicalBridge, error)
+	CreateLogicalBridge(ctx context.Context, name string, vlanID uint32, vni uint32, vtepIP string) (*pb.LogicalBridge, error)
 	DeleteLogicalBridge(ctx context.Context, name string, allowMissing bool) (*emptypb.Empty, error)
 	GetLogicalBridge(ctx context.Context, name string) (*pb.LogicalBridge, error)
 	ListLogicalBridges(ctx context.Context, pageSize int32, pageToken string) (*pb.ListLogicalBridgesResponse, error)
