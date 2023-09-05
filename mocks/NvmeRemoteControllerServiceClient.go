@@ -450,6 +450,76 @@ func (_c *NvmeRemoteControllerServiceClient_GetNvmeRemoteController_Call) RunAnd
 	return _c
 }
 
+// GetNvmeRemoteNamespace provides a mock function with given fields: ctx, in, opts
+func (_m *NvmeRemoteControllerServiceClient) GetNvmeRemoteNamespace(ctx context.Context, in *_go.GetNvmeRemoteNamespaceRequest, opts ...grpc.CallOption) (*_go.NvmeRemoteNamespace, error) {
+	_va := make([]interface{}, len(opts))
+	for _i := range opts {
+		_va[_i] = opts[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, in)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	var r0 *_go.NvmeRemoteNamespace
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *_go.GetNvmeRemoteNamespaceRequest, ...grpc.CallOption) (*_go.NvmeRemoteNamespace, error)); ok {
+		return rf(ctx, in, opts...)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *_go.GetNvmeRemoteNamespaceRequest, ...grpc.CallOption) *_go.NvmeRemoteNamespace); ok {
+		r0 = rf(ctx, in, opts...)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*_go.NvmeRemoteNamespace)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *_go.GetNvmeRemoteNamespaceRequest, ...grpc.CallOption) error); ok {
+		r1 = rf(ctx, in, opts...)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// NvmeRemoteControllerServiceClient_GetNvmeRemoteNamespace_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetNvmeRemoteNamespace'
+type NvmeRemoteControllerServiceClient_GetNvmeRemoteNamespace_Call struct {
+	*mock.Call
+}
+
+// GetNvmeRemoteNamespace is a helper method to define mock.On call
+//   - ctx context.Context
+//   - in *_go.GetNvmeRemoteNamespaceRequest
+//   - opts ...grpc.CallOption
+func (_e *NvmeRemoteControllerServiceClient_Expecter) GetNvmeRemoteNamespace(ctx interface{}, in interface{}, opts ...interface{}) *NvmeRemoteControllerServiceClient_GetNvmeRemoteNamespace_Call {
+	return &NvmeRemoteControllerServiceClient_GetNvmeRemoteNamespace_Call{Call: _e.mock.On("GetNvmeRemoteNamespace",
+		append([]interface{}{ctx, in}, opts...)...)}
+}
+
+func (_c *NvmeRemoteControllerServiceClient_GetNvmeRemoteNamespace_Call) Run(run func(ctx context.Context, in *_go.GetNvmeRemoteNamespaceRequest, opts ...grpc.CallOption)) *NvmeRemoteControllerServiceClient_GetNvmeRemoteNamespace_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		variadicArgs := make([]grpc.CallOption, len(args)-2)
+		for i, a := range args[2:] {
+			if a != nil {
+				variadicArgs[i] = a.(grpc.CallOption)
+			}
+		}
+		run(args[0].(context.Context), args[1].(*_go.GetNvmeRemoteNamespaceRequest), variadicArgs...)
+	})
+	return _c
+}
+
+func (_c *NvmeRemoteControllerServiceClient_GetNvmeRemoteNamespace_Call) Return(_a0 *_go.NvmeRemoteNamespace, _a1 error) *NvmeRemoteControllerServiceClient_GetNvmeRemoteNamespace_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *NvmeRemoteControllerServiceClient_GetNvmeRemoteNamespace_Call) RunAndReturn(run func(context.Context, *_go.GetNvmeRemoteNamespaceRequest, ...grpc.CallOption) (*_go.NvmeRemoteNamespace, error)) *NvmeRemoteControllerServiceClient_GetNvmeRemoteNamespace_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // ListNvmePaths provides a mock function with given fields: ctx, in, opts
 func (_m *NvmeRemoteControllerServiceClient) ListNvmePaths(ctx context.Context, in *_go.ListNvmePathsRequest, opts ...grpc.CallOption) (*_go.ListNvmePathsResponse, error) {
 	_va := make([]interface{}, len(opts))
