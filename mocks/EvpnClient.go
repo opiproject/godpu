@@ -86,25 +86,25 @@ func (_c *EvpnClient_CreateBridgePort_Call) RunAndReturn(run func(context.Contex
 	return _c
 }
 
-// CreateLogicalBridge provides a mock function with given fields: ctx, name, vlanID, vni
-func (_m *EvpnClient) CreateLogicalBridge(ctx context.Context, name string, vlanID uint32, vni uint32) (*_go.LogicalBridge, error) {
-	ret := _m.Called(ctx, name, vlanID, vni)
+// CreateLogicalBridge provides a mock function with given fields: ctx, name, vlanID, vni, vtepIP
+func (_m *EvpnClient) CreateLogicalBridge(ctx context.Context, name string, vlanID uint32, vni uint32, vtepIP string) (*_go.LogicalBridge, error) {
+	ret := _m.Called(ctx, name, vlanID, vni, vtepIP)
 
 	var r0 *_go.LogicalBridge
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string, uint32, uint32) (*_go.LogicalBridge, error)); ok {
-		return rf(ctx, name, vlanID, vni)
+	if rf, ok := ret.Get(0).(func(context.Context, string, uint32, uint32, string) (*_go.LogicalBridge, error)); ok {
+		return rf(ctx, name, vlanID, vni, vtepIP)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, string, uint32, uint32) *_go.LogicalBridge); ok {
-		r0 = rf(ctx, name, vlanID, vni)
+	if rf, ok := ret.Get(0).(func(context.Context, string, uint32, uint32, string) *_go.LogicalBridge); ok {
+		r0 = rf(ctx, name, vlanID, vni, vtepIP)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*_go.LogicalBridge)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, string, uint32, uint32) error); ok {
-		r1 = rf(ctx, name, vlanID, vni)
+	if rf, ok := ret.Get(1).(func(context.Context, string, uint32, uint32, string) error); ok {
+		r1 = rf(ctx, name, vlanID, vni, vtepIP)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -122,13 +122,14 @@ type EvpnClient_CreateLogicalBridge_Call struct {
 //   - name string
 //   - vlanID uint32
 //   - vni uint32
-func (_e *EvpnClient_Expecter) CreateLogicalBridge(ctx interface{}, name interface{}, vlanID interface{}, vni interface{}) *EvpnClient_CreateLogicalBridge_Call {
-	return &EvpnClient_CreateLogicalBridge_Call{Call: _e.mock.On("CreateLogicalBridge", ctx, name, vlanID, vni)}
+//   - vtepIP string
+func (_e *EvpnClient_Expecter) CreateLogicalBridge(ctx interface{}, name interface{}, vlanID interface{}, vni interface{}, vtepIP interface{}) *EvpnClient_CreateLogicalBridge_Call {
+	return &EvpnClient_CreateLogicalBridge_Call{Call: _e.mock.On("CreateLogicalBridge", ctx, name, vlanID, vni, vtepIP)}
 }
 
-func (_c *EvpnClient_CreateLogicalBridge_Call) Run(run func(ctx context.Context, name string, vlanID uint32, vni uint32)) *EvpnClient_CreateLogicalBridge_Call {
+func (_c *EvpnClient_CreateLogicalBridge_Call) Run(run func(ctx context.Context, name string, vlanID uint32, vni uint32, vtepIP string)) *EvpnClient_CreateLogicalBridge_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(string), args[2].(uint32), args[3].(uint32))
+		run(args[0].(context.Context), args[1].(string), args[2].(uint32), args[3].(uint32), args[4].(string))
 	})
 	return _c
 }
@@ -138,7 +139,7 @@ func (_c *EvpnClient_CreateLogicalBridge_Call) Return(_a0 *_go.LogicalBridge, _a
 	return _c
 }
 
-func (_c *EvpnClient_CreateLogicalBridge_Call) RunAndReturn(run func(context.Context, string, uint32, uint32) (*_go.LogicalBridge, error)) *EvpnClient_CreateLogicalBridge_Call {
+func (_c *EvpnClient_CreateLogicalBridge_Call) RunAndReturn(run func(context.Context, string, uint32, uint32, string) (*_go.LogicalBridge, error)) *EvpnClient_CreateLogicalBridge_Call {
 	_c.Call.Return(run)
 	return _c
 }
