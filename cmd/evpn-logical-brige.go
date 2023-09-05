@@ -20,6 +20,7 @@ func CreateLogicalBridge() *cobra.Command {
 	var name string
 	var vlanID uint32
 	var vni uint32
+	var vtep string
 
 	cmd := &cobra.Command{
 		Use:   "create-lb",
@@ -33,19 +34,20 @@ func CreateLogicalBridge() *cobra.Command {
 			}
 			defer cancel()
 
-			resp, err := evpnClient.CreateLogicalBridge(ctx, name, vlanID, vni)
+			resp, err := evpnClient.CreateLogicalBridge(ctx, name, vlanID, vni, vtep)
 			if err != nil {
 				log.Fatalf("failed to create logical bridge: %v", err)
 			}
 
-			log.Printf(" Created Logical Bridge \n name: %s\n vlan: %d\n vni: %d\n status: %s\n", resp.GetName(), resp.GetSpec().GetVlanId(),
-				resp.GetSpec().GetVni(), resp.GetStatus())
+			log.Printf(" Created Logical Bridge \n name: %s\n vlan: %d\n vni: %d\n status: %s\n VtepIpPrefix:%s", resp.GetName(), resp.GetSpec().GetVlanId(),
+				resp.GetSpec().GetVni(), resp.GetStatus(), resp.GetSpec().GetVtepIpPrefix())
 		},
 	}
 	cmd.Flags().StringVar(&addr, "addr", "localhost:50151", "address of OPI gRPC server")
 	cmd.Flags().StringVarP(&name, "name", "n", "", "Specify the name of the logical bridge")
 	cmd.Flags().Uint32VarP(&vlanID, "vlan-id", "v", 0, "Specify the VLAN ID")
 	cmd.Flags().Uint32VarP(&vni, "vni", "i", 0, "Specify the VNI")
+	cmd.Flags().StringVar(&vtep, "vtep", "", "VTEP IP address")
 
 	if err := cmd.MarkFlagRequired("addr"); err != nil {
 		log.Fatalf("Error marking flag as required: %v", err)
@@ -122,8 +124,8 @@ func GetLogicalBridge() *cobra.Command {
 				log.Fatalf("failed to get logical bridge: %v", err)
 			}
 
-			log.Printf(" Created Logical Bridge \n name: %s\n vlan: %d\n vni: %d\n status: %s\n", resp.GetName(), resp.GetSpec().GetVlanId(),
-				resp.GetSpec().GetVni(), resp.GetStatus())
+			log.Printf(" Created Logical Bridge \n name: %s\n vlan: %d\n vni: %d\n status: %s\n VtepIpPrefix:%s", resp.GetName(), resp.GetSpec().GetVlanId(),
+				resp.GetSpec().GetVni(), resp.GetStatus(), resp.GetSpec().GetVtepIpPrefix())
 		},
 	}
 
@@ -159,8 +161,8 @@ func ListLogicalBridges() *cobra.Command {
 				}
 				// Process the server response
 				for _, item := range resp.LogicalBridges {
-					log.Printf(" Created Logical Bridge \n name: %s\n vlan: %d\n vni: %d\n status: %s\n", item.GetName(), item.GetSpec().GetVlanId(),
-						item.GetSpec().GetVni(), item.GetStatus())
+					log.Printf(" Created Logical Bridge \n name: %s\n vlan: %d\n vni: %d\n status: %s\n VtepIpPrefix:%s", item.GetName(), item.GetSpec().GetVlanId(),
+						item.GetSpec().GetVni(), item.GetStatus(), item.GetSpec().GetVtepIpPrefix())
 				}
 
 				// Check if there are more pages to retrieve
@@ -201,8 +203,8 @@ func UpdateLogicalBridge() *cobra.Command {
 				log.Fatalf("failed to update logical bridge: %v", err)
 			}
 
-			log.Printf(" Updated Logical Bridge \n name: %s\n vlan: %d\n vni: %d\n status: %s\n", resp.GetName(), resp.GetSpec().GetVlanId(),
-				resp.GetSpec().GetVni(), resp.GetStatus())
+			log.Printf(" Updated Logical Bridge \n name: %s\n vlan: %d\n vni: %d\n status: %s\n VtepIpPrefix:%s", resp.GetName(), resp.GetSpec().GetVlanId(),
+				resp.GetSpec().GetVni(), resp.GetStatus(), resp.GetSpec().GetVtepIpPrefix())
 		},
 	}
 	cmd.Flags().StringVar(&name, "name", "", "name of the logical bridge")

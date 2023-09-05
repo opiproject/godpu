@@ -21,10 +21,10 @@ func TestCreateLogicalBridgeSuccess(t *testing.T) {
 	mockEvpnClient := &mocks.EvpnClient{}
 
 	expectedLogicalBridge := &_go.LogicalBridge{} // Create your expected response
-	mockEvpnClient.On("CreateLogicalBridge", mock.Anything, mock.Anything, mock.Anything, mock.Anything).
+	mockEvpnClient.On("CreateLogicalBridge", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).
 		Return(expectedLogicalBridge, nil)
 
-	resultLogicalBridge, err := mockEvpnClient.CreateLogicalBridge(context.TODO(), "lb1", 1000, 1000)
+	resultLogicalBridge, err := mockEvpnClient.CreateLogicalBridge(context.TODO(), "lb1", 1000, 1000, "10.10.10.10/16")
 
 	assert.NoError(t, err)
 	assert.Equal(t, expectedLogicalBridge, resultLogicalBridge)
@@ -35,10 +35,10 @@ func TestCreateLogicalBridgeError(t *testing.T) {
 	mockEvpnClient := &mocks.EvpnClient{}
 
 	expectedError := errors.New("mocked error")
-	mockEvpnClient.On("CreateLogicalBridge", mock.Anything, mock.Anything, mock.Anything, mock.Anything).
+	mockEvpnClient.On("CreateLogicalBridge", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).
 		Return(nil, expectedError)
 
-	resultLogicalBridge, err := mockEvpnClient.CreateLogicalBridge(context.TODO(), "lb1", 1000, 1000)
+	resultLogicalBridge, err := mockEvpnClient.CreateLogicalBridge(context.TODO(), "lb1", 1000, 1000, "10.10.10.10/16")
 
 	assert.Error(t, err)
 	assert.Nil(t, resultLogicalBridge)

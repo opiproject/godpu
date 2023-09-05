@@ -15,7 +15,7 @@ import (
 )
 
 // CreateLogicalBridge creates an Logical Bridge an OPI server
-func (c evpnClientImpl) CreateLogicalBridge(ctx context.Context, name string, vlanID uint32, vni uint32) (*pb.LogicalBridge, error) {
+func (c evpnClientImpl) CreateLogicalBridge(ctx context.Context, name string, vlanID uint32, vni uint32, vtepIP string) (*pb.LogicalBridge, error) {
 	conn, closer, err := c.NewConn()
 	if err != nil {
 		log.Printf("error creating connection: %s\n", err)
@@ -24,13 +24,18 @@ func (c evpnClientImpl) CreateLogicalBridge(ctx context.Context, name string, vl
 	defer closer()
 
 	client := c.getEvpnLogicalBridgeClient(conn)
-
+	ipVtep, err := parseIPAndPrefix(vtepIP)
+	if err != nil {
+		log.Printf("parseIPAndPrefix: error creating vrf: %s\n", err)
+		return nil, err
+	}
 	data, err := client.CreateLogicalBridge(ctx, &pb.CreateLogicalBridgeRequest{
 		LogicalBridgeId: name,
 		LogicalBridge: &pb.LogicalBridge{
 			Spec: &pb.LogicalBridgeSpec{
-				VlanId: vlanID,
-				Vni:    &vni,
+				VlanId:       vlanID,
+				Vni:          &vni,
+				VtepIpPrefix: ipVtep,
 			},
 		},
 	})
