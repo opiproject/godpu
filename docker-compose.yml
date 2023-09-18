@@ -61,7 +61,7 @@ services:
     image: docker.io/opiproject/opi-smbios-bridge:main
     networks:
       - opi
-    command: /opi-smbios-bridge -port=50051
+    command: /opi-smbios-bridge -grpc_port=50051 -http_port=8082
     healthcheck:
       test: grpcurl -plaintext localhost:50051 list || exit 1
 
@@ -71,7 +71,7 @@ services:
       - NET_ADMIN
     networks:
       - opi
-    command: /opi-evpn-bridge -port=50151
+    command: /opi-evpn-bridge -grpc_port=50151 -http_port=8082
     healthcheck:
       test: grpcurl -plaintext localhost:50151 list || exit 1
 
