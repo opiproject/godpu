@@ -56,8 +56,10 @@ func executeNvmeRemoteController(ctx context.Context, c4 pb.NvmeRemoteController
 			NvmeRemoteControllerId: resourceID,
 			NvmeRemoteController: &pb.NvmeRemoteController{
 				Multipath: pb.NvmeMultipath_NVME_MULTIPATH_MULTIPATH,
-				Hdgst:     false,
-				Ddgst:     false,
+				Tcp: &pb.TcpController{
+					Hdgst: false,
+					Ddgst: false,
+				},
 			}})
 		if err != nil {
 			return err
@@ -131,9 +133,11 @@ func executeNvmePath(ctx context.Context, c5 pb.NvmeRemoteControllerServiceClien
 		NvmeRemoteControllerId: ctrlrResourceID,
 		NvmeRemoteController: &pb.NvmeRemoteController{
 			Multipath: pb.NvmeMultipath_NVME_MULTIPATH_MULTIPATH,
-			Hdgst:     false,
-			Ddgst:     false,
-			Psk:       psk,
+			Tcp: &pb.TcpController{
+				Hdgst: false,
+				Ddgst: false,
+				Psk:   psk,
+			},
 		}})
 	if err != nil {
 		return err
@@ -145,12 +149,14 @@ func executeNvmePath(ctx context.Context, c5 pb.NvmeRemoteControllerServiceClien
 			NvmePathId: resourceID,
 			NvmePath: &pb.NvmePath{
 				Trtype:            pb.NvmeTransportType_NVME_TRANSPORT_TCP,
-				Adrfam:            pb.NvmeAddressFamily_NVME_ADRFAM_IPV4,
 				Traddr:            addr[0].String(),
-				Trsvcid:           int64(port),
-				Subnqn:            "nqn.2016-06.io.spdk:cnode1",
-				Hostnqn:           "nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c",
 				ControllerNameRef: rr0.Name,
+				Fabrics: &pb.FabricsPath{
+					Adrfam:  pb.NvmeAddressFamily_NVME_ADRFAM_IPV4,
+					Trsvcid: int64(port),
+					Subnqn:  "nqn.2016-06.io.spdk:cnode1",
+					Hostnqn: "nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c",
+				},
 			}})
 		if err != nil {
 			return err
@@ -175,12 +181,14 @@ func executeNvmePath(ctx context.Context, c5 pb.NvmeRemoteControllerServiceClien
 			NvmePath: &pb.NvmePath{
 				Name:              np0.Name,
 				Trtype:            pb.NvmeTransportType_NVME_TRANSPORT_TCP,
-				Adrfam:            pb.NvmeAddressFamily_NVME_ADRFAM_IPV4,
 				Traddr:            addr[0].String(),
-				Trsvcid:           int64(port),
-				Subnqn:            "nqn.2016-06.io.spdk:cnode1",
-				Hostnqn:           "nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c",
 				ControllerNameRef: rr0.Name,
+				Fabrics: &pb.FabricsPath{
+					Adrfam:  pb.NvmeAddressFamily_NVME_ADRFAM_IPV4,
+					Trsvcid: int64(port),
+					Subnqn:  "nqn.2016-06.io.spdk:cnode1",
+					Hostnqn: "nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c",
+				},
 			}})
 		if err != nil {
 			return err
