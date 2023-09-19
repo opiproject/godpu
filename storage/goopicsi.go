@@ -69,11 +69,13 @@ func NvmeControllerConnect(id string, trAddr string, subnqn string, trSvcID int6
 			NvmePath: &pb.NvmePath{
 				ControllerNameRef: response.Name,
 				Traddr:            trAddr,
-				Subnqn:            subnqn,
-				Trsvcid:           trSvcID,
-				Hostnqn:           hostnqn,
 				Trtype:            pb.NvmeTransportType_NVME_TRANSPORT_TCP,
-				Adrfam:            pb.NvmeAddressFamily_NVME_ADRFAM_IPV4,
+				Fabrics: &pb.FabricsPath{
+					Subnqn:  subnqn,
+					Trsvcid: trSvcID,
+					Hostnqn: hostnqn,
+					Adrfam:  pb.NvmeAddressFamily_NVME_ADRFAM_IPV4,
+				},
 			},
 		})
 		if err != nil {
