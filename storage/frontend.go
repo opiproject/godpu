@@ -282,10 +282,10 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 
 	// pre create: controller
 	rc1, err := c2.CreateNvmeController(ctx, &pb.CreateNvmeControllerRequest{
+		Parent:           rs1.Name,
 		NvmeControllerId: "namespace-test-ctrler",
 		NvmeController: &pb.NvmeController{
 			Spec: &pb.NvmeControllerSpec{
-				SubsystemNameRef: rs1.Name,
 				PcieId: &pb.PciEndpoint{
 					PhysicalFunction: wrapperspb.Int32(1),
 					VirtualFunction:  wrapperspb.Int32(2),
@@ -312,15 +312,15 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 	// testing with and without {resource}_id field
 	for _, resourceID := range []string{"namespace-test", ""} {
 		rn1, err := c2.CreateNvmeNamespace(ctx, &pb.CreateNvmeNamespaceRequest{
+			Parent:          rs1.Name,
 			NvmeNamespaceId: resourceID,
 			NvmeNamespace: &pb.NvmeNamespace{
 				Spec: &pb.NvmeNamespaceSpec{
-					SubsystemNameRef: rs1.Name,
-					VolumeNameRef:    "Malloc1",
-					Uuid:             &pbc.Uuid{Value: "1b4e28ba-2fa1-11d2-883f-b9a761bde3fb"},
-					Nguid:            "1b4e28ba-2fa1-11d2-883f-b9a761bde3fb",
-					Eui64:            1967554867335598546,
-					HostNsid:         1}}})
+					VolumeNameRef: "Malloc1",
+					Uuid:          &pbc.Uuid{Value: "1b4e28ba-2fa1-11d2-883f-b9a761bde3fb"},
+					Nguid:         "1b4e28ba-2fa1-11d2-883f-b9a761bde3fb",
+					Eui64:         1967554867335598546,
+					HostNsid:      1}}})
 		if err != nil {
 			return err
 		}
@@ -343,12 +343,11 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 			NvmeNamespace: &pb.NvmeNamespace{
 				Name: rn1.Name,
 				Spec: &pb.NvmeNamespaceSpec{
-					SubsystemNameRef: rs1.Name,
-					VolumeNameRef:    "Malloc1",
-					Uuid:             &pbc.Uuid{Value: "1b4e28ba-2fa1-11d2-883f-b9a761bde3fb"},
-					Nguid:            "1b4e28ba-2fa1-11d2-883f-b9a761bde3fb",
-					Eui64:            1967554867335598546,
-					HostNsid:         1}}})
+					VolumeNameRef: "Malloc1",
+					Uuid:          &pbc.Uuid{Value: "1b4e28ba-2fa1-11d2-883f-b9a761bde3fb"},
+					Nguid:         "1b4e28ba-2fa1-11d2-883f-b9a761bde3fb",
+					Eui64:         1967554867335598546,
+					HostNsid:      1}}})
 		if err != nil {
 			return err
 		}
@@ -418,10 +417,10 @@ func executeNvmeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 	// testing with and without {resource}_id field
 	for _, resourceID := range []string{"controller-test", ""} {
 		rc1, err := c2.CreateNvmeController(ctx, &pb.CreateNvmeControllerRequest{
+			Parent:           rs1.Name,
 			NvmeControllerId: resourceID,
 			NvmeController: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: rs1.Name,
 					PcieId: &pb.PciEndpoint{
 						PhysicalFunction: wrapperspb.Int32(1),
 						VirtualFunction:  wrapperspb.Int32(2),
@@ -453,7 +452,6 @@ func executeNvmeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 			NvmeController: &pb.NvmeController{
 				Name: rc1.Name,
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: rs1.Name,
 					PcieId: &pb.PciEndpoint{
 						PhysicalFunction: wrapperspb.Int32(3),
 						VirtualFunction:  wrapperspb.Int32(2),
@@ -545,7 +543,7 @@ func executeNvmeSubsystem(ctx context.Context, c1 pb.FrontendNvmeServiceClient) 
 			log.Printf("could not update Nvme subsystem: %v", err)
 		}
 		log.Printf("Updated UpdateNvmeSubsystem: %v", rs3)
-		rs4, err := c1.ListNvmeSubsystems(ctx, &pb.ListNvmeSubsystemsRequest{Parent: "todo"})
+		rs4, err := c1.ListNvmeSubsystems(ctx, &pb.ListNvmeSubsystemsRequest{})
 		if err != nil {
 			return err
 		}

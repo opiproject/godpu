@@ -236,11 +236,11 @@ func ExposeRemoteNvme(subsystemNQN string, maxNamespaces int64) (string, string,
 	// Default value of MaxNamespaces is 32 incase the parameter is not assigned any value
 	if data2 == nil {
 		response2, err := client.CreateNvmeController(ctx, &pb.CreateNvmeControllerRequest{
+			Parent: subsystemID,
 			NvmeController: &pb.NvmeController{
 				Name: controllerID,
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: subsystemID,
-					MaxNamespaces:    int32(maxNamespaces),
+					MaxNamespaces: int32(maxNamespaces),
 				},
 			},
 		})
@@ -289,12 +289,12 @@ func CreateNvmeNamespace(id string, subSystemID string, nguid string, hostID int
 
 	client2 := pb.NewFrontendNvmeServiceClient(conn)
 	resp, err := client2.CreateNvmeNamespace(ctx, &pb.CreateNvmeNamespaceRequest{
+		Parent: subSystemID,
 		NvmeNamespace: &pb.NvmeNamespace{
 			Name: id,
 			Spec: &pb.NvmeNamespaceSpec{
-				SubsystemNameRef: subSystemID,
-				VolumeNameRef:    volumeID,
-				HostNsid:         hostID,
+				VolumeNameRef: volumeID,
+				HostNsid:      hostID,
 			},
 		},
 	})
