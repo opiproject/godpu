@@ -10,5 +10,5 @@ permissions:
 
 jobs:
   call:
-    uses: opiproject/opi-smbios-bridge/.github/workflows/update-copyright-years-in-license-file.yml@main
+    uses: opiproject/actions/.github/workflows/update-copyright-years-in-license-file.yml@main
     secrets: inherit

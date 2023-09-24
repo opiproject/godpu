@@ -15,5 +15,5 @@ jobs:
     permissions:
       contents: read
       security-events: write
-    uses: opiproject/opi-smbios-bridge/.github/workflows/codeql.yml@main
+    uses: opiproject/actions/.github/workflows/codeql.yml@main
     secrets: inherit
