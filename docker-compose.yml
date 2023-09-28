@@ -12,6 +12,7 @@ services:
       - /dev/shm:/dev/shm
       - /proc:/proc
       - /var/tmp:/var/tmp
+      - /tmp:/tmp
     ports:
       - "9009:9009"
       - "4444:4444"
