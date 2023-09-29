@@ -92,7 +92,8 @@ jobs:
       - name: Start containers
         run: |
           docker-compose down --volumes --remove-orphans
-          docker-compose up --build --force-recreate --detach opi-test
+          docker-compose build --no-cache
+          docker-compose up --force-recreate --detach opi-test
 
       - name: Run Tests
         run: |
