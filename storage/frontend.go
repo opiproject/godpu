@@ -286,10 +286,14 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 		NvmeControllerId: "namespace-test-ctrler",
 		NvmeController: &pb.NvmeController{
 			Spec: &pb.NvmeControllerSpec{
-				PcieId: &pb.PciEndpoint{
-					PhysicalFunction: wrapperspb.Int32(1),
-					VirtualFunction:  wrapperspb.Int32(2),
-					PortId:           wrapperspb.Int32(3)},
+				Endpoint: &pb.NvmeControllerSpec_FabricsId{
+					FabricsId: &pb.FabricsEndpoint{
+						Traddr:  "127.0.0.1",
+						Trsvcid: "4421",
+						Adrfam:  pb.NvmeAddressFamily_NVME_ADRFAM_IPV4,
+					},
+				},
+				Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TCP,
 				MaxNsq:           5,
 				MaxNcq:           6,
 				Sqes:             7,
@@ -423,10 +427,14 @@ func executeNvmeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 			NvmeControllerId: resourceID,
 			NvmeController: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					PcieId: &pb.PciEndpoint{
-						PhysicalFunction: wrapperspb.Int32(1),
-						VirtualFunction:  wrapperspb.Int32(2),
-						PortId:           wrapperspb.Int32(3)},
+					Endpoint: &pb.NvmeControllerSpec_FabricsId{
+						FabricsId: &pb.FabricsEndpoint{
+							Traddr:  "127.0.0.1",
+							Trsvcid: "4421",
+							Adrfam:  pb.NvmeAddressFamily_NVME_ADRFAM_IPV4,
+						},
+					},
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TCP,
 					MaxNsq:           5,
 					MaxNcq:           6,
 					Sqes:             7,
@@ -455,10 +463,14 @@ func executeNvmeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 			NvmeController: &pb.NvmeController{
 				Name: rc1.Name,
 				Spec: &pb.NvmeControllerSpec{
-					PcieId: &pb.PciEndpoint{
-						PhysicalFunction: wrapperspb.Int32(3),
-						VirtualFunction:  wrapperspb.Int32(2),
-						PortId:           wrapperspb.Int32(1)},
+					Endpoint: &pb.NvmeControllerSpec_FabricsId{
+						FabricsId: &pb.FabricsEndpoint{
+							Traddr:  "127.0.0.1",
+							Trsvcid: "4421",
+							Adrfam:  pb.NvmeAddressFamily_NVME_ADRFAM_IPV4,
+						},
+					},
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TCP,
 					MaxNsq:           8,
 					MaxNcq:           7,
 					Sqes:             6,
