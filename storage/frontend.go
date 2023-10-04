@@ -270,6 +270,7 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 				ModelNumber:   "OPI Model",
 				SerialNumber:  "OPI SN",
 				MaxNamespaces: 10,
+				Hostnqn:       "nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c",
 				Nqn:           "nqn.2022-09.io.spdk:opi1"}}})
 	if err != nil {
 		return err
@@ -408,6 +409,7 @@ func executeNvmeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 				ModelNumber:   "OPI Model",
 				SerialNumber:  "OPI SN",
 				MaxNamespaces: 10,
+				Hostnqn:       "nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c",
 				Nqn:           "nqn.2022-09.io.spdk:opi2"}}})
 	if err != nil {
 		return err
@@ -529,6 +531,7 @@ func executeNvmeSubsystem(ctx context.Context, c1 pb.FrontendNvmeServiceClient) 
 					ModelNumber:   "OPI Model",
 					SerialNumber:  "OPI SN",
 					MaxNamespaces: 10,
+					Hostnqn:       "nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c",
 					Nqn:           "nqn.2022-09.io.spdk:opi3"}}})
 		if err != nil {
 			return err
