@@ -13,7 +13,7 @@ require (
 	github.com/opiproject/opi-api v0.0.0-20231004104309-217649f4535f
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
-	golang.org/x/net v0.15.0
+	golang.org/x/net v0.16.0
 	golang.org/x/text v0.13.0
 	google.golang.org/grpc v1.58.2
 	google.golang.org/protobuf v1.31.0
@@ -32,7 +32,7 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
 	golang.org/x/sync v0.3.0 // indirect
-	golang.org/x/sys v0.12.0 // indirect
+	golang.org/x/sys v0.13.0 // indirect
 	golang.org/x/tools v0.12.0 // indirect
 	google.golang.org/genproto v0.0.0-20231002182017-d307bd883b97 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20231002182017-d307bd883b97 // indirect
