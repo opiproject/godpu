@@ -204,8 +204,8 @@ func executeVirtioBlk(ctx context.Context, c4 pb.FrontendVirtioBlkServiceClient)
 				VolumeNameRef: "Malloc1",
 				PcieId: &pb.PciEndpoint{
 					PhysicalFunction: wrapperspb.Int32(1),
-					VirtualFunction:  wrapperspb.Int32(2),
-					PortId:           wrapperspb.Int32(3)},
+					VirtualFunction:  wrapperspb.Int32(0),
+					PortId:           wrapperspb.Int32(0)},
 			}})
 		if err != nil {
 			return err
