@@ -12,7 +12,7 @@ import (
 	grpcOpi "github.com/opiproject/godpu/grpc"
 	"github.com/opiproject/godpu/inventory"
 	"github.com/opiproject/godpu/mocks"
-	pb "github.com/opiproject/opi-api/common/v1/gen/go"
+	pb "github.com/opiproject/opi-api/inventory/v1/gen/go"
 	"google.golang.org/grpc"
 )
 
