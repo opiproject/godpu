@@ -4,7 +4,9 @@
 package grpc_test
 
 import (
+	//nolint:revive
 	. "github.com/onsi/ginkgo/v2"
+	//nolint:revive
 	. "github.com/onsi/gomega"
 	grpcOpi "github.com/opiproject/godpu/grpc"
 	"google.golang.org/grpc"

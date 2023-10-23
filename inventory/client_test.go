@@ -7,7 +7,9 @@ import (
 	"context"
 	"errors"
 
+	//nolint:revive
 	. "github.com/onsi/ginkgo/v2"
+	//nolint:revive
 	. "github.com/onsi/gomega"
 	grpcOpi "github.com/opiproject/godpu/grpc"
 	"github.com/opiproject/godpu/inventory"
