@@ -47,6 +47,17 @@ services:
       start_period: 20s
       timeout: 10s
 
+  jaeger:
+    image: jaegertracing/all-in-one:1.50.0
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+      - "4318:4318"
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    networks:
+      - opi
+
   redis:
     image: redis:7.2.2-alpine3.18
     networks:
@@ -56,11 +67,15 @@ services:
 
   opi-spdk-server:
     image: docker.io/opiproject/opi-spdk-bridge:main
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
     volumes_from:
       - spdk
     networks:
       - opi
     depends_on:
+      jaeger:
+        condition: service_started
       spdk:
         condition: service_healthy
     command: /opi-spdk-bridge -grpc_port=50051 -http_port=8082 -spdk_addr=/var/tmp/spdk.sock
@@ -69,14 +84,21 @@ services:
 
   opi-smbios-server:
     image: docker.io/opiproject/opi-smbios-bridge:main
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
     networks:
       - opi
+    depends_on:
+      jaeger:
+        condition: service_started
     command: /opi-smbios-bridge -grpc_port=50051 -http_port=8082
     healthcheck:
       test: grpcurl -plaintext localhost:50051 list || exit 1
 
   opi-evpn-server:
     image: docker.io/opiproject/opi-evpn-bridge:main
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
     cap_add:
       - NET_ADMIN
     networks:
@@ -87,6 +109,8 @@ services:
     depends_on:
       redis:
         condition: service_healthy
+      jaeger:
+        condition: service_started
 
   opi-evpn-test:
     build:
