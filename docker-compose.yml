@@ -1,10 +1,9 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright (c) 2022-2023 Dell Inc, or its subsidiaries.
+# Copyright (C) 2023 Intel Corporation
 ---
 version: "3.7"
-
 services:
-
   spdk:
     image: docker.io/opiproject/spdk:v23.09
     volumes:
@@ -124,9 +123,14 @@ services:
     networks:
       - opi
     depends_on:
-      - opi-evpn-test
-      - opi-smbios-test
-      - opi-storage-test
+      opi-evpn-test:
+        condition: service_completed_successfully
+      opi-smbios-test:
+        condition: service_completed_successfully
+      opi-storage-test:
+        condition: service_completed_successfully
+    command: |
+      sh -c 'exit 0'
 
 networks:
   opi:
