@@ -14,6 +14,7 @@ services:
     ports:
       - "9009:9009"
       - "4444:4444"
+      - "5555:5555"
     privileged: true
     networks:
       - opi
@@ -25,6 +26,8 @@ services:
             echo 1024 > /proc/sys/vm/nr_hugepages && \
             grep "" /sys/kernel/mm/hugepages/hugepages-*/nr_hugepages && \
             dd if=/dev/zero of=/tmp/aio_bdev_file bs=512 count=64 && \
+            echo -n NVMeTLSkey-1:01:MDAxMTIyMzM0NDU1NjY3Nzg4OTlhYWJiY2NkZGVlZmZwJEiQ: > /tmp/opikey.txt && \
+            chmod 0600 /tmp/opikey.txt && \
             /usr/local/bin/spdk_tgt -m 0x1 -s 512 --no-pci -S /var/tmp |& tee /tmp/spdk.log & \
             for i in `seq 1 10`; do ./rpc.py spdk_get_version && break || sleep 1; done  && \
             ./rpc.py bdev_malloc_create -b Malloc0 64 512 && \
@@ -32,9 +35,10 @@ services:
             ./rpc.py nvmf_create_transport -t TCP -u 8192 -m 4 -c 0  && \
             ./rpc.py nvmf_create_transport -t VFIOUSER && \
             ./rpc.py nvmf_create_subsystem nqn.2016-06.io.spdk:cnode1 -a -s SPDK00000000000001 -d SPDK_Controller1  && \
-            ./rpc.py nvmf_subsystem_add_listener nqn.2016-06.io.spdk:cnode1 -t tcp -a  `hostname -i` -f ipv4 -s 4444  && \
             ./rpc.py nvmf_subsystem_allow_any_host nqn.2016-06.io.spdk:cnode1 --disable && \
-            ./rpc.py nvmf_subsystem_add_host nqn.2016-06.io.spdk:cnode1 nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c && \
+            ./rpc.py nvmf_subsystem_add_listener nqn.2016-06.io.spdk:cnode1 -t tcp -a  `hostname -i` -f ipv4 -s 4444  && \
+            ./rpc.py nvmf_subsystem_add_listener nqn.2016-06.io.spdk:cnode1 -t tcp -a  `hostname -i` -f ipv4 -s 5555 --secure-channel && \
+            ./rpc.py nvmf_subsystem_add_host nqn.2016-06.io.spdk:cnode1 nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c --psk /tmp/opikey.txt && \
             ./rpc_http_proxy.py 0.0.0.0 9009 spdkuser spdkpass'
     healthcheck:
       test:
