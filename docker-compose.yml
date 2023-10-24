@@ -47,6 +47,13 @@ services:
       start_period: 20s
       timeout: 10s
 
+  redis:
+    image: redis:7.2.2-alpine3.18
+    networks:
+      - opi
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+
   opi-spdk-server:
     image: docker.io/opiproject/opi-spdk-bridge:main
     volumes_from:
@@ -74,9 +81,12 @@ services:
       - NET_ADMIN
     networks:
       - opi
-    command: /opi-evpn-bridge -grpc_port=50151 -http_port=8082
+    command: /opi-evpn-bridge -grpc_port=50151 -http_port=8082 -redis_addr="redis:6379"
     healthcheck:
       test: grpcurl -plaintext localhost:50151 list || exit 1
+    depends_on:
+      redis:
+        condition: service_healthy
 
   opi-evpn-test:
     build:
