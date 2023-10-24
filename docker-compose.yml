@@ -82,7 +82,7 @@ services:
         condition: service_started
       spdk:
         condition: service_healthy
-    command: /opi-spdk-bridge -grpc_port=50051 -http_port=8082 -spdk_addr=/var/tmp/spdk.sock
+    command: /opi-spdk-bridge -grpc_port=50051 -http_port=8082 -spdk_addr=/var/tmp/spdk.sock -redis_addr="redis:6379"
     healthcheck:
       test: grpcurl -plaintext localhost:50051 list || exit 1
 
