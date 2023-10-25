@@ -15,7 +15,7 @@ import (
 )
 
 // PbInvClientGetter defines the function type used to retrieve an inventory protobuf client
-type PbInvClientGetter func(c grpc.ClientConnInterface) pb.InventorySvcClient
+type PbInvClientGetter func(c grpc.ClientConnInterface) pb.InventoryServiceClient
 
 type invClientImpl struct {
 	getInvClient PbInvClientGetter
@@ -35,7 +35,7 @@ func New(addr string) (InvClient, error) {
 	}
 
 	// Default is to use the OPI grpc client and the pb client generated from the protobuf spec
-	return NewWithArgs(c, pb.NewInventorySvcClient)
+	return NewWithArgs(c, pb.NewInventoryServiceClient)
 }
 
 // NewWithArgs creates an inventory client for use with OPI server using the given gRPC client and the given function for
