@@ -28,7 +28,7 @@ func Stats(address string) error {
 		}
 	}
 
-	client := pb.NewIPsecClient(conn)
+	client := pb.NewIPsecServiceClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
@@ -52,7 +52,7 @@ func TestIpsec(address string, pingaddr string) error {
 	defer cancel()
 
 	// IPsec
-	c1 := pb.NewIPsecClient(conn)
+	c1 := pb.NewIPsecServiceClient(conn)
 
 	// Print info
 	getVersion(ctx, c1)
@@ -62,7 +62,7 @@ func TestIpsec(address string, pingaddr string) error {
 	loadConnections(ctx, c1)
 
 	// Bring the connection up
-	initConn := pb.IPsecInitiateReq{
+	initConn := pb.IPsecInitiateRequest{
 		Ike:   "opi-test",
 		Child: "opi-child",
 	}
@@ -73,7 +73,7 @@ func TestIpsec(address string, pingaddr string) error {
 	log.Printf("Initiated: %v", initRet)
 
 	// List the ikeSas
-	ikeSas := pb.IPsecListSasReq{
+	ikeSas := pb.IPsecListSasRequest{
 		Ike: "opi-test",
 	}
 	listSasRet, err := c1.IPsecListSas(ctx, &ikeSas)
@@ -90,7 +90,7 @@ func TestIpsec(address string, pingaddr string) error {
 	doPing(pingaddr)
 
 	// Rekey the IKE_SA
-	rekeyConn := pb.IPsecRekeyReq{
+	rekeyConn := pb.IPsecRekeyRequest{
 		Ike: "opi-test",
 	}
 	rekeyRet, err := c1.IPsecRekey(ctx, &rekeyConn)
@@ -104,9 +104,9 @@ func TestIpsec(address string, pingaddr string) error {
 	return nil
 }
 
-func doCleanup(ctx context.Context, client pb.IPsecClient) {
+func doCleanup(ctx context.Context, client pb.IPsecServiceClient) {
 	// Terminate the connection
-	termConn := pb.IPsecTerminateReq{
+	termConn := pb.IPsecTerminateRequest{
 		Ike: "opi-test",
 	}
 
@@ -117,7 +117,7 @@ func doCleanup(ctx context.Context, client pb.IPsecClient) {
 	log.Printf("Terminate: %v", termRet)
 
 	// Unload
-	unloadIpsec := pb.IPsecUnloadConnReq{
+	unloadIpsec := pb.IPsecUnloadConnRequest{
 		Name: "opi-test",
 	}
 
@@ -128,9 +128,9 @@ func doCleanup(ctx context.Context, client pb.IPsecClient) {
 	log.Printf("Unloaded: %v", rs2)
 }
 
-func listConnections(ctx context.Context, client pb.IPsecClient) {
+func listConnections(ctx context.Context, client pb.IPsecServiceClient) {
 	// List the connections
-	listConn := pb.IPsecListConnsReq{
+	listConn := pb.IPsecListConnsRequest{
 		Ike: "opi-test",
 	}
 	listConnsRet, err := client.IPsecListConns(ctx, &listConn)
@@ -140,9 +140,9 @@ func listConnections(ctx context.Context, client pb.IPsecClient) {
 	log.Printf("Returned connections: %v", listConnsRet)
 }
 
-func listCertificates(ctx context.Context, client pb.IPsecClient) {
+func listCertificates(ctx context.Context, client pb.IPsecServiceClient) {
 	// List the certificates
-	listCerts := pb.IPsecListCertsReq{
+	listCerts := pb.IPsecListCertsRequest{
 		Type: "any",
 	}
 	listCertsRet, err := client.IPsecListCerts(ctx, &listCerts)
@@ -152,16 +152,16 @@ func listCertificates(ctx context.Context, client pb.IPsecClient) {
 	log.Printf("Returned certificates: %v", listCertsRet)
 }
 
-func getStats(ctx context.Context, client pb.IPsecClient) {
-	statsResp, err := client.IPsecStats(ctx, &pb.IPsecStatsReq{})
+func getStats(ctx context.Context, client pb.IPsecServiceClient) {
+	statsResp, err := client.IPsecStats(ctx, &pb.IPsecStatsRequest{})
 	if err != nil {
 		log.Fatalf("could not get IPsec stats")
 	}
 	log.Printf("IPsec stats\n%s", statsResp.GetStatus())
 }
 
-func getVersion(ctx context.Context, client pb.IPsecClient) {
-	vresp, err := client.IPsecVersion(ctx, &pb.IPsecVersionReq{})
+func getVersion(ctx context.Context, client pb.IPsecServiceClient) {
+	vresp, err := client.IPsecVersion(ctx, &pb.IPsecVersionRequest{})
 	if err != nil {
 		log.Fatalf("could not get IPsec version")
 	}
@@ -190,8 +190,8 @@ func doPing(a string) {
 	log.Printf("Ping stats: %v", stats)
 }
 
-func loadConnections(ctx context.Context, client pb.IPsecClient) {
-	localIpsec := pb.IPsecLoadConnReq{
+func loadConnections(ctx context.Context, client pb.IPsecServiceClient) {
+	localIpsec := pb.IPsecLoadConnRequest{
 		Connection: &pb.Connection{
 			Name:    "opi-test",
 			Version: "2",
@@ -206,15 +206,15 @@ func loadConnections(ctx context.Context, client pb.IPsecClient) {
 					Addr: "192.168.200.210",
 				},
 			},
-			LocalAuth:  &pb.LocalAuth{Auth: pb.AuthType_PSK, Id: "hacker@strongswan.org"},
-			RemoteAuth: &pb.RemoteAuth{Auth: pb.AuthType_PSK, Id: "server.strongswan.org"},
+			LocalAuth:  &pb.LocalAuth{Auth: pb.AuthType_AUTH_TYPE_PSK, Id: "hacker@strongswan.org"},
+			RemoteAuth: &pb.RemoteAuth{Auth: pb.AuthType_AUTH_TYPE_PSK, Id: "server.strongswan.org"},
 			Children: []*pb.Child{
 				{
 					Name: "opi-child",
 					EspProposals: &pb.Proposals{
-						CryptoAlg: []pb.CryptoAlgorithm{pb.CryptoAlgorithm_AES256GCM128},
-						IntegAlg:  []pb.IntegAlgorithm{pb.IntegAlgorithm_SHA512},
-						Dhgroups:  []pb.DiffieHellmanGroups{pb.DiffieHellmanGroups_CURVE25519},
+						CryptoAlg: []pb.CryptoAlgorithm{pb.CryptoAlgorithm_CRYPTO_ALGORITHM_AES256GCM128},
+						IntegAlg:  []pb.IntegAlgorithm{pb.IntegAlgorithm_INTEG_ALGORITHM_SHA512},
+						Dhgroups:  []pb.DHGroups{pb.DHGroups_DH_GROUPS_CURVE25519},
 					},
 					RemoteTs: &pb.TrafficSelectors{
 						Ts: []*pb.TrafficSelectors_TrafficSelector{
