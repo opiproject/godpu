@@ -60,7 +60,7 @@ mock-generate:
 	mockery --config=mocks/.mockery.yaml --name=EvpnClient --dir=network
 
 	# Generate mocks for imported protobuf clients too
-	mockery --config=mocks/.mockery.yaml --name=IPsecClient --srcpkg=github.com/opiproject/opi-api/security/v1/gen/go
+	mockery --config=mocks/.mockery.yaml --name=IPsecServiceClient --srcpkg=github.com/opiproject/opi-api/security/v1/gen/go
 	mockery --config=mocks/.mockery.yaml --name=InventorySvcClient --srcpkg=github.com/opiproject/opi-api/inventory/v1/gen/go
 	mockery --config=mocks/.mockery.yaml --name=SviServiceClient --srcpkg=github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go
 	mockery --config=mocks/.mockery.yaml --name=VrfServiceClient --srcpkg=github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go
