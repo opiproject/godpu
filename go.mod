@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/go-chi/chi v1.5.5
 	github.com/go-ping/ping v1.1.0
-	github.com/google/uuid v1.3.1
+	github.com/google/uuid v1.4.0
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/onsi/ginkgo/v2 v2.13.0
 	github.com/onsi/gomega v1.28.0
