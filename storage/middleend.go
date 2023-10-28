@@ -59,7 +59,7 @@ func executeEncryptedVolume(ctx context.Context, c1 pb.MiddleendEncryptionServic
 			}
 			newResourceID = parsed.String()
 		}
-		fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", newResourceID)
+		fullname := resourceIDToVolumeName(newResourceID)
 		if rs1.Name != fullname {
 			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Name, fullname)
 		}
@@ -131,7 +131,7 @@ func executeQosVolume(ctx context.Context, c2 pb.MiddleendQosVolumeServiceClient
 			}
 			newResourceID = parsed.String()
 		}
-		fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", newResourceID)
+		fullname := resourceIDToVolumeName(newResourceID)
 		if rs1.Name != fullname {
 			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Name, fullname)
 		}

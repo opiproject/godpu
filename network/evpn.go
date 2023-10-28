@@ -8,10 +8,10 @@ package network
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	grpcOpi "github.com/opiproject/godpu/grpc"
 	pb "github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go"
+	"go.einride.tech/aip/resourcename"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
@@ -70,7 +70,10 @@ type EvpnClient interface {
 }
 
 func resourceIDToFullName(container string, resourceID string) string {
-	return fmt.Sprintf("//network.opiproject.org/%s/%s", container, resourceID)
+	return resourcename.Join(
+		"//network.opiproject.org/",
+		container, resourceID,
+	)
 }
 
 // NewLogicalBridge creates an evpn Logical Bridge client for use with OPI server at the given address
