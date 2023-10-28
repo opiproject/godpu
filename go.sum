@@ -89,6 +89,8 @@ github.com/opiproject/opi-api v0.0.0-20231024191239-b23b3f9635f0 h1:tnHsLAB4mLeY
 github.com/opiproject/opi-api v0.0.0-20231024191239-b23b3f9635f0/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
 github.com/opiproject/opi-api v0.0.0-20231026170050-b3c06e7f8fbb h1:13gisU+WRfo07XBakEoniyJGltlHoGnExh4spXCibac=
 github.com/opiproject/opi-api v0.0.0-20231026170050-b3c06e7f8fbb/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
+github.com/opiproject/opi-api v0.0.0-20231028074849-2fd1b3a4ab9f h1:CCgubUpYT941qu60oEbAaYNn6E3HPGMcTOOOVI9U4sQ=
+github.com/opiproject/opi-api v0.0.0-20231028074849-2fd1b3a4ab9f/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
 github.com/pkg/diff v0.0.0-20210226163009-20ebb0f2a09e/go.mod h1:pJLUxLENpZxwdsKMEsNbx1VGcRFpLqf3715MtcvvzbA=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
