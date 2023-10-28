@@ -77,7 +77,7 @@ func executeNvmeRemoteController(ctx context.Context, c4 pb.NvmeRemoteController
 			}
 			newResourceID = parsed.String()
 		}
-		fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", newResourceID)
+		fullname := resourceIDToVolumeName(newResourceID)
 		if rr0.Name != fullname {
 			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rr0.Name, fullname)
 		}
@@ -175,7 +175,7 @@ func executeNvmePath(ctx context.Context, c5 pb.NvmeRemoteControllerServiceClien
 			}
 			newResourceID = parsed.String()
 		}
-		fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", newResourceID)
+		fullname := resourceIDToVolumeName(newResourceID)
 		if np0.Name != fullname {
 			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", np0.Name, fullname)
 		}
@@ -256,7 +256,7 @@ func executeNullVolume(ctx context.Context, c1 pb.NullVolumeServiceClient) error
 			}
 			newResourceID = parsed.String()
 		}
-		fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", newResourceID)
+		fullname := resourceIDToVolumeName(newResourceID)
 		if rs1.Name != fullname {
 			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Name, fullname)
 		}
@@ -319,7 +319,7 @@ func executeAioVolume(ctx context.Context, c2 pb.AioVolumeServiceClient) error {
 			}
 			newResourceID = parsed.String()
 		}
-		fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", newResourceID)
+		fullname := resourceIDToVolumeName(newResourceID)
 		if ra1.Name != fullname {
 			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", ra1.Name, fullname)
 		}

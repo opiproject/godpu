@@ -72,7 +72,7 @@ func executeVirtioScsiLun(ctx context.Context, c6 pb.FrontendVirtioScsiServiceCl
 	if err != nil {
 		return err
 	}
-	ctrlrName := fmt.Sprintf("//storage.opiproject.org/volumes/%s", resourceID)
+	ctrlrName := resourceIDToVolumeName(resourceID)
 	if rss1.Name != ctrlrName {
 		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rss1.Name, ctrlrName)
 	}
@@ -80,7 +80,7 @@ func executeVirtioScsiLun(ctx context.Context, c6 pb.FrontendVirtioScsiServiceCl
 	if err != nil {
 		return err
 	}
-	fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", resourceID)
+	fullname := resourceIDToVolumeName(resourceID)
 	if rl1.Name != fullname {
 		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rl1.Name, fullname)
 	}
@@ -148,7 +148,7 @@ func executeVirtioScsiController(ctx context.Context, c5 pb.FrontendVirtioScsiSe
 			}
 			newResourceID = parsed.String()
 		}
-		fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", newResourceID)
+		fullname := resourceIDToVolumeName(newResourceID)
 		if rss1.Name != fullname {
 			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rss1.Name, fullname)
 		}
@@ -219,7 +219,7 @@ func executeVirtioBlk(ctx context.Context, c4 pb.FrontendVirtioBlkServiceClient)
 			}
 			newResourceID = parsed.String()
 		}
-		fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", newResourceID)
+		fullname := resourceIDToVolumeName(newResourceID)
 		if rv1.Name != fullname {
 			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rv1.Name, fullname)
 		}
@@ -275,7 +275,7 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 	if err != nil {
 		return err
 	}
-	ssName := fmt.Sprintf("//storage.opiproject.org/subsystems/%s", "namespace-test-ss")
+	ssName := resourceIDToSubsystemName("namespace-test-ss")
 	if rs1.Name != ssName {
 		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Name, ssName)
 	}
@@ -303,8 +303,7 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 	if err != nil {
 		return err
 	}
-	ctrlrName := fmt.Sprintf("//storage.opiproject.org/subsystems/%s/controllers/%s",
-		"namespace-test-ss", "namespace-test-ctrler")
+	ctrlrName := resourceIDToControllerName("namespace-test-ss", "namespace-test-ctrler")
 	if rc1.Name != ctrlrName {
 		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rc1.Name, ctrlrName)
 	}
@@ -339,8 +338,7 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 			}
 			newResourceID = parsed.String()
 		}
-		fullname := fmt.Sprintf("//storage.opiproject.org/subsystems/%s/namespaces/%s",
-			"namespace-test-ss", newResourceID)
+		fullname := resourceIDToNamespaceName("namespace-test-ss", newResourceID)
 		if rn1.Name != fullname {
 			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rn1.Name, fullname)
 		}
@@ -414,7 +412,7 @@ func executeNvmeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 	if err != nil {
 		return err
 	}
-	ssName := fmt.Sprintf("//storage.opiproject.org/subsystems/%s", "controller-test-ss")
+	ssName := resourceIDToSubsystemName("controller-test-ss")
 	if rs1.Name != ssName {
 		return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Name, ssName)
 	}
@@ -454,8 +452,7 @@ func executeNvmeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 			}
 			newResourceID = parsed.String()
 		}
-		fullname := fmt.Sprintf("//storage.opiproject.org/subsystems/%s/controllers/%s",
-			"controller-test-ss", newResourceID)
+		fullname := resourceIDToControllerName("controller-test-ss", newResourceID)
 		if rc1.Name != fullname {
 			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rc1.Name, fullname)
 		}
@@ -545,7 +542,7 @@ func executeNvmeSubsystem(ctx context.Context, c1 pb.FrontendNvmeServiceClient) 
 			}
 			newResourceID = parsed.String()
 		}
-		fullname := fmt.Sprintf("//storage.opiproject.org/subsystems/%s", newResourceID)
+		fullname := resourceIDToSubsystemName(newResourceID)
 		if rs1.Name != fullname {
 			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rs1.Name, fullname)
 		}
