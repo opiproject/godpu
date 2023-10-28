@@ -63,7 +63,7 @@ services:
       - opi
 
   frr:
-    image: quay.io/frrouting/frr:8.5.3
+    image: quay.io/frrouting/frr:9.0.1
     cap_add:
       - NET_ADMIN
       - SYS_ADMIN
