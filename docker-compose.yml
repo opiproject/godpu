@@ -128,8 +128,9 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
     cap_add:
       - NET_ADMIN
-    network_mode: service:frr
-    command: /opi-evpn-bridge -grpc_port=50151 -http_port=8082 -redis_addr="redis:6379"
+    networks:
+      - opi
+    command: /opi-evpn-bridge -grpc_port=50151 -http_port=8082 -redis_addr="redis:6379" -frr_addr="frr"
     healthcheck:
       test: grpcurl -plaintext localhost:50151 list || exit 1
     depends_on:
@@ -148,7 +149,7 @@ services:
     depends_on:
       opi-evpn-server:
         condition: service_healthy
-    command: evpn create-vrf --name blue --vni 100 --vtep 10.0.0.100/24 --loopback 10.100.0.1/24 --addr frr:50151
+    command: evpn create-vrf --name blue --vni 100 --vtep 10.0.0.100/24 --loopback 10.100.0.1/24 --addr opi-evpn-server:50151
 
   opi-smbios-test:
     build:
