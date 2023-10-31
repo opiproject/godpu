@@ -111,6 +111,8 @@ services:
     networks:
       - opi
     depends_on:
+      redis:
+        condition: service_healthy
       jaeger:
         condition: service_healthy
       spdk:
