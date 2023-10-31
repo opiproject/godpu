@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2022-2023 Dell Inc, or its subsidiaries.
+// Copyright (C) 2023 Intel Corporation
 
 // Package storage implements the go library for OPI to be used in storage, for example, CSI drivers
 package storage
@@ -21,36 +22,69 @@ import (
 	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
-// DoFrontend executes the front end code
-func DoFrontend(ctx context.Context, conn grpc.ClientConnInterface) error {
-	nvme := pb.NewFrontendNvmeServiceClient(conn)
-	blk := pb.NewFrontendVirtioBlkServiceClient(conn)
-	scsi := pb.NewFrontendVirtioScsiServiceClient(conn)
+// FrontendPartition defines frontend API partition type
+type FrontendPartition int
 
-	err := executeNvmeSubsystem(ctx, nvme)
-	if err != nil {
-		return err
+// Enumerates all frontend API partitions
+const (
+	FrontendPartitionNvme FrontendPartition = iota + 1
+	FrontendPartitionVirtioBlk
+	FrontendPartitionScsi
+)
+
+// AllFrontendPartitions contains partitions to test entire frontend API
+var AllFrontendPartitions = []FrontendPartition{
+	FrontendPartitionNvme,
+	FrontendPartitionVirtioBlk,
+	FrontendPartitionScsi,
+}
+
+// DoFrontend executes the front end code
+func DoFrontend(
+	ctx context.Context,
+	conn grpc.ClientConnInterface,
+	partitionsToTest []FrontendPartition,
+) error {
+	for _, partition := range partitionsToTest {
+		switch partition {
+		case FrontendPartitionNvme:
+			nvme := pb.NewFrontendNvmeServiceClient(conn)
+			err := executeNvmeSubsystem(ctx, nvme)
+			if err != nil {
+				return err
+			}
+			err = executeNvmeController(ctx, nvme)
+			if err != nil {
+				return err
+			}
+			err = executeNvmeNamespace(ctx, nvme)
+			if err != nil {
+				return err
+			}
+
+		case FrontendPartitionVirtioBlk:
+			blk := pb.NewFrontendVirtioBlkServiceClient(conn)
+			err := executeVirtioBlk(ctx, blk)
+			if err != nil {
+				return err
+			}
+
+		case FrontendPartitionScsi:
+			scsi := pb.NewFrontendVirtioScsiServiceClient(conn)
+			err := executeVirtioScsiController(ctx, scsi)
+			if err != nil {
+				return err
+			}
+			err = executeVirtioScsiLun(ctx, scsi)
+			if err != nil {
+				return err
+			}
+
+		default:
+			return fmt.Errorf("unknown storage frontend partition: %v", partition)
+		}
 	}
-	err = executeNvmeController(ctx, nvme)
-	if err != nil {
-		return err
-	}
-	err = executeNvmeNamespace(ctx, nvme)
-	if err != nil {
-		return err
-	}
-	err = executeVirtioBlk(ctx, blk)
-	if err != nil {
-		return err
-	}
-	err = executeVirtioScsiController(ctx, scsi)
-	if err != nil {
-		return err
-	}
-	err = executeVirtioScsiLun(ctx, scsi)
-	if err != nil {
-		return err
-	}
+
 	return nil
 }
 

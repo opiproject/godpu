@@ -61,6 +61,7 @@ func newStorageTestCommand() *cobra.Command {
 			runTests(
 				c,
 				allStoragePartitions,
+				storage.AllFrontendPartitions,
 			)
 		},
 	}
@@ -83,9 +84,47 @@ func newStorageTestFrontendCommand() *cobra.Command {
 			runTests(
 				c,
 				[]storagePartition{storagePartitionFrontend},
+				storage.AllFrontendPartitions,
 			)
 		},
 	}
+
+	cmd.AddCommand(&cobra.Command{
+		Use:   "nvme",
+		Short: "Tests storage frontend nvme API",
+		Args:  cobra.NoArgs,
+		Run: func(c *cobra.Command, args []string) {
+			runTests(
+				c,
+				[]storagePartition{storagePartitionFrontend},
+				[]storage.FrontendPartition{storage.FrontendPartitionNvme},
+			)
+		},
+	})
+	cmd.AddCommand(&cobra.Command{
+		Use:   "virtio-blk",
+		Short: "Tests storage frontend virtio-blk API",
+		Args:  cobra.NoArgs,
+		Run: func(c *cobra.Command, args []string) {
+			runTests(
+				c,
+				[]storagePartition{storagePartitionFrontend},
+				[]storage.FrontendPartition{storage.FrontendPartitionVirtioBlk},
+			)
+		},
+	})
+	cmd.AddCommand(&cobra.Command{
+		Use:   "scsi",
+		Short: "Tests storage frontend scsi API",
+		Args:  cobra.NoArgs,
+		Run: func(c *cobra.Command, args []string) {
+			runTests(
+				c,
+				[]storagePartition{storagePartitionFrontend},
+				[]storage.FrontendPartition{storage.FrontendPartitionScsi},
+			)
+		},
+	})
 
 	return cmd
 }
@@ -99,6 +138,7 @@ func newStorageTestBackendCommand() *cobra.Command {
 			runTests(
 				c,
 				[]storagePartition{storagePartitionBackend},
+				nil,
 			)
 		},
 	}
@@ -115,6 +155,7 @@ func newStorageTestMiddleendCommand() *cobra.Command {
 			runTests(
 				c,
 				[]storagePartition{storagePartitionMiddleend},
+				nil,
 			)
 		},
 	}
@@ -125,6 +166,7 @@ func newStorageTestMiddleendCommand() *cobra.Command {
 func runTests(
 	cmd *cobra.Command,
 	partitions []storagePartition,
+	frontendPartitions []storage.FrontendPartition,
 ) {
 	addr, err := cmd.Flags().GetString(addrCmdLineArg)
 	if err != nil {
@@ -155,7 +197,7 @@ func runTests(
 		var err error
 		switch partition {
 		case storagePartitionFrontend:
-			err = storage.DoFrontend(ctx, conn)
+			err = storage.DoFrontend(ctx, conn, frontendPartitions)
 		case storagePartitionBackend:
 			err = storage.DoBackend(ctx, conn)
 		case storagePartitionMiddleend:
