@@ -11,66 +11,24 @@ import (
 	"time"
 
 	"github.com/opiproject/godpu/grpc"
-
 	"github.com/opiproject/godpu/storage"
 	"github.com/spf13/cobra"
 )
 
-// NewStorageTestCommand returns the storage tests command
-func NewStorageTestCommand() *cobra.Command {
-	var (
-		addr string
-	)
-	cmd := &cobra.Command{
-		Use:     "test",
-		Aliases: []string{"s"},
-		Short:   "Test storage functionality",
-		Args:    cobra.NoArgs,
-		Run: func(cmd *cobra.Command, args []string) {
-			// Set up a connection to the server.
-			client, err := grpc.New(addr)
-			if err != nil {
-				log.Fatalf("error creating new client: %v", err)
-			}
+const addrCmdLineArg = "addr"
 
-			// Contact the server and print out its response.
-			conn, closer, err := client.NewConn()
-			if err != nil {
-				log.Fatalf("error creating gRPC connection: %v", err)
-			}
-			defer closer()
+type storagePartition string
 
-			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-			defer cancel()
+const (
+	storagePartitionFrontend  storagePartition = "frontend"
+	storagePartitionBackend   storagePartition = "backend"
+	storagePartitionMiddleend storagePartition = "middleend"
+)
 
-			log.Printf("==============================================================================")
-			log.Printf("Test frontend")
-			log.Printf("==============================================================================")
-			err = storage.DoFrontend(ctx, conn)
-			if err != nil {
-				log.Panicf("DoFrontend tests failed with error: %v", err)
-			}
-
-			log.Printf("==============================================================================")
-			log.Printf("Test backend")
-			log.Printf("==============================================================================")
-			err = storage.DoBackend(ctx, conn)
-			if err != nil {
-				log.Panicf("DoBackend tests failed with error: %v", err)
-			}
-
-			log.Printf("==============================================================================")
-			log.Printf("Test middleend")
-			log.Printf("==============================================================================")
-			err = storage.DoMiddleend(ctx, conn)
-			if err != nil {
-				log.Panicf("DoMiddleend tests failed with error: %v", err)
-			}
-		},
-	}
-	flags := cmd.Flags()
-	flags.StringVar(&addr, "addr", "localhost:50151", "address or OPI gRPC server")
-	return cmd
+var allStoragePartitions = []storagePartition{
+	storagePartitionFrontend,
+	storagePartitionBackend,
+	storagePartitionMiddleend,
 }
 
 // NewStorageCommand tests the storage functionality
@@ -80,14 +38,134 @@ func NewStorageCommand() *cobra.Command {
 		Aliases: []string{"g"},
 		Short:   "Tests storage functionality",
 		Args:    cobra.NoArgs,
-		Run: func(cmd *cobra.Command, args []string) {
-			err := cmd.Help()
+		Run: func(c *cobra.Command, args []string) {
+			err := c.Help()
 			if err != nil {
 				log.Fatalf("[ERROR] %s", err.Error())
 			}
 		},
 	}
 
-	cmd.AddCommand(NewStorageTestCommand())
+	cmd.AddCommand(newStorageTestCommand())
+
 	return cmd
+}
+
+func newStorageTestCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "test",
+		Aliases: []string{"s"},
+		Short:   "Test storage functionality",
+		Args:    cobra.NoArgs,
+		Run: func(c *cobra.Command, args []string) {
+			runTests(
+				c,
+				allStoragePartitions,
+			)
+		},
+	}
+
+	cmd.AddCommand(newStorageTestFrontendCommand())
+	cmd.AddCommand(newStorageTestBackendCommand())
+	cmd.AddCommand(newStorageTestMiddleendCommand())
+
+	flags := cmd.PersistentFlags()
+	flags.String(addrCmdLineArg, "localhost:50151", "address of OPI gRPC server")
+	return cmd
+}
+
+func newStorageTestFrontendCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   string(storagePartitionFrontend),
+		Short: "Tests storage frontend API",
+		Args:  cobra.NoArgs,
+		Run: func(c *cobra.Command, args []string) {
+			runTests(
+				c,
+				[]storagePartition{storagePartitionFrontend},
+			)
+		},
+	}
+
+	return cmd
+}
+
+func newStorageTestBackendCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   string(storagePartitionBackend),
+		Short: "Tests storage backend API",
+		Args:  cobra.NoArgs,
+		Run: func(c *cobra.Command, args []string) {
+			runTests(
+				c,
+				[]storagePartition{storagePartitionBackend},
+			)
+		},
+	}
+
+	return cmd
+}
+
+func newStorageTestMiddleendCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   string(storagePartitionMiddleend),
+		Short: "Tests storage middleend API",
+		Args:  cobra.NoArgs,
+		Run: func(c *cobra.Command, args []string) {
+			runTests(
+				c,
+				[]storagePartition{storagePartitionMiddleend},
+			)
+		},
+	}
+
+	return cmd
+}
+
+func runTests(
+	cmd *cobra.Command,
+	partitions []storagePartition,
+) {
+	addr, err := cmd.Flags().GetString(addrCmdLineArg)
+	if err != nil {
+		log.Fatalf("error getting %v argument: %v", addrCmdLineArg, err)
+	}
+
+	// Set up a connection to the server.
+	client, err := grpc.New(addr)
+	if err != nil {
+		log.Fatalf("error creating new client: %v", err)
+	}
+
+	// Contact the server and print out its response.
+	conn, closer, err := client.NewConn()
+	if err != nil {
+		log.Fatalf("error creating gRPC connection: %v", err)
+	}
+	defer closer()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	for _, partition := range partitions {
+		log.Printf("==============================================================================")
+		log.Printf("Test %v", partition)
+		log.Printf("==============================================================================")
+
+		var err error
+		switch partition {
+		case storagePartitionFrontend:
+			err = storage.DoFrontend(ctx, conn)
+		case storagePartitionBackend:
+			err = storage.DoBackend(ctx, conn)
+		case storagePartitionMiddleend:
+			err = storage.DoMiddleend(ctx, conn)
+		default:
+			log.Panicf("Unknown storage partition: %v", partition)
+		}
+
+		if err != nil {
+			log.Panicf("%v tests failed with error: %v", partition, err)
+		}
+	}
 }
