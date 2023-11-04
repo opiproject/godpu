@@ -10,7 +10,7 @@ require (
 	github.com/onsi/ginkgo/v2 v2.13.0
 	github.com/onsi/gomega v1.29.0
 	github.com/opiproject/opi-api v0.0.0-20231030062733-bbe47cce6d77
-	github.com/spf13/cobra v1.7.0
+	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.8.4
 	go.einride.tech/aip v0.63.0
 	golang.org/x/net v0.17.0
