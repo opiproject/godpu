@@ -12,7 +12,7 @@ require (
 	github.com/opiproject/opi-api v0.0.0-20231030062733-bbe47cce6d77
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
-	go.einride.tech/aip v0.63.0
+	go.einride.tech/aip v0.65.0
 	golang.org/x/net v0.17.0
 	golang.org/x/text v0.13.0
 	google.golang.org/grpc v1.59.0
