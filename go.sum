@@ -45,6 +45,8 @@ github.com/opiproject/opi-api v0.0.0-20231028074849-2fd1b3a4ab9f h1:CCgubUpYT941
 github.com/opiproject/opi-api v0.0.0-20231028074849-2fd1b3a4ab9f/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
 github.com/opiproject/opi-api v0.0.0-20231030062733-bbe47cce6d77 h1:7XbMFmFH42T9QY2DjL8s5VVU25cdEdDznBDnmUm3YcE=
 github.com/opiproject/opi-api v0.0.0-20231030062733-bbe47cce6d77/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
+github.com/opiproject/opi-api v0.0.0-20231105064559-afce4254fa49 h1:IcZrm+pPJNO3uCpo9DjQ18iUfQumVwyz/cA6HKcMtws=
+github.com/opiproject/opi-api v0.0.0-20231105064559-afce4254fa49/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/rogpeppe/go-internal v1.9.0 h1:73kH8U+JUqXU8lRuOHeVHaa/SZPifC7BkcraZVejAe8=
