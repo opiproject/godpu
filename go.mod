@@ -8,7 +8,7 @@ require (
 	github.com/go-ping/ping v1.1.0
 	github.com/google/uuid v1.4.0
 	github.com/lithammer/fuzzysearch v1.1.8
-	github.com/onsi/ginkgo/v2 v2.13.0
+	github.com/onsi/ginkgo/v2 v2.13.1
 	github.com/onsi/gomega v1.30.0
 	github.com/opiproject/opi-api v0.0.0-20231106063049-7979f3e83669
 	github.com/spf13/cobra v1.8.0
@@ -22,7 +22,7 @@ require (
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/go-logr/logr v1.2.4 // indirect
+	github.com/go-logr/logr v1.3.0 // indirect
 	github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
