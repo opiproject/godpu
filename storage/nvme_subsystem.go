@@ -36,3 +36,26 @@ func (c *Client) CreateNvmeSubsystem(
 
 	return response, err
 }
+
+// DeleteNvmeSubsystem deletes an nvme namespace
+func (c *Client) DeleteNvmeSubsystem(
+	ctx context.Context,
+	name string,
+	allowMissing bool,
+) error {
+	conn, connClose, err := c.connector.NewConn()
+	if err != nil {
+		return err
+	}
+	defer connClose()
+
+	client := c.createClient(conn)
+	_, err = client.DeleteNvmeSubsystem(
+		ctx,
+		&pb.DeleteNvmeSubsystemRequest{
+			Name:         name,
+			AllowMissing: allowMissing,
+		})
+
+	return err
+}
