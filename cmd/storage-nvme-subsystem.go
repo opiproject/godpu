@@ -46,3 +46,34 @@ func newCreateNvmeSubsystemCommand() *cobra.Command {
 
 	return cmd
 }
+
+func newDeleteNvmeSubsystemCommand() *cobra.Command {
+	name := ""
+	allowMissing := false
+	cmd := &cobra.Command{
+		Use:     "subsystem",
+		Aliases: []string{"s"},
+		Short:   "Deletes nvme subsystem",
+		Args:    cobra.NoArgs,
+		Run: func(c *cobra.Command, args []string) {
+			addr, err := c.Flags().GetString(addrCmdLineArg)
+			cobra.CheckErr(err)
+
+			client, err := storage.New(addr)
+			cobra.CheckErr(err)
+
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
+
+			err = client.DeleteNvmeSubsystem(ctx, name, allowMissing)
+			cobra.CheckErr(err)
+		},
+	}
+
+	cmd.Flags().StringVar(&name, "name", "", "name of deleted subsystem")
+	cmd.Flags().BoolVar(&allowMissing, "allowMissing", false, "cmd succeeds if attempts to delete a resource that is not present")
+
+	cobra.CheckErr(cmd.MarkFlagRequired("name"))
+
+	return cmd
+}

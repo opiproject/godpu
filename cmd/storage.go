@@ -30,6 +30,7 @@ func NewStorageCommand() *cobra.Command {
 	flags.String(addrCmdLineArg, "localhost:50151", "address of OPI gRPC server")
 
 	cmd.AddCommand(newStorageCreateCommand())
+	cmd.AddCommand(newStorageDeleteCommand())
 	cmd.AddCommand(newStorageTestCommand())
 
 	return cmd
@@ -65,6 +66,40 @@ func newCreateNvmeCommand() *cobra.Command {
 	}
 
 	cmd.AddCommand(newCreateNvmeSubsystemCommand())
+
+	return cmd
+}
+
+func newStorageDeleteCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "delete",
+		Aliases: []string{"d"},
+		Short:   "Deletes resource",
+		Args:    cobra.NoArgs,
+		Run: func(c *cobra.Command, args []string) {
+			err := c.Help()
+			cobra.CheckErr(err)
+		},
+	}
+
+	cmd.AddCommand(newDeleteNvmeCommand())
+
+	return cmd
+}
+
+func newDeleteNvmeCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "nvme",
+		Aliases: []string{"n"},
+		Short:   "Deletes nvme resource",
+		Args:    cobra.NoArgs,
+		Run: func(c *cobra.Command, args []string) {
+			err := c.Help()
+			cobra.CheckErr(err)
+		},
+	}
+
+	cmd.AddCommand(newDeleteNvmeSubsystemCommand())
 
 	return cmd
 }
