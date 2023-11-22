@@ -7,11 +7,13 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/spf13/cobra"
 )
 
 const addrCmdLineArg = "addr"
+const timeoutCmdLineArg = "timeout"
 
 // NewStorageCommand tests the storage functionality
 func NewStorageCommand() *cobra.Command {
@@ -28,6 +30,7 @@ func NewStorageCommand() *cobra.Command {
 
 	flags := cmd.PersistentFlags()
 	flags.String(addrCmdLineArg, "localhost:50151", "address of OPI gRPC server")
+	flags.Duration(timeoutCmdLineArg, 10*time.Second, "timeout for a cmd")
 
 	cmd.AddCommand(newStorageCreateCommand())
 	cmd.AddCommand(newStorageDeleteCommand())
