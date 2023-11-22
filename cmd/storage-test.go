@@ -31,26 +31,6 @@ var allStoragePartitions = []storagePartition{
 	storagePartitionMiddleend,
 }
 
-// NewStorageCommand tests the storage functionality
-func NewStorageCommand() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:     "storage",
-		Aliases: []string{"g"},
-		Short:   "Tests storage functionality",
-		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
-			err := c.Help()
-			if err != nil {
-				log.Fatalf("[ERROR] %s", err.Error())
-			}
-		},
-	}
-
-	cmd.AddCommand(newStorageTestCommand())
-
-	return cmd
-}
-
 func newStorageTestCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "test",
