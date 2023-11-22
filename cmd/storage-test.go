@@ -8,7 +8,6 @@ package cmd
 import (
 	"context"
 	"log"
-	"time"
 
 	"github.com/opiproject/godpu/grpc"
 	"github.com/opiproject/godpu/storage"
@@ -107,6 +106,11 @@ func runTests(
 		log.Fatalf("error getting %v argument: %v", addrCmdLineArg, err)
 	}
 
+	timeout, err := cmd.Flags().GetDuration(timeoutCmdLineArg)
+	if err != nil {
+		log.Fatalf("error getting %v argument: %v", addrCmdLineArg, err)
+	}
+
 	// Set up a connection to the server.
 	client, err := grpc.New(addr)
 	if err != nil {
@@ -120,7 +124,7 @@ func runTests(
 	}
 	defer closer()
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
 	for _, partition := range partitions {

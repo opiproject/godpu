@@ -6,7 +6,6 @@ package cmd
 
 import (
 	"context"
-	"time"
 
 	"github.com/opiproject/godpu/storage"
 	"github.com/spf13/cobra"
@@ -25,10 +24,13 @@ func newCreateNvmeSubsystemCommand() *cobra.Command {
 			addr, err := c.Flags().GetString(addrCmdLineArg)
 			cobra.CheckErr(err)
 
+			timeout, err := c.Flags().GetDuration(timeoutCmdLineArg)
+			cobra.CheckErr(err)
+
 			client, err := storage.New(addr)
 			cobra.CheckErr(err)
 
-			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			ctx, cancel := context.WithTimeout(context.Background(), timeout)
 			defer cancel()
 
 			response, err := client.CreateNvmeSubsystem(ctx, id, nqn, hostnqn)
@@ -59,10 +61,13 @@ func newDeleteNvmeSubsystemCommand() *cobra.Command {
 			addr, err := c.Flags().GetString(addrCmdLineArg)
 			cobra.CheckErr(err)
 
+			timeout, err := c.Flags().GetDuration(timeoutCmdLineArg)
+			cobra.CheckErr(err)
+
 			client, err := storage.New(addr)
 			cobra.CheckErr(err)
 
-			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			ctx, cancel := context.WithTimeout(context.Background(), timeout)
 			defer cancel()
 
 			err = client.DeleteNvmeSubsystem(ctx, name, allowMissing)
