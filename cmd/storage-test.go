@@ -15,8 +15,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const addrCmdLineArg = "addr"
-
 type storagePartition string
 
 const (
@@ -49,8 +47,6 @@ func newStorageTestCommand() *cobra.Command {
 	cmd.AddCommand(newStorageTestBackendCommand())
 	cmd.AddCommand(newStorageTestMiddleendCommand())
 
-	flags := cmd.PersistentFlags()
-	flags.String(addrCmdLineArg, "localhost:50151", "address of OPI gRPC server")
 	return cmd
 }
 
