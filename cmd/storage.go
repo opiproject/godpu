@@ -5,6 +5,9 @@
 package cmd
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/spf13/cobra"
 )
 
@@ -29,4 +32,8 @@ func NewStorageCommand() *cobra.Command {
 	cmd.AddCommand(newStorageTestCommand())
 
 	return cmd
+}
+
+func printResponse(response string) {
+	fmt.Fprintln(os.Stdout, response)
 }
