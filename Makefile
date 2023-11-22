@@ -34,8 +34,7 @@ go-get:
 go-test:
 	@echo "  >  Running ginkgo test suites..."
 	# can replace with a recursive command ginkgo suites are defined for all packages
-	ginkgo grpc inventory
-	ginkgo grpc network
+	ginkgo grpc inventory storage network
 
 go-vet:
 	@CGO_ENABLED=0 go vet -v ./...
