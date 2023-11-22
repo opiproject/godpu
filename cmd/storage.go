@@ -29,7 +29,42 @@ func NewStorageCommand() *cobra.Command {
 	flags := cmd.PersistentFlags()
 	flags.String(addrCmdLineArg, "localhost:50151", "address of OPI gRPC server")
 
+	cmd.AddCommand(newStorageCreateCommand())
 	cmd.AddCommand(newStorageTestCommand())
+
+	return cmd
+}
+
+func newStorageCreateCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "create",
+		Aliases: []string{"c"},
+		Short:   "Creates resource",
+		Args:    cobra.NoArgs,
+		Run: func(c *cobra.Command, args []string) {
+			err := c.Help()
+			cobra.CheckErr(err)
+		},
+	}
+
+	cmd.AddCommand(newCreateNvmeCommand())
+
+	return cmd
+}
+
+func newCreateNvmeCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "nvme",
+		Aliases: []string{"n"},
+		Short:   "Creates nvme resource",
+		Args:    cobra.NoArgs,
+		Run: func(c *cobra.Command, args []string) {
+			err := c.Help()
+			cobra.CheckErr(err)
+		},
+	}
+
+	cmd.AddCommand(newCreateNvmeSubsystemCommand())
 
 	return cmd
 }
