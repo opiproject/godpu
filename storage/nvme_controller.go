@@ -10,6 +10,7 @@ import (
 	"net"
 
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // CreateNvmeTCPController creates an nvme TCP controller
@@ -49,6 +50,41 @@ func (c *Client) CreateNvmeTCPController(
 							Traddr:  ip.String(),
 							Trsvcid: fmt.Sprint(port),
 							Adrfam:  adrfam,
+						},
+					},
+				},
+			},
+		})
+
+	return response, err
+}
+
+// CreateNvmePcieController creates an nvme PCIe controller
+func (c *Client) CreateNvmePcieController(
+	ctx context.Context,
+	id, subsystem string,
+	port, pf, vf uint,
+) (*pb.NvmeController, error) {
+	conn, connClose, err := c.connector.NewConn()
+	if err != nil {
+		return nil, err
+	}
+	defer connClose()
+
+	client := c.createClient(conn)
+	response, err := client.CreateNvmeController(
+		ctx,
+		&pb.CreateNvmeControllerRequest{
+			Parent:           subsystem,
+			NvmeControllerId: id,
+			NvmeController: &pb.NvmeController{
+				Spec: &pb.NvmeControllerSpec{
+					Trtype: pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Endpoint: &pb.NvmeControllerSpec_PcieId{
+						PcieId: &pb.PciEndpoint{
+							PortId:           wrapperspb.Int32(int32(port)),
+							PhysicalFunction: wrapperspb.Int32(int32(pf)),
+							VirtualFunction:  wrapperspb.Int32(int32(vf)),
 						},
 					},
 				},
