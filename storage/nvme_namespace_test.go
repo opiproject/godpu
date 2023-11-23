@@ -15,6 +15,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 func TestCreateNvmeNamespace(t *testing.T) {
@@ -100,6 +101,76 @@ func TestCreateNvmeNamespace(t *testing.T) {
 
 			require.Equal(t, tt.wantErr, err)
 			require.True(t, proto.Equal(response, tt.wantResponse))
+			require.Equal(t, tt.wantConnClosed, connClosed)
+		})
+	}
+}
+
+func TestDeleteNvmeNamespace(t *testing.T) {
+	testNamespaceName := "name"
+	testRequest := &pb.DeleteNvmeNamespaceRequest{
+		Name:         testNamespaceName,
+		AllowMissing: true,
+	}
+	tests := map[string]struct {
+		giveClientErr    error
+		giveConnectorErr error
+		wantErr          error
+		wantRequest      *pb.DeleteNvmeNamespaceRequest
+		wantConnClosed   bool
+	}{
+		"successful call": {
+			giveConnectorErr: nil,
+			giveClientErr:    nil,
+			wantErr:          nil,
+			wantRequest:      proto.Clone(testRequest).(*pb.DeleteNvmeNamespaceRequest),
+			wantConnClosed:   true,
+		},
+		"client err": {
+			giveConnectorErr: nil,
+			giveClientErr:    errors.New("Some client error"),
+			wantErr:          errors.New("Some client error"),
+			wantRequest:      proto.Clone(testRequest).(*pb.DeleteNvmeNamespaceRequest),
+			wantConnClosed:   true,
+		},
+		"connector err": {
+			giveConnectorErr: errors.New("Some conn error"),
+			giveClientErr:    nil,
+			wantErr:          errors.New("Some conn error"),
+			wantRequest:      nil,
+			wantConnClosed:   false,
+		},
+	}
+
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+			defer cancel()
+
+			mockClient := mocks.NewFrontendNvmeServiceClient(t)
+			if tt.wantRequest != nil {
+				mockClient.EXPECT().DeleteNvmeNamespace(ctx, tt.wantRequest).
+					Return(&emptypb.Empty{}, tt.giveClientErr)
+			}
+
+			connClosed := false
+			mockConn := mocks.NewConnector(t)
+			mockConn.EXPECT().NewConn().Return(
+				&grpc.ClientConn{},
+				func() { connClosed = true },
+				tt.giveConnectorErr,
+			)
+
+			c, _ := NewWithArgs(
+				mockConn,
+				func(grpc.ClientConnInterface) pb.FrontendNvmeServiceClient {
+					return mockClient
+				},
+			)
+
+			err := c.DeleteNvmeNamespace(ctx, testNamespaceName, true)
+
+			require.Equal(t, tt.wantErr, err)
 			require.Equal(t, tt.wantConnClosed, connClosed)
 		})
 	}
