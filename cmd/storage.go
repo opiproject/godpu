@@ -70,6 +70,7 @@ func newCreateNvmeCommand() *cobra.Command {
 
 	cmd.AddCommand(newCreateNvmeSubsystemCommand())
 	cmd.AddCommand(newCreateNvmeNamespaceCommand())
+	cmd.AddCommand(newCreateNvmeControllerCommand())
 
 	return cmd
 }
