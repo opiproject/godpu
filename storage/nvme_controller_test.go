@@ -17,6 +17,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 func TestCreateNvmeTCPController(t *testing.T) {
@@ -150,6 +151,105 @@ func TestCreateNvmeTCPController(t *testing.T) {
 				subsystemName,
 				tt.giveIP,
 				4420,
+			)
+
+			require.Equal(t, tt.wantErr, err)
+			require.True(t, proto.Equal(response, tt.wantResponse))
+			require.Equal(t, tt.wantConnClosed, connClosed)
+		})
+	}
+}
+
+func TestCreateNvmePcieController(t *testing.T) {
+	controllerID := "nvmepcie0"
+	subsystemName := "subsysPcie0Name"
+	testPcieController := &pb.NvmeController{
+		Spec: &pb.NvmeControllerSpec{
+			Trtype: pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+			Endpoint: &pb.NvmeControllerSpec_PcieId{
+				PcieId: &pb.PciEndpoint{
+					PortId:           wrapperspb.Int32(0),
+					PhysicalFunction: wrapperspb.Int32(1),
+					VirtualFunction:  wrapperspb.Int32(2),
+				},
+			},
+		},
+	}
+
+	tests := map[string]struct {
+		giveClientErr    error
+		giveConnectorErr error
+		wantErr          error
+		wantRequest      *pb.CreateNvmeControllerRequest
+		wantResponse     *pb.NvmeController
+		wantConnClosed   bool
+	}{
+		"successful call": {
+			giveConnectorErr: nil,
+			giveClientErr:    nil,
+			wantErr:          nil,
+			wantRequest: &pb.CreateNvmeControllerRequest{
+				Parent:           subsystemName,
+				NvmeControllerId: controllerID,
+				NvmeController:   proto.Clone(testPcieController).(*pb.NvmeController),
+			},
+			wantResponse:   proto.Clone(testPcieController).(*pb.NvmeController),
+			wantConnClosed: true,
+		},
+		"client err": {
+			giveConnectorErr: nil,
+			giveClientErr:    errors.New("Some client error"),
+			wantErr:          errors.New("Some client error"),
+			wantRequest: &pb.CreateNvmeControllerRequest{
+				Parent:           subsystemName,
+				NvmeControllerId: controllerID,
+				NvmeController:   proto.Clone(testPcieController).(*pb.NvmeController),
+			},
+			wantResponse:   nil,
+			wantConnClosed: true,
+		},
+		"connector err": {
+			giveConnectorErr: errors.New("Some conn error"),
+			giveClientErr:    nil,
+			wantErr:          errors.New("Some conn error"),
+			wantRequest:      nil,
+			wantResponse:     nil,
+			wantConnClosed:   false,
+		},
+	}
+
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+			defer cancel()
+
+			mockClient := mocks.NewFrontendNvmeServiceClient(t)
+			if tt.wantRequest != nil {
+				toReturn := proto.Clone(tt.wantResponse).(*pb.NvmeController)
+				mockClient.EXPECT().CreateNvmeController(ctx, tt.wantRequest).
+					Return(toReturn, tt.giveClientErr)
+			}
+
+			connClosed := false
+			mockConn := mocks.NewConnector(t)
+			mockConn.EXPECT().NewConn().Return(
+				&grpc.ClientConn{},
+				func() { connClosed = true },
+				tt.giveConnectorErr,
+			)
+
+			c, _ := NewWithArgs(
+				mockConn,
+				func(grpc.ClientConnInterface) pb.FrontendNvmeServiceClient {
+					return mockClient
+				},
+			)
+
+			response, err := c.CreateNvmePcieController(
+				ctx,
+				controllerID,
+				subsystemName,
+				0, 1, 2,
 			)
 
 			require.Equal(t, tt.wantErr, err)
