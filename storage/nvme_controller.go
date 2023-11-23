@@ -57,3 +57,26 @@ func (c *Client) CreateNvmeTCPController(
 
 	return response, err
 }
+
+// DeleteNvmeController deletes an nvme controller
+func (c *Client) DeleteNvmeController(
+	ctx context.Context,
+	name string,
+	allowMissing bool,
+) error {
+	conn, connClose, err := c.connector.NewConn()
+	if err != nil {
+		return err
+	}
+	defer connClose()
+
+	client := c.createClient(conn)
+	_, err = client.DeleteNvmeController(
+		ctx,
+		&pb.DeleteNvmeControllerRequest{
+			Name:         name,
+			AllowMissing: allowMissing,
+		})
+
+	return err
+}
