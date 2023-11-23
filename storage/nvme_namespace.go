@@ -36,3 +36,26 @@ func (c *Client) CreateNvmeNamespace(
 
 	return response, err
 }
+
+// DeleteNvmeNamespace deletes an nvme namespace
+func (c *Client) DeleteNvmeNamespace(
+	ctx context.Context,
+	name string,
+	allowMissing bool,
+) error {
+	conn, connClose, err := c.connector.NewConn()
+	if err != nil {
+		return err
+	}
+	defer connClose()
+
+	client := c.createClient(conn)
+	_, err = client.DeleteNvmeNamespace(
+		ctx,
+		&pb.DeleteNvmeNamespaceRequest{
+			Name:         name,
+			AllowMissing: allowMissing,
+		})
+
+	return err
+}
