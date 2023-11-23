@@ -25,6 +25,7 @@ func newCreateNvmeControllerCommand() *cobra.Command {
 	}
 
 	cmd.AddCommand(newCreateNvmeControllerTCPCommand())
+	cmd.AddCommand(newCreateNvmeControllerPcieCommand())
 
 	return cmd
 }
@@ -67,6 +68,50 @@ func newCreateNvmeControllerTCPCommand() *cobra.Command {
 	cobra.CheckErr(cmd.MarkFlagRequired("subsystem"))
 	cobra.CheckErr(cmd.MarkFlagRequired("ip"))
 	cobra.CheckErr(cmd.MarkFlagRequired("port"))
+
+	return cmd
+}
+
+func newCreateNvmeControllerPcieCommand() *cobra.Command {
+	id := ""
+	subsystem := ""
+	var port uint
+	var pf uint
+	var vf uint
+	cmd := &cobra.Command{
+		Use:     "pcie",
+		Aliases: []string{"p"},
+		Short:   "Creates nvme PCIe controller",
+		Args:    cobra.NoArgs,
+		Run: func(c *cobra.Command, args []string) {
+			addr, err := c.Flags().GetString(addrCmdLineArg)
+			cobra.CheckErr(err)
+
+			timeout, err := c.Flags().GetDuration(timeoutCmdLineArg)
+			cobra.CheckErr(err)
+
+			client, err := storage.New(addr)
+			cobra.CheckErr(err)
+
+			ctx, cancel := context.WithTimeout(context.Background(), timeout)
+			defer cancel()
+
+			response, err := client.CreateNvmePcieController(ctx, id, subsystem, port, pf, vf)
+			cobra.CheckErr(err)
+
+			printResponse(response.Name)
+		},
+	}
+
+	cmd.Flags().StringVar(&id, "id", "", "id for created resource. Assigned by server if omitted.")
+	cmd.Flags().StringVar(&subsystem, "subsystem", "", "subsystem name to attach the controller to")
+	cmd.Flags().UintVar(&port, "port", 0, "port_id address part of the created controller")
+	cmd.Flags().UintVar(&pf, "pf", 0, "physical_function address part of the created controller")
+	cmd.Flags().UintVar(&vf, "vf", 0, "virtual_function address part of the created controller")
+
+	cobra.CheckErr(cmd.MarkFlagRequired("subsystem"))
+	cobra.CheckErr(cmd.MarkFlagRequired("pf"))
+	cobra.CheckErr(cmd.MarkFlagRequired("vf"))
 
 	return cmd
 }
