@@ -106,6 +106,7 @@ func newDeleteNvmeCommand() *cobra.Command {
 
 	cmd.AddCommand(newDeleteNvmeSubsystemCommand())
 	cmd.AddCommand(newDeleteNvmeNamespaceCommand())
+	cmd.AddCommand(newDeleteNvmeControllerCommand())
 
 	return cmd
 }
