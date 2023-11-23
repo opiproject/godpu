@@ -37,7 +37,7 @@ func (c *Client) CreateNvmeSubsystem(
 	return response, err
 }
 
-// DeleteNvmeSubsystem deletes an nvme namespace
+// DeleteNvmeSubsystem deletes an nvme subsystem
 func (c *Client) DeleteNvmeSubsystem(
 	ctx context.Context,
 	name string,
