@@ -8,10 +8,10 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/opiproject/godpu/mocks"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
-	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
@@ -71,10 +71,13 @@ func TestCreateNvmeSubsystem(t *testing.T) {
 
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
+			ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+			defer cancel()
+
 			mockClient := mocks.NewFrontendNvmeServiceClient(t)
 			if tt.wantRequest != nil {
 				toReturn := proto.Clone(tt.wantResponse).(*pb.NvmeSubsystem)
-				mockClient.EXPECT().CreateNvmeSubsystem(mock.Anything, tt.wantRequest).
+				mockClient.EXPECT().CreateNvmeSubsystem(ctx, tt.wantRequest).
 					Return(toReturn, tt.giveClientErr)
 			}
 
@@ -93,7 +96,7 @@ func TestCreateNvmeSubsystem(t *testing.T) {
 				},
 			)
 
-			response, err := c.CreateNvmeSubsystem(context.Background(), subsystemID, nqn, hostnqn)
+			response, err := c.CreateNvmeSubsystem(ctx, subsystemID, nqn, hostnqn)
 
 			require.Equal(t, tt.wantErr, err)
 			require.True(t, proto.Equal(response, tt.wantResponse))
