@@ -143,9 +143,12 @@ func TestDeleteNvmeSubsystem(t *testing.T) {
 
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
+			ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+			defer cancel()
+
 			mockClient := mocks.NewFrontendNvmeServiceClient(t)
 			if tt.wantRequest != nil {
-				mockClient.EXPECT().DeleteNvmeSubsystem(mock.Anything, tt.wantRequest).
+				mockClient.EXPECT().DeleteNvmeSubsystem(ctx, tt.wantRequest).
 					Return(&emptypb.Empty{}, tt.giveClientErr)
 			}
 
@@ -164,7 +167,7 @@ func TestDeleteNvmeSubsystem(t *testing.T) {
 				},
 			)
 
-			err := c.DeleteNvmeSubsystem(context.Background(), testSubsystemName, true)
+			err := c.DeleteNvmeSubsystem(ctx, testSubsystemName, true)
 
 			require.Equal(t, tt.wantErr, err)
 			require.Equal(t, tt.wantConnClosed, connClosed)
