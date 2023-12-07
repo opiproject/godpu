@@ -3,7 +3,7 @@
 // Copyright (c) 2022-2023 Dell Inc, or its subsidiaries.
 
 // Package network implements the go library for OPI to be used to establish networking
-package network_test
+package network
 
 import (
 	"context"
@@ -11,153 +11,406 @@ import (
 	"testing"
 
 	"github.com/opiproject/godpu/mocks"
-	_go "github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go"
+	pb "github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go"
+	"google.golang.org/grpc"
+	"google.golang.org/protobuf/proto"
+
+	pc "github.com/opiproject/opi-api/network/opinetcommon/v1alpha1/gen/go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
 )
 
-func TestCreateLogicalBridgeSuccess(t *testing.T) {
-	mockEvpnClient := &mocks.EvpnClient{}
+func TestCreateLogicalBridge(t *testing.T) {
+	wantIPPefix := &pc.IPPrefix{
+		Addr: &pc.IPAddress{
+			Af: pc.IpAf_IP_AF_INET,
+			V4OrV6: &pc.IPAddress_V4Addr{
+				V4Addr: 3232235776,
+			},
+		},
+		Len: 24,
+	}
+	testLogicalBridge := &pb.LogicalBridge{
+		Spec: &pb.LogicalBridgeSpec{
+			VlanId:       100,
+			Vni:          proto.Uint32(500),
+			VtepIpPrefix: wantIPPefix,
+		},
+	}
 
-	expectedLogicalBridge := &_go.LogicalBridge{} // Create your expected response
-	mockEvpnClient.On("CreateLogicalBridge", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).
-		Return(expectedLogicalBridge, nil)
+	tests := map[string]struct {
+		giveClientErr    error
+		giveConnectorErr error
+		wantErr          error
+		wantRequest      *pb.CreateLogicalBridgeRequest
+		wantResponse     *pb.LogicalBridge
+		wantConnClosed   bool
+	}{
+		"successful call": {
+			giveConnectorErr: nil,
+			giveClientErr:    nil,
+			wantErr:          nil,
+			wantRequest: &pb.CreateLogicalBridgeRequest{
+				LogicalBridgeId: "lb1",
+				LogicalBridge:   testLogicalBridge,
+			},
+			wantResponse:   proto.Clone(testLogicalBridge).(*pb.LogicalBridge),
+			wantConnClosed: true,
+		},
+		"client err": {
+			giveConnectorErr: nil,
+			giveClientErr:    errors.New("Some client error"),
+			wantErr:          errors.New("Some client error"),
+			wantRequest: &pb.CreateLogicalBridgeRequest{
+				LogicalBridgeId: "lb1",
+				LogicalBridge:   testLogicalBridge,
+			},
+			wantResponse:   nil,
+			wantConnClosed: true,
+		},
+		"connector err": {
+			giveConnectorErr: errors.New("Some conn error"),
+			giveClientErr:    nil,
+			wantErr:          errors.New("Some conn error"),
+			wantRequest:      nil,
+			wantConnClosed:   false,
+			wantResponse:     nil,
+		},
+	}
 
-	resultLogicalBridge, err := mockEvpnClient.CreateLogicalBridge(context.TODO(), "lb1", 1000, 1000, "10.10.10.10/16")
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			mockClient := mocks.NewLogicalBridgeServiceClient(t)
+			if tt.wantRequest != nil {
+				toReturn := proto.Clone(tt.wantResponse).(*pb.LogicalBridge)
+				mockClient.EXPECT().CreateLogicalBridge(mock.Anything, tt.wantRequest).
+					Return(toReturn, tt.giveClientErr)
+			}
 
-	assert.NoError(t, err)
-	assert.Equal(t, expectedLogicalBridge, resultLogicalBridge)
-	mockEvpnClient.AssertExpectations(t)
+			connClosed := false
+			mockConn := mocks.NewConnector(t)
+			mockConn.EXPECT().NewConn().Return(
+				&grpc.ClientConn{},
+				func() { connClosed = true },
+				tt.giveConnectorErr,
+			)
+
+			c, _ := NewLogicalBridgeWithArgs(
+				mockConn,
+				func(grpc.ClientConnInterface) pb.LogicalBridgeServiceClient {
+					return mockClient
+				},
+			)
+
+			response, err := c.CreateLogicalBridge(
+				context.Background(),
+				"lb1", 100, 500, "192.168.1.0/24",
+			)
+
+			assert.Equal(t, tt.wantErr, err)
+			assert.True(t, proto.Equal(response, tt.wantResponse))
+			assert.Equal(t, tt.wantConnClosed, connClosed)
+		})
+	}
 }
 
-func TestCreateLogicalBridgeError(t *testing.T) {
-	mockEvpnClient := &mocks.EvpnClient{}
+func TestDeleteLogicalBridge(t *testing.T) {
+	name := "lb2"
+	allowMissing := false
+	testRequest := &pb.DeleteLogicalBridgeRequest{
+		Name:         resourceIDToFullName("bridges", name),
+		AllowMissing: allowMissing,
+	}
 
-	expectedError := errors.New("mocked error")
-	mockEvpnClient.On("CreateLogicalBridge", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).
-		Return(nil, expectedError)
+	tests := map[string]struct {
+		giveClientErr    error
+		giveConnectorErr error
+		wantErr          error
+		wantRequest      *pb.DeleteLogicalBridgeRequest
+		wantConnClosed   bool
+	}{
+		"successful call": {
+			giveConnectorErr: nil,
+			giveClientErr:    nil,
+			wantErr:          nil,
+			wantRequest:      proto.Clone(testRequest).(*pb.DeleteLogicalBridgeRequest),
+			wantConnClosed:   true,
+		},
+		"client err": {
+			giveConnectorErr: nil,
+			giveClientErr:    errors.New("Some client error"),
+			wantErr:          errors.New("Some client error"),
+			wantRequest:      proto.Clone(testRequest).(*pb.DeleteLogicalBridgeRequest),
+			wantConnClosed:   true,
+		},
+		"connector err": {
+			giveConnectorErr: errors.New("Some conn error"),
+			giveClientErr:    nil,
+			wantErr:          errors.New("Some conn error"),
+			wantRequest:      nil,
+			wantConnClosed:   false,
+		},
+	}
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			mockClient := mocks.NewLogicalBridgeServiceClient(t)
+			if tt.wantRequest != nil {
+				mockClient.EXPECT().DeleteLogicalBridge(mock.Anything, tt.wantRequest).
+					Return(&emptypb.Empty{}, tt.giveClientErr)
+			}
 
-	resultLogicalBridge, err := mockEvpnClient.CreateLogicalBridge(context.TODO(), "lb1", 1000, 1000, "10.10.10.10/16")
+			connClosed := false
+			mockConn := mocks.NewConnector(t)
+			mockConn.EXPECT().NewConn().Return(
+				&grpc.ClientConn{},
+				func() { connClosed = true },
+				tt.giveConnectorErr,
+			)
 
-	assert.Error(t, err)
-	assert.Nil(t, resultLogicalBridge)
-	assert.Equal(t, expectedError, err)
-	mockEvpnClient.AssertExpectations(t)
+			c, _ := NewLogicalBridgeWithArgs(
+				mockConn,
+				func(grpc.ClientConnInterface) pb.LogicalBridgeServiceClient {
+					return mockClient
+				},
+			)
+
+			_, err := c.DeleteLogicalBridge(context.Background(), name, allowMissing)
+
+			assert.Equal(t, tt.wantErr, err)
+			assert.Equal(t, tt.wantConnClosed, connClosed)
+		})
+	}
 }
 
-func TestDeleteLogicalBridgeSuccess(t *testing.T) {
-	mockEvpnClient := &mocks.EvpnClient{}
+func TestGetLogicalBridge(t *testing.T) {
+	name := "lb3"
+	testRequest := &pb.GetLogicalBridgeRequest{
+		Name: resourceIDToFullName("bridges", name),
+	}
+	testLogicalBridge := &pb.LogicalBridge{}
+	tests := map[string]struct {
+		giveClientErr    error
+		giveConnectorErr error
+		wantErr          error
+		wantRequest      *pb.GetLogicalBridgeRequest
+		wantConnClosed   bool
+		wantResponse     *pb.LogicalBridge
+	}{
+		"GetLogicalBridge successful call": {
+			giveConnectorErr: nil,
+			giveClientErr:    nil,
+			wantErr:          nil,
+			wantRequest:      proto.Clone(testRequest).(*pb.GetLogicalBridgeRequest),
+			wantConnClosed:   true,
+			wantResponse:     proto.Clone(testLogicalBridge).(*pb.LogicalBridge),
+		},
+		"GetLogicalBridge client err": {
+			giveConnectorErr: nil,
+			giveClientErr:    errors.New("Some client error"),
+			wantErr:          errors.New("Some client error"),
+			wantRequest:      proto.Clone(testRequest).(*pb.GetLogicalBridgeRequest),
+			wantConnClosed:   true,
+			wantResponse:     nil,
+		},
+		"connector err": {
+			giveConnectorErr: errors.New("Some conn error"),
+			giveClientErr:    nil,
+			wantErr:          errors.New("Some conn error"),
+			wantRequest:      nil,
+			wantConnClosed:   false,
+			wantResponse:     nil,
+		},
+	}
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			mockClient := mocks.NewLogicalBridgeServiceClient(t)
+			if testName == "GetLogicalBridge successful call" {
+				mockClient.EXPECT().GetLogicalBridge(mock.Anything, tt.wantRequest).
+					Return(&pb.LogicalBridge{}, nil)
+			}
+			if testName == "GetLogicalBridge client err" {
+				mockClient.EXPECT().GetLogicalBridge(mock.Anything, tt.wantRequest).
+					Return(nil, tt.giveClientErr)
+			}
+			connClosed := false
+			mockConn := mocks.NewConnector(t)
+			mockConn.EXPECT().NewConn().Return(
+				&grpc.ClientConn{},
+				func() { connClosed = true },
+				tt.giveConnectorErr,
+			)
 
-	expectedResponse := &emptypb.Empty{} // Create your expected response
-	mockEvpnClient.On("DeleteLogicalBridge", mock.Anything, mock.Anything, mock.Anything).
-		Return(expectedResponse, nil)
+			c, _ := NewLogicalBridgeWithArgs(
+				mockConn,
+				func(grpc.ClientConnInterface) pb.LogicalBridgeServiceClient {
+					return mockClient
+				},
+			)
 
-	resultResponse, err := mockEvpnClient.DeleteLogicalBridge(context.TODO(), "lb1", true)
+			response, err := c.GetLogicalBridge(context.Background(), name)
 
-	assert.NoError(t, err)
-	assert.Equal(t, expectedResponse, resultResponse)
-	mockEvpnClient.AssertExpectations(t)
+			assert.Equal(t, tt.wantErr, err)
+			assert.Equal(t, tt.wantConnClosed, connClosed)
+			assert.True(t, proto.Equal(response, tt.wantResponse))
+		})
+	}
 }
 
-func TestDeleteLogicalBridgeError(t *testing.T) {
-	mockEvpnClient := &mocks.EvpnClient{}
+func TestListLogicalBridges(t *testing.T) {
+	pageSize := int32(10)
+	pageToken := "def"
 
-	expectedError := errors.New("mocked error")
-	mockEvpnClient.On("DeleteLogicalBridge", mock.Anything, mock.Anything, mock.Anything).
-		Return(nil, expectedError)
+	testRequest := &pb.ListLogicalBridgesRequest{
+		PageSize:  pageSize,
+		PageToken: pageToken,
+	}
+	testLogicalBridgeList := &pb.ListLogicalBridgesResponse{}
+	tests := map[string]struct {
+		giveClientErr    error
+		giveConnectorErr error
+		wantErr          error
+		wantRequest      *pb.ListLogicalBridgesRequest
+		wantConnClosed   bool
+		wantResponse     *pb.ListLogicalBridgesResponse
+	}{
+		"ListLogicalBridges successful call": {
+			giveConnectorErr: nil,
+			giveClientErr:    nil,
+			wantErr:          nil,
+			wantRequest:      proto.Clone(testRequest).(*pb.ListLogicalBridgesRequest),
+			wantConnClosed:   true,
+			wantResponse:     proto.Clone(testLogicalBridgeList).(*pb.ListLogicalBridgesResponse),
+		},
+		"ListLogicalBridges client err": {
+			giveConnectorErr: nil,
+			giveClientErr:    errors.New("Some client error"),
+			wantErr:          errors.New("Some client error"),
+			wantRequest:      proto.Clone(testRequest).(*pb.ListLogicalBridgesRequest),
+			wantConnClosed:   true,
+			wantResponse:     nil,
+		},
+		"connector err": {
+			giveConnectorErr: errors.New("Some conn error"),
+			giveClientErr:    nil,
+			wantErr:          errors.New("Some conn error"),
+			wantRequest:      nil,
+			wantConnClosed:   false,
+			wantResponse:     nil,
+		},
+	}
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			mockClient := mocks.NewLogicalBridgeServiceClient(t)
+			if testName == "ListLogicalBridges successful call" {
+				mockClient.EXPECT().ListLogicalBridges(mock.Anything, tt.wantRequest).
+					Return(&pb.ListLogicalBridgesResponse{}, nil)
+			}
+			if testName == "ListLogicalBridges client err" {
+				mockClient.EXPECT().ListLogicalBridges(mock.Anything, tt.wantRequest).
+					Return(nil, tt.giveClientErr)
+			}
+			connClosed := false
+			mockConn := mocks.NewConnector(t)
+			mockConn.EXPECT().NewConn().Return(
+				&grpc.ClientConn{},
+				func() { connClosed = true },
+				tt.giveConnectorErr,
+			)
 
-	resultResponse, err := mockEvpnClient.DeleteLogicalBridge(context.TODO(), "lb1", true)
+			c, _ := NewLogicalBridgeWithArgs(
+				mockConn,
+				func(grpc.ClientConnInterface) pb.LogicalBridgeServiceClient {
+					return mockClient
+				},
+			)
 
-	assert.Error(t, err)
-	assert.Nil(t, resultResponse)
-	assert.Equal(t, expectedError, err)
-	mockEvpnClient.AssertExpectations(t)
+			response, err := c.ListLogicalBridges(context.Background(), pageSize, pageToken)
+
+			assert.Equal(t, tt.wantErr, err)
+			assert.Equal(t, tt.wantConnClosed, connClosed)
+			assert.True(t, proto.Equal(response, tt.wantResponse))
+		})
+	}
 }
 
-func TestGetLogicalBridgeSuccess(t *testing.T) {
-	mockEvpnClient := &mocks.EvpnClient{}
+func TestUpdateLogicalBridge(t *testing.T) {
+	name := "lb1"
+	updateMask := []string{""}
+	allowMissing := false
 
-	expectedLogicalBridge := &_go.LogicalBridge{} // Create your expected response
-	mockEvpnClient.On("GetLogicalBridge", mock.Anything, mock.Anything).
-		Return(expectedLogicalBridge, nil)
+	testRequest := &pb.UpdateLogicalBridgeRequest{
+		LogicalBridge: &pb.LogicalBridge{Name: resourceIDToFullName("bridges", name)},
+		UpdateMask:    &fieldmaskpb.FieldMask{Paths: updateMask},
+		AllowMissing:  allowMissing,
+	}
 
-	resultLogicalBridge, err := mockEvpnClient.GetLogicalBridge(context.TODO(), "lb1")
+	testLogicalBridgeList := &pb.LogicalBridge{}
+	tests := map[string]struct {
+		giveClientErr    error
+		giveConnectorErr error
+		wantErr          error
+		wantRequest      *pb.UpdateLogicalBridgeRequest
+		wantConnClosed   bool
+		wantResponse     *pb.LogicalBridge
+	}{
+		"UpdateLogicalBridge successful call": {
+			giveConnectorErr: nil,
+			giveClientErr:    nil,
+			wantErr:          nil,
+			wantRequest:      proto.Clone(testRequest).(*pb.UpdateLogicalBridgeRequest),
+			wantConnClosed:   true,
+			wantResponse:     proto.Clone(testLogicalBridgeList).(*pb.LogicalBridge),
+		},
+		"UpdateLogicalBridge client err": {
+			giveConnectorErr: nil,
+			giveClientErr:    errors.New("Some client error"),
+			wantErr:          errors.New("Some client error"),
+			wantRequest:      proto.Clone(testRequest).(*pb.UpdateLogicalBridgeRequest),
+			wantConnClosed:   true,
+			wantResponse:     nil,
+		},
+		"connector err": {
+			giveConnectorErr: errors.New("Some conn error"),
+			giveClientErr:    nil,
+			wantErr:          errors.New("Some conn error"),
+			wantRequest:      nil,
+			wantConnClosed:   false,
+			wantResponse:     nil,
+		},
+	}
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			mockClient := mocks.NewLogicalBridgeServiceClient(t)
+			if testName == "UpdateLogicalBridge successful call" {
+				mockClient.EXPECT().UpdateLogicalBridge(mock.Anything, tt.wantRequest).
+					Return(&pb.LogicalBridge{}, nil)
+			}
+			if testName == "UpdateLogicalBridge client err" {
+				mockClient.EXPECT().UpdateLogicalBridge(mock.Anything, tt.wantRequest).
+					Return(nil, tt.giveClientErr)
+			}
+			connClosed := false
+			mockConn := mocks.NewConnector(t)
+			mockConn.EXPECT().NewConn().Return(
+				&grpc.ClientConn{},
+				func() { connClosed = true },
+				tt.giveConnectorErr,
+			)
 
-	assert.NoError(t, err)
-	assert.Equal(t, expectedLogicalBridge, resultLogicalBridge)
-	mockEvpnClient.AssertExpectations(t)
-}
+			c, _ := NewLogicalBridgeWithArgs(
+				mockConn,
+				func(grpc.ClientConnInterface) pb.LogicalBridgeServiceClient {
+					return mockClient
+				},
+			)
 
-func TestGetLogicalBridgeError(t *testing.T) {
-	mockEvpnClient := &mocks.EvpnClient{}
+			response, err := c.UpdateLogicalBridge(context.Background(), name, updateMask)
 
-	expectedError := errors.New("mocked error")
-	mockEvpnClient.On("GetLogicalBridge", mock.Anything, mock.Anything).
-		Return(nil, expectedError)
-
-	resultLogicalBridge, err := mockEvpnClient.GetLogicalBridge(context.TODO(), "lb1")
-
-	assert.Error(t, err)
-	assert.Nil(t, resultLogicalBridge)
-	assert.Equal(t, expectedError, err)
-	mockEvpnClient.AssertExpectations(t)
-}
-
-func TestListLogicalBridgesSuccess(t *testing.T) {
-	mockEvpnClient := &mocks.EvpnClient{}
-
-	expectedResponse := &_go.ListLogicalBridgesResponse{} // Create your expected response
-	mockEvpnClient.On("ListLogicalBridges", mock.Anything, mock.Anything, mock.Anything).
-		Return(expectedResponse, nil)
-
-	resultResponse, err := mockEvpnClient.ListLogicalBridges(context.TODO(), 10, "token")
-
-	assert.NoError(t, err)
-	assert.Equal(t, expectedResponse, resultResponse)
-	mockEvpnClient.AssertExpectations(t)
-}
-
-func TestListLogicalBridgesError(t *testing.T) {
-	mockEvpnClient := &mocks.EvpnClient{}
-
-	expectedError := errors.New("mocked error")
-	mockEvpnClient.On("ListLogicalBridges", mock.Anything, mock.Anything, mock.Anything).
-		Return(nil, expectedError)
-
-	resultResponse, err := mockEvpnClient.ListLogicalBridges(context.TODO(), 10, "token")
-
-	assert.Error(t, err)
-	assert.Nil(t, resultResponse)
-	assert.Equal(t, expectedError, err)
-	mockEvpnClient.AssertExpectations(t)
-}
-
-func TestUpdateLogicalBridgeSuccess(t *testing.T) {
-	mockEvpnClient := &mocks.EvpnClient{}
-
-	expectedLogicalBridge := &_go.LogicalBridge{} // Create your expected response
-	mockEvpnClient.On("UpdateLogicalBridge", mock.Anything, mock.Anything, mock.Anything).
-		Return(expectedLogicalBridge, nil)
-
-	resultLogicalBridge, err := mockEvpnClient.UpdateLogicalBridge(context.TODO(), "lb1", []string{"VlanId", "Vni"})
-
-	assert.NoError(t, err)
-	assert.Equal(t, expectedLogicalBridge, resultLogicalBridge)
-	mockEvpnClient.AssertExpectations(t)
-}
-
-func TestUpdateLogicalBridgeError(t *testing.T) {
-	mockEvpnClient := &mocks.EvpnClient{}
-
-	expectedError := errors.New("mocked error")
-	mockEvpnClient.On("UpdateLogicalBridge", mock.Anything, mock.Anything, mock.Anything).
-		Return(nil, expectedError)
-
-	resultLogicalBridge, err := mockEvpnClient.UpdateLogicalBridge(context.TODO(), "name", []string{"VlanId", "Vni"})
-
-	assert.Error(t, err)
-	assert.Nil(t, resultLogicalBridge)
-	assert.Equal(t, expectedError, err)
-	mockEvpnClient.AssertExpectations(t)
+			assert.Equal(t, tt.wantErr, err)
+			assert.Equal(t, tt.wantConnClosed, connClosed)
+			assert.True(t, proto.Equal(response, tt.wantResponse))
+		})
+	}
 }

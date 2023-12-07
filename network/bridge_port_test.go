@@ -3,7 +3,7 @@
 // Copyright (c) 2022-2023 Dell Inc, or its subsidiaries.
 
 // Package network implements the go library for OPI to be used to establish networking
-package network_test
+package network
 
 import (
 	"context"
@@ -11,154 +11,396 @@ import (
 	"testing"
 
 	"github.com/opiproject/godpu/mocks"
-	_go "github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
+	pb "github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go"
+	"google.golang.org/grpc"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
 
-func TestCreateBridgePortSuccess(t *testing.T) {
-	mockEvpnClient := &mocks.EvpnClient{}
+func TestCreateBridgePort(t *testing.T) {
+	testBridgePort := &pb.BridgePort{
+		Spec: &pb.BridgePortSpec{
+			MacAddress:     []byte("00:11:22:aa:bb:cc"),
+			Ptype:          pb.BridgePortType_ACCESS,
+			LogicalBridges: []string{"lb1", "lb2"},
+		},
+	}
 
-	expectedBridgePort := &_go.BridgePort{} // Create your expected response
-	mockEvpnClient.On("CreateBridgePort", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).
-		Return(expectedBridgePort, nil)
+	tests := map[string]struct {
+		giveClientErr    error
+		giveConnectorErr error
+		wantErr          error
+		wantRequest      *pb.CreateBridgePortRequest
+		wantResponse     *pb.BridgePort
+		wantConnClosed   bool
+	}{
+		"successful call": {
+			giveConnectorErr: nil,
+			giveClientErr:    nil,
+			wantErr:          nil,
+			wantRequest: &pb.CreateBridgePortRequest{
+				BridgePortId: "bp1",
+				BridgePort:   testBridgePort,
+			},
+			wantResponse:   proto.Clone(testBridgePort).(*pb.BridgePort),
+			wantConnClosed: true,
+		},
+		"client err": {
+			giveConnectorErr: nil,
+			giveClientErr:    errors.New("Some client error"),
+			wantErr:          errors.New("Some client error"),
+			wantRequest: &pb.CreateBridgePortRequest{
+				BridgePortId: "bp1",
+				BridgePort:   testBridgePort,
+			},
+			wantResponse:   nil,
+			wantConnClosed: true,
+		},
+		"connector err": {
+			giveConnectorErr: errors.New("Some conn error"),
+			giveClientErr:    nil,
+			wantErr:          errors.New("Some conn error"),
+			wantRequest:      nil,
+			wantConnClosed:   false,
+			wantResponse:     nil,
+		},
+	}
 
-	resultBridgePort, err := mockEvpnClient.CreateBridgePort(context.TODO(), "bp1", "00:11:22:AA:BB:CC", "access", []string{"lb1", "lb2"})
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			mockClient := mocks.NewBridgePortServiceClient(t)
+			if tt.wantRequest != nil {
+				toReturn := proto.Clone(tt.wantResponse).(*pb.BridgePort)
+				mockClient.EXPECT().CreateBridgePort(mock.Anything, tt.wantRequest).
+					Return(toReturn, tt.giveClientErr)
+			}
 
-	assert.NoError(t, err)
-	assert.Equal(t, expectedBridgePort, resultBridgePort)
-	mockEvpnClient.AssertExpectations(t)
+			connClosed := false
+			mockConn := mocks.NewConnector(t)
+			mockConn.EXPECT().NewConn().Return(
+				&grpc.ClientConn{},
+				func() { connClosed = true },
+				tt.giveConnectorErr,
+			)
+
+			c, _ := NewBridgePortWithArgs(
+				mockConn,
+				func(grpc.ClientConnInterface) pb.BridgePortServiceClient {
+					return mockClient
+				},
+			)
+
+			response, err := c.CreateBridgePort(
+				context.Background(),
+				"bp1", "00:11:22:aa:bb:cc", "access", []string{"lb1", "lb2"},
+			)
+
+			assert.Equal(t, tt.wantErr, err)
+			assert.True(t, proto.Equal(response, tt.wantResponse))
+			assert.Equal(t, tt.wantConnClosed, connClosed)
+		})
+	}
 }
 
-func TestCreateBridgePortError(t *testing.T) {
-	mockEvpnClient := &mocks.EvpnClient{}
+func TestDeleteBridgePort(t *testing.T) {
+	name := "bp2"
+	allowMissing := false
+	testRequest := &pb.DeleteBridgePortRequest{
+		Name:         resourceIDToFullName("ports", name),
+		AllowMissing: allowMissing,
+	}
 
-	expectedError := errors.New("mocked error")
-	mockEvpnClient.On("CreateBridgePort", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).
-		Return(nil, expectedError)
+	tests := map[string]struct {
+		giveClientErr    error
+		giveConnectorErr error
+		wantErr          error
+		wantRequest      *pb.DeleteBridgePortRequest
+		wantConnClosed   bool
+	}{
+		"successful call": {
+			giveConnectorErr: nil,
+			giveClientErr:    nil,
+			wantErr:          nil,
+			wantRequest:      proto.Clone(testRequest).(*pb.DeleteBridgePortRequest),
+			wantConnClosed:   true,
+		},
+		"client err": {
+			giveConnectorErr: nil,
+			giveClientErr:    errors.New("Some client error"),
+			wantErr:          errors.New("Some client error"),
+			wantRequest:      proto.Clone(testRequest).(*pb.DeleteBridgePortRequest),
+			wantConnClosed:   true,
+		},
+		"connector err": {
+			giveConnectorErr: errors.New("Some conn error"),
+			giveClientErr:    nil,
+			wantErr:          errors.New("Some conn error"),
+			wantRequest:      nil,
+			wantConnClosed:   false,
+		},
+	}
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			mockClient := mocks.NewBridgePortServiceClient(t)
+			if tt.wantRequest != nil {
+				mockClient.EXPECT().DeleteBridgePort(mock.Anything, tt.wantRequest).
+					Return(&emptypb.Empty{}, tt.giveClientErr)
+			}
 
-	resultBridgePort, err := mockEvpnClient.CreateBridgePort(context.TODO(), "bp1", "00:11:22:AA:BB:CC", "access", []string{"lb1", "lb2"})
+			connClosed := false
+			mockConn := mocks.NewConnector(t)
+			mockConn.EXPECT().NewConn().Return(
+				&grpc.ClientConn{},
+				func() { connClosed = true },
+				tt.giveConnectorErr,
+			)
 
-	assert.Error(t, err)
-	assert.Nil(t, resultBridgePort)
-	assert.Equal(t, expectedError, err)
-	mockEvpnClient.AssertExpectations(t)
+			c, _ := NewBridgePortWithArgs(
+				mockConn,
+				func(grpc.ClientConnInterface) pb.BridgePortServiceClient {
+					return mockClient
+				},
+			)
+
+			_, err := c.DeleteBridgePort(context.Background(), name, allowMissing)
+
+			assert.Equal(t, tt.wantErr, err)
+			assert.Equal(t, tt.wantConnClosed, connClosed)
+		})
+	}
 }
 
-func TestDeleteBridgePortSuccess(t *testing.T) {
-	mockEvpnClient := &mocks.EvpnClient{}
+func TestGetBridgePort(t *testing.T) {
+	name := "bp3"
+	testRequest := &pb.GetBridgePortRequest{
+		Name: resourceIDToFullName("ports", name),
+	}
+	testBridgePort := &pb.BridgePort{}
+	tests := map[string]struct {
+		giveClientErr    error
+		giveConnectorErr error
+		wantErr          error
+		wantRequest      *pb.GetBridgePortRequest
+		wantConnClosed   bool
+		wantResponse     *pb.BridgePort
+	}{
+		"GetBridgePort successful call": {
+			giveConnectorErr: nil,
+			giveClientErr:    nil,
+			wantErr:          nil,
+			wantRequest:      proto.Clone(testRequest).(*pb.GetBridgePortRequest),
+			wantConnClosed:   true,
+			wantResponse:     proto.Clone(testBridgePort).(*pb.BridgePort),
+		},
+		"GetBridgePort client err": {
+			giveConnectorErr: nil,
+			giveClientErr:    errors.New("Some client error"),
+			wantErr:          errors.New("Some client error"),
+			wantRequest:      proto.Clone(testRequest).(*pb.GetBridgePortRequest),
+			wantConnClosed:   true,
+			wantResponse:     nil,
+		},
+		"connector err": {
+			giveConnectorErr: errors.New("Some conn error"),
+			giveClientErr:    nil,
+			wantErr:          errors.New("Some conn error"),
+			wantRequest:      nil,
+			wantConnClosed:   false,
+			wantResponse:     nil,
+		},
+	}
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			mockClient := mocks.NewBridgePortServiceClient(t)
+			if testName == "GetBridgePort successful call" {
+				mockClient.EXPECT().GetBridgePort(mock.Anything, tt.wantRequest).
+					Return(&pb.BridgePort{}, nil)
+			}
+			if testName == "GetBridgePort client err" {
+				mockClient.EXPECT().GetBridgePort(mock.Anything, tt.wantRequest).
+					Return(nil, tt.giveClientErr)
+			}
+			connClosed := false
+			mockConn := mocks.NewConnector(t)
+			mockConn.EXPECT().NewConn().Return(
+				&grpc.ClientConn{},
+				func() { connClosed = true },
+				tt.giveConnectorErr,
+			)
 
-	expectedResponse := &emptypb.Empty{} // Create your expected response
-	mockEvpnClient.On("DeleteBridgePort", mock.Anything, mock.Anything, mock.Anything).
-		Return(expectedResponse, nil)
+			c, _ := NewBridgePortWithArgs(
+				mockConn,
+				func(grpc.ClientConnInterface) pb.BridgePortServiceClient {
+					return mockClient
+				},
+			)
 
-	resultResponse, err := mockEvpnClient.DeleteBridgePort(context.TODO(), "bp1", true)
+			response, err := c.GetBridgePort(context.Background(), name)
 
-	assert.NoError(t, err)
-	assert.Equal(t, expectedResponse, resultResponse)
-	mockEvpnClient.AssertExpectations(t)
+			assert.Equal(t, tt.wantErr, err)
+			assert.Equal(t, tt.wantConnClosed, connClosed)
+			assert.True(t, proto.Equal(response, tt.wantResponse))
+		})
+	}
 }
 
-func TestDeleteBridgePortError(t *testing.T) {
-	mockEvpnClient := &mocks.EvpnClient{}
+func TestListBridgePorts(t *testing.T) {
+	pageSize := int32(10)
+	pageToken := "abc"
 
-	expectedError := errors.New("mocked error")
-	mockEvpnClient.On("DeleteBridgePort", mock.Anything, mock.Anything, mock.Anything).
-		Return(nil, expectedError)
+	testRequest := &pb.ListBridgePortsRequest{
+		PageSize:  pageSize,
+		PageToken: pageToken,
+	}
+	testBridgePortList := &pb.ListBridgePortsResponse{}
+	tests := map[string]struct {
+		giveClientErr    error
+		giveConnectorErr error
+		wantErr          error
+		wantRequest      *pb.ListBridgePortsRequest
+		wantConnClosed   bool
+		wantResponse     *pb.ListBridgePortsResponse
+	}{
+		"ListBridgePorts successful call": {
+			giveConnectorErr: nil,
+			giveClientErr:    nil,
+			wantErr:          nil,
+			wantRequest:      proto.Clone(testRequest).(*pb.ListBridgePortsRequest),
+			wantConnClosed:   true,
+			wantResponse:     proto.Clone(testBridgePortList).(*pb.ListBridgePortsResponse),
+		},
+		"ListBridgePorts client err": {
+			giveConnectorErr: nil,
+			giveClientErr:    errors.New("Some client error"),
+			wantErr:          errors.New("Some client error"),
+			wantRequest:      proto.Clone(testRequest).(*pb.ListBridgePortsRequest),
+			wantConnClosed:   true,
+			wantResponse:     nil,
+		},
+		"connector err": {
+			giveConnectorErr: errors.New("Some conn error"),
+			giveClientErr:    nil,
+			wantErr:          errors.New("Some conn error"),
+			wantRequest:      nil,
+			wantConnClosed:   false,
+			wantResponse:     nil,
+		},
+	}
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			mockClient := mocks.NewBridgePortServiceClient(t)
+			if testName == "ListBridgePorts successful call" {
+				mockClient.EXPECT().ListBridgePorts(mock.Anything, tt.wantRequest).
+					Return(&pb.ListBridgePortsResponse{}, nil)
+			}
+			if testName == "ListBridgePorts client err" {
+				mockClient.EXPECT().ListBridgePorts(mock.Anything, tt.wantRequest).
+					Return(nil, tt.giveClientErr)
+			}
+			connClosed := false
+			mockConn := mocks.NewConnector(t)
+			mockConn.EXPECT().NewConn().Return(
+				&grpc.ClientConn{},
+				func() { connClosed = true },
+				tt.giveConnectorErr,
+			)
 
-	resultResponse, err := mockEvpnClient.DeleteBridgePort(context.TODO(), "bp1", true)
+			c, _ := NewBridgePortWithArgs(
+				mockConn,
+				func(grpc.ClientConnInterface) pb.BridgePortServiceClient {
+					return mockClient
+				},
+			)
 
-	assert.Error(t, err)
-	assert.Nil(t, resultResponse)
-	assert.Equal(t, expectedError, err)
-	mockEvpnClient.AssertExpectations(t)
+			response, err := c.ListBridgePorts(context.Background(), pageSize, pageToken)
+
+			assert.Equal(t, tt.wantErr, err)
+			assert.Equal(t, tt.wantConnClosed, connClosed)
+			assert.True(t, proto.Equal(response, tt.wantResponse))
+		})
+	}
 }
 
-func TestGetBridgePortSuccess(t *testing.T) {
-	mockEvpnClient := &mocks.EvpnClient{}
+func TestUpdateBridgePort(t *testing.T) {
+	name := "bp1"
+	updateMask := []string{""}
+	allowMissing := false
 
-	expectedBridgePort := &_go.BridgePort{} // Create your expected response
-	mockEvpnClient.On("GetBridgePort", mock.Anything, mock.Anything).
-		Return(expectedBridgePort, nil)
+	testRequest := &pb.UpdateBridgePortRequest{
+		BridgePort:   &pb.BridgePort{Name: resourceIDToFullName("ports", name)},
+		UpdateMask:   &fieldmaskpb.FieldMask{Paths: updateMask},
+		AllowMissing: allowMissing,
+	}
 
-	resultBridgePort, err := mockEvpnClient.GetBridgePort(context.TODO(), "bp1")
+	testBridgePortList := &pb.BridgePort{}
+	tests := map[string]struct {
+		giveClientErr    error
+		giveConnectorErr error
+		wantErr          error
+		wantRequest      *pb.UpdateBridgePortRequest
+		wantConnClosed   bool
+		wantResponse     *pb.BridgePort
+	}{
+		"UpdateBridgePort successful call": {
+			giveConnectorErr: nil,
+			giveClientErr:    nil,
+			wantErr:          nil,
+			wantRequest:      proto.Clone(testRequest).(*pb.UpdateBridgePortRequest),
+			wantConnClosed:   true,
+			wantResponse:     proto.Clone(testBridgePortList).(*pb.BridgePort),
+		},
+		"UpdateBridgePort client err": {
+			giveConnectorErr: nil,
+			giveClientErr:    errors.New("Some client error"),
+			wantErr:          errors.New("Some client error"),
+			wantRequest:      proto.Clone(testRequest).(*pb.UpdateBridgePortRequest),
+			wantConnClosed:   true,
+			wantResponse:     nil,
+		},
+		"connector err": {
+			giveConnectorErr: errors.New("Some conn error"),
+			giveClientErr:    nil,
+			wantErr:          errors.New("Some conn error"),
+			wantRequest:      nil,
+			wantConnClosed:   false,
+			wantResponse:     nil,
+		},
+	}
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			mockClient := mocks.NewBridgePortServiceClient(t)
+			if testName == "UpdateBridgePort successful call" {
+				mockClient.EXPECT().UpdateBridgePort(mock.Anything, tt.wantRequest).
+					Return(&pb.BridgePort{}, nil)
+			}
+			if testName == "UpdateBridgePort client err" {
+				mockClient.EXPECT().UpdateBridgePort(mock.Anything, tt.wantRequest).
+					Return(nil, tt.giveClientErr)
+			}
+			connClosed := false
+			mockConn := mocks.NewConnector(t)
+			mockConn.EXPECT().NewConn().Return(
+				&grpc.ClientConn{},
+				func() { connClosed = true },
+				tt.giveConnectorErr,
+			)
 
-	assert.NoError(t, err)
-	assert.Equal(t, expectedBridgePort, resultBridgePort)
-	mockEvpnClient.AssertExpectations(t)
-}
+			c, _ := NewBridgePortWithArgs(
+				mockConn,
+				func(grpc.ClientConnInterface) pb.BridgePortServiceClient {
+					return mockClient
+				},
+			)
 
-func TestGetBridgePortError(t *testing.T) {
-	mockEvpnClient := &mocks.EvpnClient{}
+			response, err := c.UpdateBridgePort(context.Background(), name, updateMask, allowMissing)
 
-	expectedError := errors.New("mocked error")
-	mockEvpnClient.On("GetBridgePort", mock.Anything, mock.Anything).
-		Return(nil, expectedError)
-
-	resultBridgePort, err := mockEvpnClient.GetBridgePort(context.TODO(), "bp1")
-
-	assert.Error(t, err)
-	assert.Nil(t, resultBridgePort)
-	assert.Equal(t, expectedError, err)
-	mockEvpnClient.AssertExpectations(t)
-}
-
-func TestListBridgePortsSuccess(t *testing.T) {
-	mockEvpnClient := &mocks.EvpnClient{}
-
-	expectedResponse := &_go.ListBridgePortsResponse{} // Create your expected response
-	mockEvpnClient.On("ListBridgePorts", mock.Anything, mock.Anything, mock.Anything).
-		Return(expectedResponse, nil)
-
-	resultResponse, err := mockEvpnClient.ListBridgePorts(context.TODO(), 10, "token")
-
-	assert.NoError(t, err)
-	assert.Equal(t, expectedResponse, resultResponse)
-	mockEvpnClient.AssertExpectations(t)
-}
-
-func TestListBridgePortsError(t *testing.T) {
-	mockEvpnClient := &mocks.EvpnClient{}
-
-	expectedError := errors.New("mocked error")
-	mockEvpnClient.On("ListBridgePorts", mock.Anything, mock.Anything, mock.Anything).
-		Return(nil, expectedError)
-
-	resultResponse, err := mockEvpnClient.ListBridgePorts(context.TODO(), 10, "token")
-
-	assert.Error(t, err)
-	assert.Nil(t, resultResponse)
-	assert.Equal(t, expectedError, err)
-	mockEvpnClient.AssertExpectations(t)
-}
-
-func TestUpdateBridgePortSuccess(t *testing.T) {
-	mockEvpnClient := &mocks.EvpnClient{}
-
-	expectedBridgePort := &_go.BridgePort{} // Create your expected response
-	mockEvpnClient.On("UpdateBridgePort", mock.Anything, mock.Anything, mock.Anything, mock.Anything).
-		Return(expectedBridgePort, nil)
-
-	resultBridgePort, err := mockEvpnClient.UpdateBridgePort(context.TODO(), "bp1", []string{"Ptype", "LogicalBridges"}, false)
-
-	assert.NoError(t, err)
-	assert.Equal(t, expectedBridgePort, resultBridgePort)
-	mockEvpnClient.AssertExpectations(t)
-}
-
-func TestUpdateBridgePortError(t *testing.T) {
-	mockEvpnClient := &mocks.EvpnClient{}
-
-	expectedError := errors.New("mocked error")
-	mockEvpnClient.On("UpdateBridgePort", mock.Anything, mock.Anything, mock.Anything, mock.Anything).
-		Return(nil, expectedError)
-
-	resultBridgePort, err := mockEvpnClient.UpdateBridgePort(context.TODO(), "bp1", []string{"Ptype", "LogicalBridges"}, false)
-
-	assert.Error(t, err)
-	assert.Nil(t, resultBridgePort)
-	assert.Equal(t, expectedError, err)
-	mockEvpnClient.AssertExpectations(t)
+			assert.Equal(t, tt.wantErr, err)
+			assert.Equal(t, tt.wantConnClosed, connClosed)
+			assert.True(t, proto.Equal(response, tt.wantResponse))
+		})
+	}
 }
