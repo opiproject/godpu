@@ -15,7 +15,7 @@ ENV CGO_ENABLED=0
 COPY . .
 RUN go build -v -o /dpu .
 
-FROM alpine:3.18
+FROM alpine:3.19
 
 WORKDIR /
 
