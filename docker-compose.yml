@@ -184,7 +184,7 @@ services:
     command: storage test --addr opi-spdk-server:50051
 
   opi-test:
-    image: docker.io/library/alpine:3.18
+    image: docker.io/library/alpine:3.19
     networks:
       - opi
     depends_on:
