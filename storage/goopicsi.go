@@ -65,11 +65,11 @@ func NvmeControllerConnect(id string, trAddr string, subnqn string, trSvcID int6
 		log.Printf("Connected: %v", response)
 
 		pathResponse, err := client.CreateNvmePath(ctx, &pb.CreateNvmePathRequest{
+			Parent:     response.Name,
 			NvmePathId: nvmeControllerToPathResourceID(id),
 			NvmePath: &pb.NvmePath{
-				ControllerNameRef: response.Name,
-				Traddr:            trAddr,
-				Trtype:            pb.NvmeTransportType_NVME_TRANSPORT_TCP,
+				Traddr: trAddr,
+				Trtype: pb.NvmeTransportType_NVME_TRANSPORT_TCP,
 				Fabrics: &pb.FabricsPath{
 					Subnqn:  subnqn,
 					Trsvcid: trSvcID,
@@ -107,7 +107,7 @@ func NvmeControllerList() ([]NvmeConnection, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	response, err := client.ListNvmeRemoteControllers(ctx, &pb.ListNvmeRemoteControllersRequest{Parent: "todo"})
+	response, err := client.ListNvmeRemoteControllers(ctx, &pb.ListNvmeRemoteControllersRequest{})
 	if err != nil {
 		log.Printf("could not list the connections to Remote Nvme controller: %v", err)
 		return []NvmeConnection{}, err
