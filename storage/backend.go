@@ -77,7 +77,7 @@ func executeNvmeRemoteController(ctx context.Context, c4 pb.NvmeRemoteController
 			}
 			newResourceID = parsed.String()
 		}
-		fullname := resourceIDToVolumeName(newResourceID)
+		fullname := resourceIDToRemoteControllerName(newResourceID)
 		if rr0.Name != fullname {
 			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", rr0.Name, fullname)
 		}
@@ -88,7 +88,7 @@ func executeNvmeRemoteController(ctx context.Context, c4 pb.NvmeRemoteController
 			return err
 		}
 		log.Printf("Reset Nvme: %v", rr2)
-		rr3, err := c4.ListNvmeRemoteControllers(ctx, &pb.ListNvmeRemoteControllersRequest{Parent: "todo"})
+		rr3, err := c4.ListNvmeRemoteControllers(ctx, &pb.ListNvmeRemoteControllersRequest{})
 		if err != nil {
 			return err
 		}
@@ -150,11 +150,11 @@ func executeNvmePath(ctx context.Context, c5 pb.NvmeRemoteControllerServiceClien
 
 	for _, resourceID := range []string{"opi-nvme8-path", ""} {
 		np0, err := c5.CreateNvmePath(ctx, &pb.CreateNvmePathRequest{
+			Parent:     rr0.Name,
 			NvmePathId: resourceID,
 			NvmePath: &pb.NvmePath{
-				Trtype:            pb.NvmeTransportType_NVME_TRANSPORT_TCP,
-				Traddr:            addr[0].String(),
-				ControllerNameRef: rr0.Name,
+				Trtype: pb.NvmeTransportType_NVME_TRANSPORT_TCP,
+				Traddr: addr[0].String(),
 				Fabrics: &pb.FabricsPath{
 					Adrfam:  pb.NvmeAddressFamily_NVME_ADRFAM_IPV4,
 					Trsvcid: int64(port),
@@ -175,7 +175,7 @@ func executeNvmePath(ctx context.Context, c5 pb.NvmeRemoteControllerServiceClien
 			}
 			newResourceID = parsed.String()
 		}
-		fullname := resourceIDToVolumeName(newResourceID)
+		fullname := resourceIDToNvmePathName(ctrlrResourceID, newResourceID)
 		if np0.Name != fullname {
 			return fmt.Errorf("server filled value '%s' is not matching user requested '%s'", np0.Name, fullname)
 		}
@@ -183,10 +183,9 @@ func executeNvmePath(ctx context.Context, c5 pb.NvmeRemoteControllerServiceClien
 		np3, err := c5.UpdateNvmePath(ctx, &pb.UpdateNvmePathRequest{
 			UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"*"}},
 			NvmePath: &pb.NvmePath{
-				Name:              np0.Name,
-				Trtype:            pb.NvmeTransportType_NVME_TRANSPORT_TCP,
-				Traddr:            addr[0].String(),
-				ControllerNameRef: rr0.Name,
+				Name:   np0.Name,
+				Trtype: pb.NvmeTransportType_NVME_TRANSPORT_TCP,
+				Traddr: addr[0].String(),
 				Fabrics: &pb.FabricsPath{
 					Adrfam:  pb.NvmeAddressFamily_NVME_ADRFAM_IPV4,
 					Trsvcid: int64(port),
@@ -198,7 +197,7 @@ func executeNvmePath(ctx context.Context, c5 pb.NvmeRemoteControllerServiceClien
 			return err
 		}
 		log.Printf("Updated Nvme path: %v", np3)
-		np4, err := c5.ListNvmePaths(ctx, &pb.ListNvmePathsRequest{Parent: "todo"})
+		np4, err := c5.ListNvmePaths(ctx, &pb.ListNvmePathsRequest{Parent: rr0.Name})
 		if err != nil {
 			return err
 		}

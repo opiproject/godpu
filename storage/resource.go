@@ -35,3 +35,18 @@ func resourceIDToControllerName(subsysResourceID, ctrlrResourceID string) string
 		"controllers", ctrlrResourceID,
 	)
 }
+
+func resourceIDToRemoteControllerName(resourceID string) string {
+	return resourcename.Join(
+		"//storage.opiproject.org/",
+		"nvmeRemoteControllers", resourceID,
+	)
+}
+
+func resourceIDToNvmePathName(ctrlrResourceID, pathResourceID string) string {
+	return resourcename.Join(
+		"//storage.opiproject.org/",
+		"nvmeRemoteControllers", ctrlrResourceID,
+		"nvmePaths", pathResourceID,
+	)
+}
