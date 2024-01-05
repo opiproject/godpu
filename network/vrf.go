@@ -122,21 +122,17 @@ func (c evpnClientImpl) UpdateVrf(ctx context.Context, name string, updateMask [
 		return nil, err
 	}
 	defer closer()
-	client := c.getEvpnVRFClient(conn)
-	vrf, err := client.GetVrf(ctx, &pb.GetVrfRequest{
+	vrf := &pb.Vrf{
 		Name: resourceIDToFullName("vrfs", name),
-	})
-	if err != nil {
-		log.Printf("error updating vrf: %s\n", err)
-		return nil, err
 	}
+	client := c.getEvpnVRFClient(conn)
 	data, err := client.UpdateVrf(ctx, &pb.UpdateVrfRequest{
 		Vrf:          vrf,
 		UpdateMask:   &fieldmaskpb.FieldMask{Paths: updateMask},
 		AllowMissing: allowMissing,
 	})
 	if err != nil {
-		log.Printf("error creating evpn: %s\n", err)
+		log.Printf("error updating vrf: %s\n", err)
 		return nil, err
 	}
 
