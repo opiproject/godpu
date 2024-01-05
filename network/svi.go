@@ -122,12 +122,9 @@ func (c evpnClientImpl) UpdateSvi(ctx context.Context, name string, updateMask [
 	}
 	defer closer()
 	client := c.getEvpnSVIClient(conn)
-	svi, err := client.GetSvi(ctx, &pb.GetSviRequest{
+
+	svi := &pb.Svi{
 		Name: resourceIDToFullName("svis", name),
-	})
-	if err != nil {
-		log.Printf("error getting svi: %s\n", err)
-		return nil, err
 	}
 	data, err := client.UpdateSvi(ctx, &pb.UpdateSviRequest{
 		Svi:          svi,
