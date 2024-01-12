@@ -23,7 +23,7 @@ func (c *Client) CreateVirtioBlk(
 	}
 	defer connClose()
 
-	client := c.createVirtioBlkClient(conn)
+	client := c.createFrontendVirtioBlkClient(conn)
 	response, err := client.CreateVirtioBlk(
 		ctx,
 		&pb.CreateVirtioBlkRequest{
@@ -54,7 +54,7 @@ func (c *Client) DeleteVirtioBlk(
 	}
 	defer connClose()
 
-	client := c.createVirtioBlkClient(conn)
+	client := c.createFrontendVirtioBlkClient(conn)
 	_, err = client.DeleteVirtioBlk(
 		ctx,
 		&pb.DeleteVirtioBlkRequest{

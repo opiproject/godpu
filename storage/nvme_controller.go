@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Copyright (C) 2023 Intel Corporation
+// Copyright (C) 2023-2024 Intel Corporation
 
 // Package storage implements the go library for OPI to be used in storage, for example, CSI drivers
 package storage
@@ -36,7 +36,7 @@ func (c *Client) CreateNvmeTCPController(
 		return nil, fmt.Errorf("invalid ip address format: %v", ip)
 	}
 
-	client := c.createClient(conn)
+	client := c.createFrontendNvmeClient(conn)
 	response, err := client.CreateNvmeController(
 		ctx,
 		&pb.CreateNvmeControllerRequest{
@@ -71,7 +71,7 @@ func (c *Client) CreateNvmePcieController(
 	}
 	defer connClose()
 
-	client := c.createClient(conn)
+	client := c.createFrontendNvmeClient(conn)
 	response, err := client.CreateNvmeController(
 		ctx,
 		&pb.CreateNvmeControllerRequest{
@@ -106,7 +106,7 @@ func (c *Client) DeleteNvmeController(
 	}
 	defer connClose()
 
-	client := c.createClient(conn)
+	client := c.createFrontendNvmeClient(conn)
 	_, err = client.DeleteNvmeController(
 		ctx,
 		&pb.DeleteNvmeControllerRequest{
