@@ -56,3 +56,37 @@ func newCreateVirtioBlkCommand() *cobra.Command {
 
 	return cmd
 }
+
+func newDeleteVirtioBlkCommand() *cobra.Command {
+	name := ""
+	allowMissing := false
+	cmd := &cobra.Command{
+		Use:     "blk",
+		Aliases: []string{"b"},
+		Short:   "Deletes virtio-blk controller",
+		Args:    cobra.NoArgs,
+		Run: func(c *cobra.Command, args []string) {
+			addr, err := c.Flags().GetString(addrCmdLineArg)
+			cobra.CheckErr(err)
+
+			timeout, err := c.Flags().GetDuration(timeoutCmdLineArg)
+			cobra.CheckErr(err)
+
+			client, err := storage.New(addr)
+			cobra.CheckErr(err)
+
+			ctx, cancel := context.WithTimeout(context.Background(), timeout)
+			defer cancel()
+
+			err = client.DeleteVirtioBlk(ctx, name, allowMissing)
+			cobra.CheckErr(err)
+		},
+	}
+
+	cmd.Flags().StringVar(&name, "name", "", "name of deleted virtio-blk controller")
+	cmd.Flags().BoolVar(&allowMissing, "allowMissing", false, "cmd succeeds if attempts to delete a resource that is not present")
+
+	cobra.CheckErr(cmd.MarkFlagRequired("name"))
+
+	return cmd
+}

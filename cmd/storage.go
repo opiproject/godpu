@@ -106,6 +106,7 @@ func newStorageDeleteCommand() *cobra.Command {
 	}
 
 	cmd.AddCommand(newDeleteNvmeCommand())
+	cmd.AddCommand(newDeleteVirtioCommand())
 
 	return cmd
 }
@@ -125,6 +126,23 @@ func newDeleteNvmeCommand() *cobra.Command {
 	cmd.AddCommand(newDeleteNvmeSubsystemCommand())
 	cmd.AddCommand(newDeleteNvmeNamespaceCommand())
 	cmd.AddCommand(newDeleteNvmeControllerCommand())
+
+	return cmd
+}
+
+func newDeleteVirtioCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "virtio",
+		Aliases: []string{"v"},
+		Short:   "Deletes virtio resource",
+		Args:    cobra.NoArgs,
+		Run: func(c *cobra.Command, args []string) {
+			err := c.Help()
+			cobra.CheckErr(err)
+		},
+	}
+
+	cmd.AddCommand(newDeleteVirtioBlkCommand())
 
 	return cmd
 }
