@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Copyright (C) 2023 Intel Corporation
+// Copyright (C) 2023-2024 Intel Corporation
 
 // Package storage implements the go library for OPI to be used in storage, for example, CSI drivers
 package storage
@@ -21,7 +21,7 @@ func (c *Client) CreateNvmeSubsystem(
 	}
 	defer connClose()
 
-	client := c.createClient(conn)
+	client := c.createFrontendNvmeClient(conn)
 	response, err := client.CreateNvmeSubsystem(
 		ctx,
 		&pb.CreateNvmeSubsystemRequest{
@@ -49,7 +49,7 @@ func (c *Client) DeleteNvmeSubsystem(
 	}
 	defer connClose()
 
-	client := c.createClient(conn)
+	client := c.createFrontendNvmeClient(conn)
 	_, err = client.DeleteNvmeSubsystem(
 		ctx,
 		&pb.DeleteNvmeSubsystemRequest{
