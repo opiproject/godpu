@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Copyright (C) 2023 Intel Corporation
+// Copyright (C) 2023-2024 Intel Corporation
 
 // Package cmd implements the CLI commands
 package cmd
@@ -52,6 +52,7 @@ func newStorageCreateCommand() *cobra.Command {
 	}
 
 	cmd.AddCommand(newCreateNvmeCommand())
+	cmd.AddCommand(newCreateVirtioCommand())
 
 	return cmd
 }
@@ -71,6 +72,23 @@ func newCreateNvmeCommand() *cobra.Command {
 	cmd.AddCommand(newCreateNvmeSubsystemCommand())
 	cmd.AddCommand(newCreateNvmeNamespaceCommand())
 	cmd.AddCommand(newCreateNvmeControllerCommand())
+
+	return cmd
+}
+
+func newCreateVirtioCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "virtio",
+		Aliases: []string{"v"},
+		Short:   "Creates virtio resource",
+		Args:    cobra.NoArgs,
+		Run: func(c *cobra.Command, args []string) {
+			err := c.Help()
+			cobra.CheckErr(err)
+		},
+	}
+
+	cmd.AddCommand(newCreateVirtioBlkCommand())
 
 	return cmd
 }
