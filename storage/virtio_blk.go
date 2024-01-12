@@ -41,3 +41,26 @@ func (c *Client) CreateVirtioBlk(
 
 	return response, err
 }
+
+// DeleteVirtioBlk deletes a virtio-blk controller
+func (c *Client) DeleteVirtioBlk(
+	ctx context.Context,
+	name string,
+	allowMissing bool,
+) error {
+	conn, connClose, err := c.connector.NewConn()
+	if err != nil {
+		return err
+	}
+	defer connClose()
+
+	client := c.createVirtioBlkClient(conn)
+	_, err = client.DeleteVirtioBlk(
+		ctx,
+		&pb.DeleteVirtioBlkRequest{
+			Name:         name,
+			AllowMissing: allowMissing,
+		})
+
+	return err
+}
