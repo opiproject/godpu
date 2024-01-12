@@ -143,6 +143,7 @@ func TestCreateNvmeTCPController(t *testing.T) {
 				func(grpc.ClientConnInterface) pb.FrontendNvmeServiceClient {
 					return mockClient
 				},
+				pb.NewFrontendVirtioBlkServiceClient,
 			)
 
 			response, err := c.CreateNvmeTCPController(
@@ -243,6 +244,7 @@ func TestCreateNvmePcieController(t *testing.T) {
 				func(grpc.ClientConnInterface) pb.FrontendNvmeServiceClient {
 					return mockClient
 				},
+				pb.NewFrontendVirtioBlkServiceClient,
 			)
 
 			response, err := c.CreateNvmePcieController(
@@ -319,6 +321,7 @@ func TestDeleteNvmeController(t *testing.T) {
 				func(grpc.ClientConnInterface) pb.FrontendNvmeServiceClient {
 					return mockClient
 				},
+				pb.NewFrontendVirtioBlkServiceClient,
 			)
 
 			err := c.DeleteNvmeController(ctx, testControllerName, true)

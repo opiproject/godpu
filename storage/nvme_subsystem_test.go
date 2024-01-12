@@ -94,6 +94,7 @@ func TestCreateNvmeSubsystem(t *testing.T) {
 				func(grpc.ClientConnInterface) pb.FrontendNvmeServiceClient {
 					return mockClient
 				},
+				pb.NewFrontendVirtioBlkServiceClient,
 			)
 
 			response, err := c.CreateNvmeSubsystem(ctx, subsystemID, nqn, hostnqn)
@@ -165,6 +166,7 @@ func TestDeleteNvmeSubsystem(t *testing.T) {
 				func(grpc.ClientConnInterface) pb.FrontendNvmeServiceClient {
 					return mockClient
 				},
+				pb.NewFrontendVirtioBlkServiceClient,
 			)
 
 			err := c.DeleteNvmeSubsystem(ctx, testSubsystemName, true)
