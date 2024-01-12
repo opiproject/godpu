@@ -95,6 +95,7 @@ func TestCreateNvmeNamespace(t *testing.T) {
 				func(grpc.ClientConnInterface) pb.FrontendNvmeServiceClient {
 					return mockClient
 				},
+				pb.NewFrontendVirtioBlkServiceClient,
 			)
 
 			response, err := c.CreateNvmeNamespace(ctx, namespaceID, subsystem, volume)
@@ -166,6 +167,7 @@ func TestDeleteNvmeNamespace(t *testing.T) {
 				func(grpc.ClientConnInterface) pb.FrontendNvmeServiceClient {
 					return mockClient
 				},
+				pb.NewFrontendVirtioBlkServiceClient,
 			)
 
 			err := c.DeleteNvmeNamespace(ctx, testNamespaceName, true)
