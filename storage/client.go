@@ -5,14 +5,10 @@
 package storage
 
 import (
-	"time"
-
 	grpcOpi "github.com/opiproject/godpu/grpc"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 	"google.golang.org/grpc"
 )
-
-const defaultTimeout = 10 * time.Second
 
 // CreateFrontendNvmeClient defines the function type used to retrieve FrontendNvmeServiceClient
 type CreateFrontendNvmeClient func(cc grpc.ClientConnInterface) pb.FrontendNvmeServiceClient
@@ -25,8 +21,6 @@ type Client struct {
 	connector                     grpcOpi.Connector
 	createFrontendNvmeClient      CreateFrontendNvmeClient
 	createFrontendVirtioBlkClient CreateFrontendVirtioBlkClient
-
-	timeout time.Duration
 }
 
 // New creates a new instance of Client
@@ -53,6 +47,5 @@ func NewWithArgs(
 		connector:                     connector,
 		createFrontendNvmeClient:      createFrontendNvmeClient,
 		createFrontendVirtioBlkClient: createFrontendVirtioBlkClient,
-		timeout:                       defaultTimeout,
 	}, nil
 }
