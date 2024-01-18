@@ -1,16 +1,17 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2022-2023 Dell Inc, or its subsidiaries.
-// Copyright (C) 2023 Intel Corporation
+// Copyright (C) 2023-2024 Intel Corporation
 
-// Package cmd implements the CLI commands
-package cmd
+// Package storage implements the storage related CLI commands
+package storage
 
 import (
 	"context"
 	"log"
 
+	"github.com/opiproject/godpu/cmd/storage/common"
 	"github.com/opiproject/godpu/grpc"
-	"github.com/opiproject/godpu/storage"
+	"github.com/opiproject/godpu/storage/test"
 	"github.com/spf13/cobra"
 )
 
@@ -38,7 +39,7 @@ func newStorageTestCommand() *cobra.Command {
 			runTests(
 				c,
 				allStoragePartitions,
-				storage.AllFrontendPartitions,
+				test.AllFrontendPartitions,
 			)
 		},
 	}
@@ -59,7 +60,7 @@ func newStorageTestFrontendCommand() *cobra.Command {
 			runTests(
 				c,
 				[]storagePartition{storagePartitionFrontend},
-				storage.AllFrontendPartitions,
+				test.AllFrontendPartitions,
 			)
 		},
 	}
@@ -72,7 +73,7 @@ func newStorageTestFrontendCommand() *cobra.Command {
 			runTests(
 				c,
 				[]storagePartition{storagePartitionFrontend},
-				[]storage.FrontendPartition{storage.FrontendPartitionNvme},
+				[]test.FrontendPartition{test.FrontendPartitionNvme},
 			)
 		},
 	})
@@ -84,7 +85,7 @@ func newStorageTestFrontendCommand() *cobra.Command {
 			runTests(
 				c,
 				[]storagePartition{storagePartitionFrontend},
-				[]storage.FrontendPartition{storage.FrontendPartitionVirtioBlk},
+				[]test.FrontendPartition{test.FrontendPartitionVirtioBlk},
 			)
 		},
 	})
@@ -96,7 +97,7 @@ func newStorageTestFrontendCommand() *cobra.Command {
 			runTests(
 				c,
 				[]storagePartition{storagePartitionFrontend},
-				[]storage.FrontendPartition{storage.FrontendPartitionScsi},
+				[]test.FrontendPartition{test.FrontendPartitionScsi},
 			)
 		},
 	})
@@ -141,16 +142,16 @@ func newStorageTestMiddleendCommand() *cobra.Command {
 func runTests(
 	cmd *cobra.Command,
 	partitions []storagePartition,
-	frontendPartitions []storage.FrontendPartition,
+	frontendPartitions []test.FrontendPartition,
 ) {
-	addr, err := cmd.Flags().GetString(addrCmdLineArg)
+	addr, err := cmd.Flags().GetString(common.AddrCmdLineArg)
 	if err != nil {
-		log.Fatalf("error getting %v argument: %v", addrCmdLineArg, err)
+		log.Fatalf("error getting %v argument: %v", common.AddrCmdLineArg, err)
 	}
 
-	timeout, err := cmd.Flags().GetDuration(timeoutCmdLineArg)
+	timeout, err := cmd.Flags().GetDuration(common.TimeoutCmdLineArg)
 	if err != nil {
-		log.Fatalf("error getting %v argument: %v", addrCmdLineArg, err)
+		log.Fatalf("error getting %v argument: %v", common.AddrCmdLineArg, err)
 	}
 
 	// Set up a connection to the server.
@@ -177,11 +178,11 @@ func runTests(
 		var err error
 		switch partition {
 		case storagePartitionFrontend:
-			err = storage.DoFrontend(ctx, conn, frontendPartitions)
+			err = test.DoFrontend(ctx, conn, frontendPartitions)
 		case storagePartitionBackend:
-			err = storage.DoBackend(ctx, conn)
+			err = test.DoBackend(ctx, conn)
 		case storagePartitionMiddleend:
-			err = storage.DoMiddleend(ctx, conn)
+			err = test.DoMiddleend(ctx, conn)
 		default:
 			log.Panicf("Unknown storage partition: %v", partition)
 		}

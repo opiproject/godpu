@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2022-2023 Dell Inc, or its subsidiaries.
+// Copyright (C) 2024 Intel Corporation
 
-// Package storage implements the go library for OPI to be used in storage, for example, CSI drivers
-package storage
+// Package test implements compliance storage tests
+package test
 
 import (
 	"context"

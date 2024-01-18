@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: Apache-2.0
-// Copyright (C) 2023 Intel Corporation
+// Copyright (C) 2023-2024 Intel Corporation
 
-// Package cmd implements the CLI commands
-package cmd
+// Package frontend implements the CLI commands for storage frontend
+package frontend
 
 import (
 	"context"
 	"net"
 
-	"github.com/opiproject/godpu/storage"
+	"github.com/opiproject/godpu/cmd/storage/common"
+	frontendclient "github.com/opiproject/godpu/storage/frontend"
 	"github.com/spf13/cobra"
 )
 
@@ -41,13 +42,13 @@ func newCreateNvmeControllerTCPCommand() *cobra.Command {
 		Short:   "Creates nvme TCP controller",
 		Args:    cobra.NoArgs,
 		Run: func(c *cobra.Command, args []string) {
-			addr, err := c.Flags().GetString(addrCmdLineArg)
+			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
 			cobra.CheckErr(err)
 
-			timeout, err := c.Flags().GetDuration(timeoutCmdLineArg)
+			timeout, err := c.Flags().GetDuration(common.TimeoutCmdLineArg)
 			cobra.CheckErr(err)
 
-			client, err := storage.New(addr)
+			client, err := frontendclient.New(addr)
 			cobra.CheckErr(err)
 
 			ctx, cancel := context.WithTimeout(context.Background(), timeout)
@@ -56,7 +57,7 @@ func newCreateNvmeControllerTCPCommand() *cobra.Command {
 			response, err := client.CreateNvmeTCPController(ctx, id, subsystem, ip, port)
 			cobra.CheckErr(err)
 
-			printResponse(response.Name)
+			common.PrintResponse(response.Name)
 		},
 	}
 
@@ -84,13 +85,13 @@ func newCreateNvmeControllerPcieCommand() *cobra.Command {
 		Short:   "Creates nvme PCIe controller",
 		Args:    cobra.NoArgs,
 		Run: func(c *cobra.Command, args []string) {
-			addr, err := c.Flags().GetString(addrCmdLineArg)
+			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
 			cobra.CheckErr(err)
 
-			timeout, err := c.Flags().GetDuration(timeoutCmdLineArg)
+			timeout, err := c.Flags().GetDuration(common.TimeoutCmdLineArg)
 			cobra.CheckErr(err)
 
-			client, err := storage.New(addr)
+			client, err := frontendclient.New(addr)
 			cobra.CheckErr(err)
 
 			ctx, cancel := context.WithTimeout(context.Background(), timeout)
@@ -99,7 +100,7 @@ func newCreateNvmeControllerPcieCommand() *cobra.Command {
 			response, err := client.CreateNvmePcieController(ctx, id, subsystem, port, pf, vf)
 			cobra.CheckErr(err)
 
-			printResponse(response.Name)
+			common.PrintResponse(response.Name)
 		},
 	}
 
@@ -125,13 +126,13 @@ func newDeleteNvmeControllerCommand() *cobra.Command {
 		Short:   "Deletes nvme controller",
 		Args:    cobra.NoArgs,
 		Run: func(c *cobra.Command, args []string) {
-			addr, err := c.Flags().GetString(addrCmdLineArg)
+			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
 			cobra.CheckErr(err)
 
-			timeout, err := c.Flags().GetDuration(timeoutCmdLineArg)
+			timeout, err := c.Flags().GetDuration(common.TimeoutCmdLineArg)
 			cobra.CheckErr(err)
 
-			client, err := storage.New(addr)
+			client, err := frontendclient.New(addr)
 			cobra.CheckErr(err)
 
 			ctx, cancel := context.WithTimeout(context.Background(), timeout)
