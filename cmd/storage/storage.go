@@ -48,8 +48,7 @@ func newStorageCreateCommand() *cobra.Command {
 		},
 	}
 
-	cmd.AddCommand(frontend.NewCreateNvmeCommand())
-	cmd.AddCommand(frontend.NewCreateVirtioCommand())
+	cmd.AddCommand(frontend.NewCreateCommand())
 
 	return cmd
 }
@@ -66,8 +65,7 @@ func newStorageDeleteCommand() *cobra.Command {
 		},
 	}
 
-	cmd.AddCommand(frontend.NewDeleteNvmeCommand())
-	cmd.AddCommand(frontend.NewDeleteVirtioCommand())
+	cmd.AddCommand(frontend.NewDeleteCommand())
 
 	return cmd
 }

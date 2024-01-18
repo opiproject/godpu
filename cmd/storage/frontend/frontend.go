@@ -6,7 +6,26 @@ package frontend
 
 import "github.com/spf13/cobra"
 
-func NewCreateNvmeCommand() *cobra.Command {
+// NewCreateCommand creates a new command to create frontend resources
+func NewCreateCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "frontend",
+		Aliases: []string{"f"},
+		Short:   "Creates frontend resource",
+		Args:    cobra.NoArgs,
+		Run: func(c *cobra.Command, args []string) {
+			err := c.Help()
+			cobra.CheckErr(err)
+		},
+	}
+
+	cmd.AddCommand(newCreateNvmeCommand())
+	cmd.AddCommand(newCreateVirtioCommand())
+
+	return cmd
+}
+
+func newCreateNvmeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "nvme",
 		Aliases: []string{"n"},
@@ -25,7 +44,7 @@ func NewCreateNvmeCommand() *cobra.Command {
 	return cmd
 }
 
-func NewCreateVirtioCommand() *cobra.Command {
+func newCreateVirtioCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "virtio",
 		Aliases: []string{"v"},
@@ -42,7 +61,26 @@ func NewCreateVirtioCommand() *cobra.Command {
 	return cmd
 }
 
-func NewDeleteNvmeCommand() *cobra.Command {
+// NewDeleteCommand creates a new command to delete frontend resources
+func NewDeleteCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "frontend",
+		Aliases: []string{"f"},
+		Short:   "Deletes frontend resource",
+		Args:    cobra.NoArgs,
+		Run: func(c *cobra.Command, args []string) {
+			err := c.Help()
+			cobra.CheckErr(err)
+		},
+	}
+
+	cmd.AddCommand(newDeleteNvmeCommand())
+	cmd.AddCommand(newDeleteVirtioCommand())
+
+	return cmd
+}
+
+func newDeleteNvmeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "nvme",
 		Aliases: []string{"n"},
@@ -61,7 +99,7 @@ func NewDeleteNvmeCommand() *cobra.Command {
 	return cmd
 }
 
-func NewDeleteVirtioCommand() *cobra.Command {
+func newDeleteVirtioCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "virtio",
 		Aliases: []string{"v"},
