@@ -4,13 +4,12 @@ go 1.19
 
 require (
 	github.com/go-chi/chi v1.5.5
-	github.com/go-chi/chi/v5 v5.0.11
 	github.com/go-ping/ping v1.1.0
 	github.com/google/uuid v1.5.0
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/onsi/ginkgo/v2 v2.14.0
 	github.com/onsi/gomega v1.30.0
-	github.com/opiproject/opi-api v0.0.0-20231211154947-aee3998dd0c2
+	github.com/opiproject/opi-api v0.0.0-20240118183513-e44db269fba4
 	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.8.4
 	go.einride.tech/aip v0.66.0
