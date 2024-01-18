@@ -69,12 +69,12 @@ func NvmeControllerConnect(id string, trAddr string, subnqn string, trSvcID int6
 			NvmePathId: nvmeControllerToPathResourceID(id),
 			NvmePath: &pb.NvmePath{
 				Traddr: trAddr,
-				Trtype: pb.NvmeTransportType_NVME_TRANSPORT_TCP,
+				Trtype: pb.NvmeTransportType_NVME_TRANSPORT_TYPE_TCP,
 				Fabrics: &pb.FabricsPath{
 					Subnqn:  subnqn,
 					Trsvcid: trSvcID,
 					Hostnqn: hostnqn,
-					Adrfam:  pb.NvmeAddressFamily_NVME_ADRFAM_IPV4,
+					Adrfam:  pb.NvmeAddressFamily_NVME_ADDRESS_FAMILY_IPV4,
 				},
 			},
 		})
@@ -268,7 +268,7 @@ func CreateNvmeNamespace(id string, subSystemID string, nguid string, hostID int
 	defer cancel()
 
 	client1 := pb.NewNullVolumeServiceClient(conn)
-	response, err := client1.ListNullVolumes(ctx, &pb.ListNullVolumesRequest{Parent: "todo"})
+	response, err := client1.ListNullVolumes(ctx, &pb.ListNullVolumesRequest{})
 
 	if err != nil {
 		log.Println(err)
@@ -278,7 +278,7 @@ func CreateNvmeNamespace(id string, subSystemID string, nguid string, hostID int
 	volumeData := response.NullVolumes
 	volumeID := ""
 	for _, data := range volumeData {
-		uuid := strings.ReplaceAll(data.Uuid.Value, "-", "")
+		uuid := strings.ReplaceAll(data.Uuid, "-", "")
 		if uuid == nguid {
 			volumeID = data.Name
 		}

@@ -21,7 +21,15 @@ import (
 )
 
 // GoopCSI mock gRPC server to implement mock service calls
-type GoopCSI struct{}
+type GoopCSI struct {
+	pb.UnimplementedNullVolumeServiceServer
+	pb.UnimplementedNvmeRemoteControllerServiceServer
+	pb.UnimplementedFrontendNvmeServiceServer
+}
+
+var _ pb.NullVolumeServiceServer = &GoopCSI{}
+var _ pb.NvmeRemoteControllerServiceServer = &GoopCSI{}
+var _ pb.FrontendNvmeServiceServer = &GoopCSI{}
 
 // CreateNullVolume creates a mock NullVolume
 func (s *GoopCSI) CreateNullVolume(_ context2.Context, _ *pb.CreateNullVolumeRequest) (*pb.NullVolume, error) {

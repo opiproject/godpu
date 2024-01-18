@@ -29,9 +29,9 @@ func (c *Client) CreateNvmeTCPController(
 	var adrfam pb.NvmeAddressFamily
 	switch {
 	case ip.To4() != nil:
-		adrfam = pb.NvmeAddressFamily_NVME_ADRFAM_IPV4
+		adrfam = pb.NvmeAddressFamily_NVME_ADDRESS_FAMILY_IPV4
 	case ip.To16() != nil:
-		adrfam = pb.NvmeAddressFamily_NVME_ADRFAM_IPV6
+		adrfam = pb.NvmeAddressFamily_NVME_ADDRESS_FAMILY_IPV6
 	default:
 		return nil, fmt.Errorf("invalid ip address format: %v", ip)
 	}
@@ -44,7 +44,7 @@ func (c *Client) CreateNvmeTCPController(
 			NvmeControllerId: id,
 			NvmeController: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					Trtype: pb.NvmeTransportType_NVME_TRANSPORT_TCP,
+					Trtype: pb.NvmeTransportType_NVME_TRANSPORT_TYPE_TCP,
 					Endpoint: &pb.NvmeControllerSpec_FabricsId{
 						FabricsId: &pb.FabricsEndpoint{
 							Traddr:  ip.String(),
@@ -79,7 +79,7 @@ func (c *Client) CreateNvmePcieController(
 			NvmeControllerId: id,
 			NvmeController: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					Trtype: pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype: pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					Endpoint: &pb.NvmeControllerSpec_PcieId{
 						PcieId: &pb.PciEndpoint{
 							PortId:           wrapperspb.Int32(int32(port)),

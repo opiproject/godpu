@@ -27,24 +27,24 @@ func TestCreateNvmeTCPController(t *testing.T) {
 	ipV6Addr := net.ParseIP("::")
 	testIPV4Controller := &pb.NvmeController{
 		Spec: &pb.NvmeControllerSpec{
-			Trtype: pb.NvmeTransportType_NVME_TRANSPORT_TCP,
+			Trtype: pb.NvmeTransportType_NVME_TRANSPORT_TYPE_TCP,
 			Endpoint: &pb.NvmeControllerSpec_FabricsId{
 				FabricsId: &pb.FabricsEndpoint{
 					Traddr:  ipV4Addr.String(),
 					Trsvcid: "4420",
-					Adrfam:  pb.NvmeAddressFamily_NVME_ADRFAM_IPV4,
+					Adrfam:  pb.NvmeAddressFamily_NVME_ADDRESS_FAMILY_IPV4,
 				},
 			},
 		},
 	}
 	testIPV6Controller := &pb.NvmeController{
 		Spec: &pb.NvmeControllerSpec{
-			Trtype: pb.NvmeTransportType_NVME_TRANSPORT_TCP,
+			Trtype: pb.NvmeTransportType_NVME_TRANSPORT_TYPE_TCP,
 			Endpoint: &pb.NvmeControllerSpec_FabricsId{
 				FabricsId: &pb.FabricsEndpoint{
 					Traddr:  ipV6Addr.String(),
 					Trsvcid: "4420",
-					Adrfam:  pb.NvmeAddressFamily_NVME_ADRFAM_IPV6,
+					Adrfam:  pb.NvmeAddressFamily_NVME_ADDRESS_FAMILY_IPV6,
 				},
 			},
 		},
@@ -166,7 +166,7 @@ func TestCreateNvmePcieController(t *testing.T) {
 	subsystemName := "subsysPcie0Name"
 	testPcieController := &pb.NvmeController{
 		Spec: &pb.NvmeControllerSpec{
-			Trtype: pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+			Trtype: pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 			Endpoint: &pb.NvmeControllerSpec_PcieId{
 				PcieId: &pb.PciEndpoint{
 					PortId:           wrapperspb.Int32(0),
