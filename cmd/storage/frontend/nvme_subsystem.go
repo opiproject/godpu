@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: Apache-2.0
-// Copyright (C) 2023 Intel Corporation
+// Copyright (C) 2023-2024 Intel Corporation
 
-// Package cmd implements the CLI commands
-package cmd
+// Package frontend implements the CLI commands for storage frontend
+package frontend
 
 import (
 	"context"
 
-	"github.com/opiproject/godpu/storage"
+	"github.com/opiproject/godpu/cmd/storage/common"
+	frontendclient "github.com/opiproject/godpu/storage/frontend"
 	"github.com/spf13/cobra"
 )
 
@@ -21,13 +22,13 @@ func newCreateNvmeSubsystemCommand() *cobra.Command {
 		Short:   "Creates nvme subsystem",
 		Args:    cobra.NoArgs,
 		Run: func(c *cobra.Command, args []string) {
-			addr, err := c.Flags().GetString(addrCmdLineArg)
+			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
 			cobra.CheckErr(err)
 
-			timeout, err := c.Flags().GetDuration(timeoutCmdLineArg)
+			timeout, err := c.Flags().GetDuration(common.TimeoutCmdLineArg)
 			cobra.CheckErr(err)
 
-			client, err := storage.New(addr)
+			client, err := frontendclient.New(addr)
 			cobra.CheckErr(err)
 
 			ctx, cancel := context.WithTimeout(context.Background(), timeout)
@@ -36,7 +37,7 @@ func newCreateNvmeSubsystemCommand() *cobra.Command {
 			response, err := client.CreateNvmeSubsystem(ctx, id, nqn, hostnqn)
 			cobra.CheckErr(err)
 
-			printResponse(response.Name)
+			common.PrintResponse(response.Name)
 		},
 	}
 
@@ -58,13 +59,13 @@ func newDeleteNvmeSubsystemCommand() *cobra.Command {
 		Short:   "Deletes nvme subsystem",
 		Args:    cobra.NoArgs,
 		Run: func(c *cobra.Command, args []string) {
-			addr, err := c.Flags().GetString(addrCmdLineArg)
+			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
 			cobra.CheckErr(err)
 
-			timeout, err := c.Flags().GetDuration(timeoutCmdLineArg)
+			timeout, err := c.Flags().GetDuration(common.TimeoutCmdLineArg)
 			cobra.CheckErr(err)
 
-			client, err := storage.New(addr)
+			client, err := frontendclient.New(addr)
 			cobra.CheckErr(err)
 
 			ctx, cancel := context.WithTimeout(context.Background(), timeout)

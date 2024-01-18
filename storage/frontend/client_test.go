@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
-// Copyright (C) 2023 Intel Corporation
+// Copyright (C) 2023-2024 Intel Corporation
 
-// Package storage implements the go library for OPI to be used in storage, for example, CSI drivers
-package storage
+// Package frontend implements the go library for OPI frontend storage
+package frontend
 
 import (
 	"testing"

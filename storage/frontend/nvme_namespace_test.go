@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (C) 2023-2024 Intel Corporation
 
-// Package storage implements the go library for OPI to be used in storage, for example, CSI drivers
-package storage
+// Package frontend implements the go library for OPI frontend storage
+package frontend
 
 import (
 	"context"
@@ -18,14 +18,13 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func TestCreateNvmeSubsystem(t *testing.T) {
-	subsystemID := "subsys0"
-	nqn := "nqn"
-	hostnqn := "hostnqn"
-	testSubsystem := &pb.NvmeSubsystem{
-		Spec: &pb.NvmeSubsystemSpec{
-			Nqn:     nqn,
-			Hostnqn: hostnqn,
+func TestCreateNvmeNamespace(t *testing.T) {
+	namespaceID := "namespace0"
+	volume := "vol0"
+	subsystem := "subsys0Name"
+	testNamespace := &pb.NvmeNamespace{
+		Spec: &pb.NvmeNamespaceSpec{
+			VolumeNameRef: volume,
 		},
 	}
 
@@ -33,28 +32,30 @@ func TestCreateNvmeSubsystem(t *testing.T) {
 		giveClientErr    error
 		giveConnectorErr error
 		wantErr          error
-		wantRequest      *pb.CreateNvmeSubsystemRequest
-		wantResponse     *pb.NvmeSubsystem
+		wantRequest      *pb.CreateNvmeNamespaceRequest
+		wantResponse     *pb.NvmeNamespace
 		wantConnClosed   bool
 	}{
 		"successful call": {
 			giveConnectorErr: nil,
 			giveClientErr:    nil,
 			wantErr:          nil,
-			wantRequest: &pb.CreateNvmeSubsystemRequest{
-				NvmeSubsystemId: subsystemID,
-				NvmeSubsystem:   proto.Clone(testSubsystem).(*pb.NvmeSubsystem),
+			wantRequest: &pb.CreateNvmeNamespaceRequest{
+				Parent:          subsystem,
+				NvmeNamespaceId: namespaceID,
+				NvmeNamespace:   proto.Clone(testNamespace).(*pb.NvmeNamespace),
 			},
-			wantResponse:   proto.Clone(testSubsystem).(*pb.NvmeSubsystem),
+			wantResponse:   proto.Clone(testNamespace).(*pb.NvmeNamespace),
 			wantConnClosed: true,
 		},
 		"client err": {
 			giveConnectorErr: nil,
 			giveClientErr:    errors.New("Some client error"),
 			wantErr:          errors.New("Some client error"),
-			wantRequest: &pb.CreateNvmeSubsystemRequest{
-				NvmeSubsystemId: subsystemID,
-				NvmeSubsystem:   proto.Clone(testSubsystem).(*pb.NvmeSubsystem),
+			wantRequest: &pb.CreateNvmeNamespaceRequest{
+				Parent:          subsystem,
+				NvmeNamespaceId: namespaceID,
+				NvmeNamespace:   proto.Clone(testNamespace).(*pb.NvmeNamespace),
 			},
 			wantResponse:   nil,
 			wantConnClosed: true,
@@ -76,8 +77,8 @@ func TestCreateNvmeSubsystem(t *testing.T) {
 
 			mockClient := mocks.NewFrontendNvmeServiceClient(t)
 			if tt.wantRequest != nil {
-				toReturn := proto.Clone(tt.wantResponse).(*pb.NvmeSubsystem)
-				mockClient.EXPECT().CreateNvmeSubsystem(ctx, tt.wantRequest).
+				toReturn := proto.Clone(tt.wantResponse).(*pb.NvmeNamespace)
+				mockClient.EXPECT().CreateNvmeNamespace(ctx, tt.wantRequest).
 					Return(toReturn, tt.giveClientErr)
 			}
 
@@ -97,7 +98,7 @@ func TestCreateNvmeSubsystem(t *testing.T) {
 				pb.NewFrontendVirtioBlkServiceClient,
 			)
 
-			response, err := c.CreateNvmeSubsystem(ctx, subsystemID, nqn, hostnqn)
+			response, err := c.CreateNvmeNamespace(ctx, namespaceID, subsystem, volume)
 
 			require.Equal(t, tt.wantErr, err)
 			require.True(t, proto.Equal(response, tt.wantResponse))
@@ -106,31 +107,31 @@ func TestCreateNvmeSubsystem(t *testing.T) {
 	}
 }
 
-func TestDeleteNvmeSubsystem(t *testing.T) {
-	testSubsystemName := "name"
-	testRequest := &pb.DeleteNvmeSubsystemRequest{
-		Name:         testSubsystemName,
+func TestDeleteNvmeNamespace(t *testing.T) {
+	testNamespaceName := "name"
+	testRequest := &pb.DeleteNvmeNamespaceRequest{
+		Name:         testNamespaceName,
 		AllowMissing: true,
 	}
 	tests := map[string]struct {
 		giveClientErr    error
 		giveConnectorErr error
 		wantErr          error
-		wantRequest      *pb.DeleteNvmeSubsystemRequest
+		wantRequest      *pb.DeleteNvmeNamespaceRequest
 		wantConnClosed   bool
 	}{
 		"successful call": {
 			giveConnectorErr: nil,
 			giveClientErr:    nil,
 			wantErr:          nil,
-			wantRequest:      proto.Clone(testRequest).(*pb.DeleteNvmeSubsystemRequest),
+			wantRequest:      proto.Clone(testRequest).(*pb.DeleteNvmeNamespaceRequest),
 			wantConnClosed:   true,
 		},
 		"client err": {
 			giveConnectorErr: nil,
 			giveClientErr:    errors.New("Some client error"),
 			wantErr:          errors.New("Some client error"),
-			wantRequest:      proto.Clone(testRequest).(*pb.DeleteNvmeSubsystemRequest),
+			wantRequest:      proto.Clone(testRequest).(*pb.DeleteNvmeNamespaceRequest),
 			wantConnClosed:   true,
 		},
 		"connector err": {
@@ -149,7 +150,7 @@ func TestDeleteNvmeSubsystem(t *testing.T) {
 
 			mockClient := mocks.NewFrontendNvmeServiceClient(t)
 			if tt.wantRequest != nil {
-				mockClient.EXPECT().DeleteNvmeSubsystem(ctx, tt.wantRequest).
+				mockClient.EXPECT().DeleteNvmeNamespace(ctx, tt.wantRequest).
 					Return(&emptypb.Empty{}, tt.giveClientErr)
 			}
 
@@ -169,7 +170,7 @@ func TestDeleteNvmeSubsystem(t *testing.T) {
 				pb.NewFrontendVirtioBlkServiceClient,
 			)
 
-			err := c.DeleteNvmeSubsystem(ctx, testSubsystemName, true)
+			err := c.DeleteNvmeNamespace(ctx, testNamespaceName, true)
 
 			require.Equal(t, tt.wantErr, err)
 			require.Equal(t, tt.wantConnClosed, connClosed)
