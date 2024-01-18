@@ -25,7 +25,7 @@ func TestCreateBridgePort(t *testing.T) {
 	testBridgePort := &pb.BridgePort{
 		Spec: &pb.BridgePortSpec{
 			MacAddress:     []byte("00:11:22:aa:bb:cc"),
-			Ptype:          pb.BridgePortType_ACCESS,
+			Ptype:          pb.BridgePortType_BRIDGE_PORT_TYPE_ACCESS,
 			LogicalBridges: []string{"lb1", "lb2"},
 		},
 	}

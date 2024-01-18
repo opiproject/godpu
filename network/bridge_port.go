@@ -27,11 +27,11 @@ func (c evpnClientImpl) CreateBridgePort(ctx context.Context, name string, mac s
 	client := c.getEvpnBridgePortClient(conn)
 	switch bridgePortType {
 	case "access":
-		typeOfPort = pb.BridgePortType_ACCESS
+		typeOfPort = pb.BridgePortType_BRIDGE_PORT_TYPE_ACCESS
 	case "trunk":
-		typeOfPort = pb.BridgePortType_TRUNK
+		typeOfPort = pb.BridgePortType_BRIDGE_PORT_TYPE_TRUNK
 	default:
-		typeOfPort = pb.BridgePortType_UNKNOWN
+		typeOfPort = pb.BridgePortType_BRIDGE_PORT_TYPE_UNSPECIFIED
 	}
 	data, err := client.CreateBridgePort(ctx, &pb.CreateBridgePortRequest{
 		BridgePortId: name,
