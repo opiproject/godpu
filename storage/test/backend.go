@@ -153,10 +153,10 @@ func executeNvmePath(ctx context.Context, c5 pb.NvmeRemoteControllerServiceClien
 			Parent:     rr0.Name,
 			NvmePathId: resourceID,
 			NvmePath: &pb.NvmePath{
-				Trtype: pb.NvmeTransportType_NVME_TRANSPORT_TCP,
+				Trtype: pb.NvmeTransportType_NVME_TRANSPORT_TYPE_TCP,
 				Traddr: addr[0].String(),
 				Fabrics: &pb.FabricsPath{
-					Adrfam:  pb.NvmeAddressFamily_NVME_ADRFAM_IPV4,
+					Adrfam:  pb.NvmeAddressFamily_NVME_ADDRESS_FAMILY_IPV4,
 					Trsvcid: int64(port),
 					Subnqn:  "nqn.2016-06.io.spdk:cnode1",
 					Hostnqn: "nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c",
@@ -184,10 +184,10 @@ func executeNvmePath(ctx context.Context, c5 pb.NvmeRemoteControllerServiceClien
 			UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"*"}},
 			NvmePath: &pb.NvmePath{
 				Name:   np0.Name,
-				Trtype: pb.NvmeTransportType_NVME_TRANSPORT_TCP,
+				Trtype: pb.NvmeTransportType_NVME_TRANSPORT_TYPE_TCP,
 				Traddr: addr[0].String(),
 				Fabrics: &pb.FabricsPath{
-					Adrfam:  pb.NvmeAddressFamily_NVME_ADRFAM_IPV4,
+					Adrfam:  pb.NvmeAddressFamily_NVME_ADDRESS_FAMILY_IPV4,
 					Trsvcid: int64(port),
 					Subnqn:  "nqn.2016-06.io.spdk:cnode1",
 					Hostnqn: "nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c",
@@ -272,7 +272,7 @@ func executeNullVolume(ctx context.Context, c1 pb.NullVolumeServiceClient) error
 			return err
 		}
 		log.Printf("Updated Null: %v", rs3)
-		rs4, err := c1.ListNullVolumes(ctx, &pb.ListNullVolumesRequest{Parent: "todo"})
+		rs4, err := c1.ListNullVolumes(ctx, &pb.ListNullVolumesRequest{})
 		if err != nil {
 			return err
 		}
@@ -331,7 +331,7 @@ func executeAioVolume(ctx context.Context, c2 pb.AioVolumeServiceClient) error {
 			return err
 		}
 		log.Printf("Updated Aio: %v", ra3)
-		ra4, err := c2.ListAioVolumes(ctx, &pb.ListAioVolumesRequest{Parent: "todo"})
+		ra4, err := c2.ListAioVolumes(ctx, &pb.ListAioVolumesRequest{})
 		if err != nil {
 			return err
 		}

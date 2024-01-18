@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	pbc "github.com/opiproject/opi-api/common/v1/gen/go"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 	"google.golang.org/protobuf/proto"
 
@@ -266,7 +265,7 @@ func executeVirtioBlk(ctx context.Context, c4 pb.FrontendVirtioBlkServiceClient)
 			log.Printf("could not update VirtioBlk: %v", err)
 		}
 		log.Printf("Updated VirtioBlk: %v", rv3)
-		rv4, err := c4.ListVirtioBlks(ctx, &pb.ListVirtioBlksRequest{Parent: "todo"})
+		rv4, err := c4.ListVirtioBlks(ctx, &pb.ListVirtioBlksRequest{})
 		if err != nil {
 			return err
 		}
@@ -325,10 +324,10 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 					FabricsId: &pb.FabricsEndpoint{
 						Traddr:  "127.0.0.1",
 						Trsvcid: "4421",
-						Adrfam:  pb.NvmeAddressFamily_NVME_ADRFAM_IPV4,
+						Adrfam:  pb.NvmeAddressFamily_NVME_ADDRESS_FAMILY_IPV4,
 					},
 				},
-				Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TCP,
+				Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_TCP,
 				MaxNsq:           5,
 				MaxNcq:           6,
 				Sqes:             7,
@@ -356,7 +355,7 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 			NvmeNamespace: &pb.NvmeNamespace{
 				Spec: &pb.NvmeNamespaceSpec{
 					VolumeNameRef: "Malloc1",
-					Uuid:          &pbc.Uuid{Value: "1b4e28ba-2fa1-11d2-883f-b9a761bde3fb"},
+					Uuid:          "1b4e28ba-2fa1-11d2-883f-b9a761bde3fb",
 					Nguid:         "1b4e28ba-2fa1-11d2-883f-b9a761bde3fb",
 					Eui64:         1967554867335598546,
 					HostNsid:      1}}})
@@ -383,7 +382,7 @@ func executeNvmeNamespace(ctx context.Context, c2 pb.FrontendNvmeServiceClient) 
 				Name: rn1.Name,
 				Spec: &pb.NvmeNamespaceSpec{
 					VolumeNameRef: "Malloc1",
-					Uuid:          &pbc.Uuid{Value: "1b4e28ba-2fa1-11d2-883f-b9a761bde3fb"},
+					Uuid:          "1b4e28ba-2fa1-11d2-883f-b9a761bde3fb",
 					Nguid:         "1b4e28ba-2fa1-11d2-883f-b9a761bde3fb",
 					Eui64:         1967554867335598546,
 					HostNsid:      1}}})
@@ -465,10 +464,10 @@ func executeNvmeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 						FabricsId: &pb.FabricsEndpoint{
 							Traddr:  "127.0.0.1",
 							Trsvcid: "4421",
-							Adrfam:  pb.NvmeAddressFamily_NVME_ADRFAM_IPV4,
+							Adrfam:  pb.NvmeAddressFamily_NVME_ADDRESS_FAMILY_IPV4,
 						},
 					},
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TCP,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_TCP,
 					MaxNsq:           5,
 					MaxNcq:           6,
 					Sqes:             7,
@@ -500,10 +499,10 @@ func executeNvmeController(ctx context.Context, c2 pb.FrontendNvmeServiceClient)
 						FabricsId: &pb.FabricsEndpoint{
 							Traddr:  "127.0.0.1",
 							Trsvcid: "4421",
-							Adrfam:  pb.NvmeAddressFamily_NVME_ADRFAM_IPV4,
+							Adrfam:  pb.NvmeAddressFamily_NVME_ADDRESS_FAMILY_IPV4,
 						},
 					},
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TCP,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_TCP,
 					MaxNsq:           8,
 					MaxNcq:           7,
 					Sqes:             6,
