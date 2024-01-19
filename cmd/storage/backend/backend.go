@@ -40,3 +40,38 @@ func newCreateNvmeCommand() *cobra.Command {
 
 	return cmd
 }
+
+// NewDeleteCommand creates a new command to delete backend resources
+func NewDeleteCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "backend",
+		Aliases: []string{"b"},
+		Short:   "Deletes backend resource",
+		Args:    cobra.NoArgs,
+		Run: func(c *cobra.Command, args []string) {
+			err := c.Help()
+			cobra.CheckErr(err)
+		},
+	}
+
+	cmd.AddCommand(newDeleteNvmeCommand())
+
+	return cmd
+}
+
+func newDeleteNvmeCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "nvme",
+		Aliases: []string{"n"},
+		Short:   "Deletes nvme resource",
+		Args:    cobra.NoArgs,
+		Run: func(c *cobra.Command, args []string) {
+			err := c.Help()
+			cobra.CheckErr(err)
+		},
+	}
+
+	cmd.AddCommand(newDeleteNvmeControllerCommand())
+
+	return cmd
+}

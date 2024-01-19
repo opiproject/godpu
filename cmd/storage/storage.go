@@ -68,6 +68,7 @@ func newStorageDeleteCommand() *cobra.Command {
 	}
 
 	cmd.AddCommand(frontend.NewDeleteCommand())
+	cmd.AddCommand(backend.NewDeleteCommand())
 
 	return cmd
 }
