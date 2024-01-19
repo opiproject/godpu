@@ -7,6 +7,7 @@ package storage
 import (
 	"time"
 
+	"github.com/opiproject/godpu/cmd/storage/backend"
 	"github.com/opiproject/godpu/cmd/storage/common"
 	"github.com/opiproject/godpu/cmd/storage/frontend"
 	"github.com/spf13/cobra"
@@ -49,6 +50,7 @@ func newStorageCreateCommand() *cobra.Command {
 	}
 
 	cmd.AddCommand(frontend.NewCreateCommand())
+	cmd.AddCommand(backend.NewCreateCommand())
 
 	return cmd
 }
