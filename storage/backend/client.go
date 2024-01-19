@@ -26,13 +26,19 @@ func New(addr string) (*Client, error) {
 		return nil, err
 	}
 
-	return NewWithConnector(connector)
+	return NewWithArgs(
+		connector,
+		pb.NewNvmeRemoteControllerServiceClient,
+	)
 }
 
-// NewWithConnector creates a new instance of Client with provided connector
-func NewWithConnector(connector grpcOpi.Connector) (*Client, error) {
+// NewWithArgs creates a new instance of Client with non-default members
+func NewWithArgs(
+	connector grpcOpi.Connector,
+	createNvmeClient CreateNvmeClient,
+) (*Client, error) {
 	return &Client{
 		connector:        connector,
-		createNvmeClient: pb.NewNvmeRemoteControllerServiceClient,
+		createNvmeClient: createNvmeClient,
 	}, nil
 }
