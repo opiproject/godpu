@@ -58,6 +58,34 @@ func (c *Client) CreateNvmeTCPPath(
 	return response, err
 }
 
+// CreateNvmePciePath creates a path to nvme PCIe controller
+func (c *Client) CreateNvmePciePath(
+	ctx context.Context,
+	id string,
+	controller string,
+	bdf string,
+) (*pb.NvmePath, error) {
+	conn, connClose, err := c.connector.NewConn()
+	if err != nil {
+		return nil, err
+	}
+	defer connClose()
+
+	client := c.createNvmeClient(conn)
+	response, err := client.CreateNvmePath(
+		ctx,
+		&pb.CreateNvmePathRequest{
+			NvmePathId: id,
+			Parent:     controller,
+			NvmePath: &pb.NvmePath{
+				Trtype: pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
+				Traddr: bdf,
+			},
+		})
+
+	return response, err
+}
+
 // DeleteNvmePath deletes an nvme path to an external nvme controller
 func (c *Client) DeleteNvmePath(
 	ctx context.Context,
