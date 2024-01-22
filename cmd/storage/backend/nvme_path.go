@@ -26,6 +26,7 @@ func newCreateNvmePathCommand() *cobra.Command {
 	}
 
 	cmd.AddCommand(newCreateNvmePathTCPCommand())
+	cmd.AddCommand(newCreateNvmePathPcieCommand())
 
 	return cmd
 }
@@ -73,6 +74,45 @@ func newCreateNvmePathTCPCommand() *cobra.Command {
 	cobra.CheckErr(cmd.MarkFlagRequired("ip"))
 	cobra.CheckErr(cmd.MarkFlagRequired("port"))
 	cobra.CheckErr(cmd.MarkFlagRequired("nqn"))
+
+	return cmd
+}
+
+func newCreateNvmePathPcieCommand() *cobra.Command {
+	id := ""
+	controller := ""
+	bdf := ""
+	cmd := &cobra.Command{
+		Use:     "pcie",
+		Aliases: []string{"p"},
+		Short:   "Creates nvme path to PCIe controller",
+		Args:    cobra.NoArgs,
+		Run: func(c *cobra.Command, args []string) {
+			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
+			cobra.CheckErr(err)
+
+			timeout, err := c.Flags().GetDuration(common.TimeoutCmdLineArg)
+			cobra.CheckErr(err)
+
+			client, err := backendclient.New(addr)
+			cobra.CheckErr(err)
+
+			ctx, cancel := context.WithTimeout(context.Background(), timeout)
+			defer cancel()
+
+			response, err := client.CreateNvmePciePath(ctx, id, controller, bdf)
+			cobra.CheckErr(err)
+
+			common.PrintResponse(response.Name)
+		},
+	}
+
+	cmd.Flags().StringVar(&id, "id", "", "id for created resource. Assigned by server if omitted.")
+	cmd.Flags().StringVar(&controller, "controller", "", "backend controller name for this path")
+	cmd.Flags().StringVar(&bdf, "bdf", "", "bdf PCI address of NVMe/PCIe controller")
+
+	cobra.CheckErr(cmd.MarkFlagRequired("controller"))
+	cobra.CheckErr(cmd.MarkFlagRequired("bdf"))
 
 	return cmd
 }
