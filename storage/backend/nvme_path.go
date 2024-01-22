@@ -57,3 +57,26 @@ func (c *Client) CreateNvmeTCPPath(
 
 	return response, err
 }
+
+// DeleteNvmePath deletes an nvme path to an external nvme controller
+func (c *Client) DeleteNvmePath(
+	ctx context.Context,
+	name string,
+	allowMissing bool,
+) error {
+	conn, connClose, err := c.connector.NewConn()
+	if err != nil {
+		return err
+	}
+	defer connClose()
+
+	client := c.createNvmeClient(conn)
+	_, err = client.DeleteNvmePath(
+		ctx,
+		&pb.DeleteNvmePathRequest{
+			Name:         name,
+			AllowMissing: allowMissing,
+		})
+
+	return err
+}
