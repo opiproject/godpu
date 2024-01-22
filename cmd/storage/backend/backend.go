@@ -37,6 +37,7 @@ func newCreateNvmeCommand() *cobra.Command {
 	}
 
 	cmd.AddCommand(newCreateNvmeControllerCommand())
+	cmd.AddCommand(newCreateNvmePathCommand())
 
 	return cmd
 }
