@@ -76,3 +76,37 @@ func newCreateNvmePathTCPCommand() *cobra.Command {
 
 	return cmd
 }
+
+func newDeleteNvmePathCommand() *cobra.Command {
+	name := ""
+	allowMissing := false
+	cmd := &cobra.Command{
+		Use:     "path",
+		Aliases: []string{"p"},
+		Short:   "Deletes nvme path to an external nvme device",
+		Args:    cobra.NoArgs,
+		Run: func(c *cobra.Command, args []string) {
+			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
+			cobra.CheckErr(err)
+
+			timeout, err := c.Flags().GetDuration(common.TimeoutCmdLineArg)
+			cobra.CheckErr(err)
+
+			client, err := backendclient.New(addr)
+			cobra.CheckErr(err)
+
+			ctx, cancel := context.WithTimeout(context.Background(), timeout)
+			defer cancel()
+
+			err = client.DeleteNvmePath(ctx, name, allowMissing)
+			cobra.CheckErr(err)
+		},
+	}
+
+	cmd.Flags().StringVar(&name, "name", "", "name of deleted nvme path")
+	cmd.Flags().BoolVar(&allowMissing, "allowMissing", false, "cmd succeeds if attempts to delete a resource that is not present")
+
+	cobra.CheckErr(cmd.MarkFlagRequired("name"))
+
+	return cmd
+}
