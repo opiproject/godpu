@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2022-2023 Dell Inc, or its subsidiaries.
 
-// Package cmd implements the CLI commands
-package cmd
+// Package inventory implements inventory related CLI commands
+package inventory
 
 import (
 	"context"

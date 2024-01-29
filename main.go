@@ -8,7 +8,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/opiproject/godpu/cmd"
+	"github.com/opiproject/godpu/cmd/inventory"
 	"github.com/opiproject/godpu/cmd/ipsec"
 	"github.com/opiproject/godpu/cmd/network"
 	"github.com/opiproject/godpu/cmd/storage"
@@ -38,7 +38,7 @@ func newCommand() *cobra.Command {
 			os.Exit(1)
 		},
 	}
-	c.AddCommand(cmd.NewInventoryCommand())
+	c.AddCommand(inventory.NewInventoryCommand())
 	c.AddCommand(ipsec.NewIPSecCommand())
 	c.AddCommand(storage.NewStorageCommand())
 	c.AddCommand(network.NewEvpnCommand())
