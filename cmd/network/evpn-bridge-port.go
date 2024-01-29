@@ -2,8 +2,8 @@
 // Copyright (c) 2022-2023 Intel Corporation, or its subsidiaries.
 // Copyright (c) 2022-2023 Dell Inc, or its subsidiaries.
 
-// Package cmd implements the CLI commands
-package cmd
+// Package network implements the network related CLI commands
+package network
 
 import (
 	"context"

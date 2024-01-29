@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"github.com/opiproject/godpu/cmd"
+	"github.com/opiproject/godpu/cmd/network"
 	"github.com/opiproject/godpu/cmd/storage"
 	"github.com/spf13/cobra"
 )
@@ -39,6 +40,6 @@ func newCommand() *cobra.Command {
 	c.AddCommand(cmd.NewInventoryCommand())
 	c.AddCommand(cmd.NewIPSecCommand())
 	c.AddCommand(storage.NewStorageCommand())
-	c.AddCommand(cmd.NewEvpnCommand())
+	c.AddCommand(network.NewEvpnCommand())
 	return c
 }
