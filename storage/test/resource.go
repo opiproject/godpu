@@ -14,21 +14,21 @@ func resourceIDToVolumeName(resourceID string) string {
 
 func resourceIDToSubsystemName(resourceID string) string {
 	return resourcename.Join(
-		"subsystems", resourceID,
+		"nvmeSubsystems", resourceID,
 	)
 }
 
 func resourceIDToNamespaceName(subsysResourceID, ctrlrResourceID string) string {
 	return resourcename.Join(
-		"subsystems", subsysResourceID,
-		"namespaces", ctrlrResourceID,
+		"nvmeSubsystems", subsysResourceID,
+		"nvmeNamespaces", ctrlrResourceID,
 	)
 }
 
 func resourceIDToControllerName(subsysResourceID, ctrlrResourceID string) string {
 	return resourcename.Join(
-		"subsystems", subsysResourceID,
-		"controllers", ctrlrResourceID,
+		"nvmeSubsystems", subsysResourceID,
+		"nvmeControllers", ctrlrResourceID,
 	)
 }
 
