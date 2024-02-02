@@ -79,3 +79,47 @@ Generate mocks like this:
 go install github.com/vektra/mockery/v2@latest
 make mock-generate
 ```
+
+## CLI
+
+### Storage
+
+```bash
+alias dpu="docker run --rm --network host ghcr.io/opiproject/godpu:main"
+
+# connect to remote nvme/tcp controller
+nvmf0=$(dpu storage create backend nvme controller --id nvmf0 --multipath disable)
+path0=$(dpu storage create backend nvme path tcp --controller "$nvmf0" --id path0 --ip "11.11.11.2" --port 4444 --nqn nqn.2016-06.io.spdk:cnode1 --hostnqn nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c)
+
+# connect to local nvme/pcie ssd controller
+nvmf1=$(dpu storage create backend nvme controller --id nvmf1 --multipath disable)
+path1=$(dpu storage create backend nvme path pcie --controller "$nvmf1" --id path1 --bdf "0000:40:00.0")
+
+# expose volume over nvme/tcp controller
+ss0=$(dpu storage create frontend nvme subsystem --id subsys0 --nqn "nqn.2022-09.io.spdk:opitest0")
+ns0=$(dpu storage create frontend nvme namespace --id namespace0 --volume "Malloc0" --subsystem "$ss0")
+ctrl0=$(dpu storage create frontend nvme controller tcp --id ctrl0 --ip "127.0.0.1" --port 4420 --subsystem "$ss0")
+
+# expose volume over emulated nvme/pcie controller
+ss1=$(dpu storage create frontend nvme subsystem --id subsys1 --nqn "nqn.2022-09.io.spdk:opitest1")
+ns1=$(dpu storage create frontend nvme namespace --id namespace1 --volume "Malloc1" --subsystem "$ss1")
+ctrl1=$(dpu storage create frontend nvme controller pcie --id ctrl1 --port 0 --pf 0 --vf 0 --subsystem "$ss1")
+
+# delete emulated nvme/pcie controller
+dpu storage delete frontend nvme controller --name "$ctrl1"
+dpu storage delete frontend nvme namespace --name "$ns1"
+dpu storage delete frontend nvme subsystem --name "$ss1"
+
+# delete nvme/tcp controller
+dpu storage delete frontend nvme controller --name "$ctrl0"
+dpu storage delete frontend nvme namespace --name "$ns0"
+dpu storage delete frontend nvme subsystem --name "$ss0"
+
+# disconnect from local nvme/pcie ssd controller
+dpu storage delete backend nvme path --name "$path1"
+dpu storage delete backend nvme controller --name "$nvmf1"
+
+# disconnect from remote nvme/tcp controller
+dpu storage delete backend nvme path --name "$path0"
+dpu storage delete backend nvme controller --name "$nvmf0"
+```
