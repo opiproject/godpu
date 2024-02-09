@@ -108,3 +108,22 @@ func (c *Client) DeleteNvmePath(
 
 	return err
 }
+
+// GetNvmePath gets an nvme path to an external nvme controller
+func (c *Client) GetNvmePath(
+	ctx context.Context,
+	name string,
+) (*pb.NvmePath, error) {
+	conn, connClose, err := c.connector.NewConn()
+	if err != nil {
+		return nil, err
+	}
+	defer connClose()
+
+	client := c.createNvmeClient(conn)
+	return client.GetNvmePath(
+		ctx,
+		&pb.GetNvmePathRequest{
+			Name: name,
+		})
+}

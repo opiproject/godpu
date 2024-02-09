@@ -187,6 +187,7 @@ services:
         nvmf0=$$(/dpu storage create backend nvme controller --addr=opi-spdk-server:50051 --id nvmf0 --multipath failover) && \
         /dpu storage get backend nvme controller --addr=opi-spdk-server:50051 --name "$$nvmf0" && \
         path0=$$(/dpu storage create backend nvme path tcp --addr=opi-spdk-server:50051 --controller "$$nvmf0" --id path0 --ip $$(getent hosts spdk | cut -d" " -f1) --port 4444 --nqn nqn.2016-06.io.spdk:cnode1 --hostnqn nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c) && \
+        /dpu storage get backend nvme path --addr=opi-spdk-server:50051 --name "$$path0" && \
         ss0=$$(/dpu storage create frontend nvme subsystem --addr=opi-spdk-server:50051 --id subsys0 --nqn "nqn.2022-09.io.spdk:opitest1") && \
         ctrl0=$$(/dpu storage create frontend nvme controller tcp --addr=opi-spdk-server:50051 --id ctrl0 --ip "127.0.0.1" --port 4420 --subsystem "$$ss0") && \
         ns0=$$(/dpu storage create frontend nvme namespace --addr=opi-spdk-server:50051 --id namespace0 --volume "Malloc0" --subsystem "$$ss0") && \

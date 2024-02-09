@@ -316,3 +316,87 @@ func TestDeleteNvmePath(t *testing.T) {
 		})
 	}
 }
+
+func TestGetNvmePath(t *testing.T) {
+	testPathName := "pathget"
+	testRequest := &pb.GetNvmePathRequest{
+		Name: testPathName,
+	}
+	testPath := &pb.NvmePath{
+		Name:   testPathName,
+		Trtype: pb.NvmeTransportType_NVME_TRANSPORT_TYPE_TCP,
+		Traddr: "127.0.0.1",
+		Fabrics: &pb.FabricsPath{
+			Trsvcid: 4420,
+			Subnqn:  "nqn.2019-06.io.spdk:8",
+			Adrfam:  pb.NvmeAddressFamily_NVME_ADDRESS_FAMILY_IPV4,
+		},
+	}
+	tests := map[string]struct {
+		giveClientErr    error
+		giveConnectorErr error
+		wantErr          error
+		wantRequest      *pb.GetNvmePathRequest
+		wantResponse     *pb.NvmePath
+		wantConnClosed   bool
+	}{
+		"successful call": {
+			giveConnectorErr: nil,
+			giveClientErr:    nil,
+			wantErr:          nil,
+			wantRequest:      proto.Clone(testRequest).(*pb.GetNvmePathRequest),
+			wantResponse:     proto.Clone(testPath).(*pb.NvmePath),
+			wantConnClosed:   true,
+		},
+		"client err": {
+			giveConnectorErr: nil,
+			giveClientErr:    errors.New("Some client error"),
+			wantErr:          errors.New("Some client error"),
+			wantRequest:      proto.Clone(testRequest).(*pb.GetNvmePathRequest),
+			wantResponse:     nil,
+			wantConnClosed:   true,
+		},
+		"connector err": {
+			giveConnectorErr: errors.New("Some conn error"),
+			giveClientErr:    nil,
+			wantErr:          errors.New("Some conn error"),
+			wantRequest:      nil,
+			wantResponse:     nil,
+			wantConnClosed:   false,
+		},
+	}
+
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+			defer cancel()
+
+			mockClient := mocks.NewNvmeRemoteControllerServiceClient(t)
+			if tt.wantRequest != nil {
+				mockClient.EXPECT().GetNvmePath(ctx, tt.wantRequest).
+					Return(proto.Clone(tt.wantResponse).(*pb.NvmePath), tt.giveClientErr)
+			}
+
+			connClosed := false
+			mockConn := mocks.NewConnector(t)
+			mockConn.EXPECT().NewConn().Return(
+				&grpc.ClientConn{},
+				func() { connClosed = true },
+				tt.giveConnectorErr,
+			)
+
+			c, _ := NewWithArgs(
+				mockConn,
+				func(grpc.ClientConnInterface) pb.NvmeRemoteControllerServiceClient {
+					return mockClient
+				},
+			)
+
+			response, err := c.GetNvmePath(ctx, testPathName)
+
+			require.Equal(t, tt.wantErr, err)
+			require.True(t, proto.Equal(tt.wantResponse, response))
+			require.Equal(t, tt.wantConnClosed, connClosed)
+		})
+	}
+}
