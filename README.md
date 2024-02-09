@@ -90,10 +90,12 @@ alias dpu="docker run --rm --network host ghcr.io/opiproject/godpu:main"
 # connect to remote nvme/tcp controller
 nvmf0=$(dpu storage create backend nvme controller --id nvmf0 --multipath disable)
 path0=$(dpu storage create backend nvme path tcp --controller "$nvmf0" --id path0 --ip "11.11.11.2" --port 4444 --nqn nqn.2016-06.io.spdk:cnode1 --hostnqn nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c)
+dpu storage get backend nvme controller --name $nvmf0
 
 # connect to local nvme/pcie ssd controller
 nvmf1=$(dpu storage create backend nvme controller --id nvmf1 --multipath disable)
 path1=$(dpu storage create backend nvme path pcie --controller "$nvmf1" --id path1 --bdf "0000:40:00.0")
+dpu storage get backend nvme controller --name $nvmf1
 
 # expose volume over nvme/tcp controller
 ss0=$(dpu storage create frontend nvme subsystem --id subsys0 --nqn "nqn.2022-09.io.spdk:opitest0")
