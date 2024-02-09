@@ -109,6 +109,7 @@ func newGetNvmeCommand() *cobra.Command {
 	}
 
 	cmd.AddCommand(newGetNvmeControllerCommand())
+	cmd.AddCommand(newGetNvmePathCommand())
 
 	return cmd
 }
