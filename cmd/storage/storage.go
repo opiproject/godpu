@@ -32,6 +32,7 @@ func NewStorageCommand() *cobra.Command {
 
 	cmd.AddCommand(newStorageCreateCommand())
 	cmd.AddCommand(newStorageDeleteCommand())
+	cmd.AddCommand(newStorageGetCommand())
 	cmd.AddCommand(newStorageTestCommand())
 
 	return cmd
@@ -69,6 +70,23 @@ func newStorageDeleteCommand() *cobra.Command {
 
 	cmd.AddCommand(frontend.NewDeleteCommand())
 	cmd.AddCommand(backend.NewDeleteCommand())
+
+	return cmd
+}
+
+func newStorageGetCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "get",
+		Aliases: []string{"g"},
+		Short:   "Gets resource",
+		Args:    cobra.NoArgs,
+		Run: func(c *cobra.Command, _ []string) {
+			err := c.Help()
+			cobra.CheckErr(err)
+		},
+	}
+
+	cmd.AddCommand(backend.NewGetCommand())
 
 	return cmd
 }

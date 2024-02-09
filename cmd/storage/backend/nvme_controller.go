@@ -13,6 +13,7 @@ import (
 	backendclient "github.com/opiproject/godpu/storage/backend"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 	"github.com/spf13/cobra"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 func newCreateNvmeControllerCommand() *cobra.Command {
@@ -88,6 +89,40 @@ func newDeleteNvmeControllerCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&name, "name", "", "name of deleted remote controller")
 	cmd.Flags().BoolVar(&allowMissing, "allowMissing", false, "cmd succeeds if attempts to delete a resource that is not present")
+
+	cobra.CheckErr(cmd.MarkFlagRequired("name"))
+
+	return cmd
+}
+
+func newGetNvmeControllerCommand() *cobra.Command {
+	name := ""
+	cmd := &cobra.Command{
+		Use:     "controller",
+		Aliases: []string{"c"},
+		Short:   "Gets nvme controller representing an external nvme device",
+		Args:    cobra.NoArgs,
+		Run: func(c *cobra.Command, _ []string) {
+			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
+			cobra.CheckErr(err)
+
+			timeout, err := c.Flags().GetDuration(common.TimeoutCmdLineArg)
+			cobra.CheckErr(err)
+
+			client, err := backendclient.New(addr)
+			cobra.CheckErr(err)
+
+			ctx, cancel := context.WithTimeout(context.Background(), timeout)
+			defer cancel()
+
+			ctrl, err := client.GetNvmeController(ctx, name)
+			cobra.CheckErr(err)
+
+			common.PrintResponse(protojson.Format(ctrl))
+		},
+	}
+
+	cmd.Flags().StringVar(&name, "name", "", "name of remote controller to get")
 
 	cobra.CheckErr(cmd.MarkFlagRequired("name"))
 
