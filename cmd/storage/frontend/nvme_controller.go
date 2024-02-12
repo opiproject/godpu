@@ -19,7 +19,7 @@ func newCreateNvmeControllerCommand() *cobra.Command {
 		Aliases: []string{"c"},
 		Short:   "Creates nvme controller",
 		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			err := c.Help()
 			cobra.CheckErr(err)
 		},
@@ -41,7 +41,7 @@ func newCreateNvmeControllerTCPCommand() *cobra.Command {
 		Aliases: []string{"t"},
 		Short:   "Creates nvme TCP controller",
 		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
 			cobra.CheckErr(err)
 
@@ -84,7 +84,7 @@ func newCreateNvmeControllerPcieCommand() *cobra.Command {
 		Aliases: []string{"p"},
 		Short:   "Creates nvme PCIe controller",
 		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
 			cobra.CheckErr(err)
 
@@ -125,7 +125,7 @@ func newDeleteNvmeControllerCommand() *cobra.Command {
 		Aliases: []string{"c"},
 		Short:   "Deletes nvme controller",
 		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
 			cobra.CheckErr(err)
 

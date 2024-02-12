@@ -24,7 +24,7 @@ func newCreateVirtioBlkCommand() *cobra.Command {
 		Aliases: []string{"b"},
 		Short:   "Creates virtio-blk controller",
 		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
 			cobra.CheckErr(err)
 
@@ -66,7 +66,7 @@ func newDeleteVirtioBlkCommand() *cobra.Command {
 		Aliases: []string{"b"},
 		Short:   "Deletes virtio-blk controller",
 		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
 			cobra.CheckErr(err)
 

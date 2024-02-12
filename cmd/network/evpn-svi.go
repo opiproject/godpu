@@ -29,7 +29,7 @@ func CreateSVI() *cobra.Command {
 		Use:   "create-svi",
 		Short: "Create a SVI",
 		Long:  "Create an  using name, vrf,logical bridges, mac, gateway ip's and enable bgp ",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			evpnClient, err := network.NewSVI(addr)
 			if err != nil {
@@ -82,7 +82,7 @@ func DeleteSVI() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-svi",
 		Short: "Delete a SVI",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			evpnClient, err := network.NewSVI(addr)
 			if err != nil {
@@ -117,7 +117,7 @@ func GetSVI() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-svi",
 		Short: "Show details of a SVI",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			evpnClient, err := network.NewSVI(addr)
 			if err != nil {
@@ -153,7 +153,7 @@ func ListSVIs() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-svis",
 		Short: "Show details of all SVIs",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			evpnClient, err := network.NewSVI(addr)
 			if err != nil {
@@ -199,7 +199,7 @@ func UpdateSVI() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-svi",
 		Short: "update the SVI",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			evpnClient, err := network.NewSVI(addr)
 			if err != nil {

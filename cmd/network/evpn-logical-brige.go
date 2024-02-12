@@ -26,7 +26,7 @@ func CreateLogicalBridge() *cobra.Command {
 		Use:   "create-lb",
 		Short: "Create a logical bridge",
 		Long:  "Create a logical bridge with the specified name, VLAN ID, and VNI",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			evpnClient, err := network.NewLogicalBridge(addr)
 			if err != nil {
@@ -75,7 +75,7 @@ func DeleteLogicalBridge() *cobra.Command {
 		Use:   "delete-lb",
 		Short: "Delete a logical bridge",
 		Long:  "Delete a logical bridge with the specified name",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			evpnClient, err := network.NewLogicalBridge(addr)
 			if err != nil {
@@ -111,7 +111,7 @@ func GetLogicalBridge() *cobra.Command {
 		Use:   "get-lb",
 		Short: "Show details of a logical bridge",
 		Long:  "Show details of a logical bridge with the specified name",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			evpnClient, err := network.NewLogicalBridge(addr)
 			if err != nil {
@@ -146,7 +146,7 @@ func ListLogicalBridges() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-lbs",
 		Short: "Show details of all logical bridges",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			evpnClient, err := network.NewLogicalBridge(addr)
 			if err != nil {
@@ -190,7 +190,7 @@ func UpdateLogicalBridge() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-lb",
 		Short: "update the logical bridge",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			evpnClient, err := network.NewLogicalBridge(addr)
 			if err != nil {

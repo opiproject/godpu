@@ -23,7 +23,7 @@ func NewGetCommand() *cobra.Command {
 		Aliases: []string{"g"},
 		Short:   "Gets DPU inventory information",
 		Args:    cobra.NoArgs,
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			invClient, err := inventory.New(addr)
 			if err != nil {
 				log.Fatalf("could create gRPC client: %v", err)
@@ -51,7 +51,7 @@ func NewInventoryCommand() *cobra.Command {
 		Aliases: []string{"g"},
 		Short:   "Tests inventory functionality",
 		Args:    cobra.NoArgs,
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(cmd *cobra.Command, _ []string) {
 			err := cmd.Help()
 			if err != nil {
 				log.Fatalf("[ERROR] %s", err.Error())

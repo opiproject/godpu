@@ -13,7 +13,7 @@ func NewCreateCommand() *cobra.Command {
 		Aliases: []string{"f"},
 		Short:   "Creates frontend resource",
 		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			err := c.Help()
 			cobra.CheckErr(err)
 		},
@@ -31,7 +31,7 @@ func newCreateNvmeCommand() *cobra.Command {
 		Aliases: []string{"n"},
 		Short:   "Creates nvme resource",
 		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			err := c.Help()
 			cobra.CheckErr(err)
 		},
@@ -50,7 +50,7 @@ func newCreateVirtioCommand() *cobra.Command {
 		Aliases: []string{"v"},
 		Short:   "Creates virtio resource",
 		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			err := c.Help()
 			cobra.CheckErr(err)
 		},
@@ -68,7 +68,7 @@ func NewDeleteCommand() *cobra.Command {
 		Aliases: []string{"f"},
 		Short:   "Deletes frontend resource",
 		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			err := c.Help()
 			cobra.CheckErr(err)
 		},
@@ -86,7 +86,7 @@ func newDeleteNvmeCommand() *cobra.Command {
 		Aliases: []string{"n"},
 		Short:   "Deletes nvme resource",
 		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			err := c.Help()
 			cobra.CheckErr(err)
 		},
@@ -105,7 +105,7 @@ func newDeleteVirtioCommand() *cobra.Command {
 		Aliases: []string{"v"},
 		Short:   "Deletes virtio resource",
 		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			err := c.Help()
 			cobra.CheckErr(err)
 		},

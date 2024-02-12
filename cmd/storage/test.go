@@ -35,7 +35,7 @@ func newStorageTestCommand() *cobra.Command {
 		Aliases: []string{"s"},
 		Short:   "Test storage functionality",
 		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			runTests(
 				c,
 				allStoragePartitions,
@@ -56,7 +56,7 @@ func newStorageTestFrontendCommand() *cobra.Command {
 		Use:   string(storagePartitionFrontend),
 		Short: "Tests storage frontend API",
 		Args:  cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			runTests(
 				c,
 				[]storagePartition{storagePartitionFrontend},
@@ -69,7 +69,7 @@ func newStorageTestFrontendCommand() *cobra.Command {
 		Use:   "nvme",
 		Short: "Tests storage frontend nvme API",
 		Args:  cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			runTests(
 				c,
 				[]storagePartition{storagePartitionFrontend},
@@ -81,7 +81,7 @@ func newStorageTestFrontendCommand() *cobra.Command {
 		Use:   "virtio-blk",
 		Short: "Tests storage frontend virtio-blk API",
 		Args:  cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			runTests(
 				c,
 				[]storagePartition{storagePartitionFrontend},
@@ -93,7 +93,7 @@ func newStorageTestFrontendCommand() *cobra.Command {
 		Use:   "scsi",
 		Short: "Tests storage frontend scsi API",
 		Args:  cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			runTests(
 				c,
 				[]storagePartition{storagePartitionFrontend},
@@ -110,7 +110,7 @@ func newStorageTestBackendCommand() *cobra.Command {
 		Use:   string(storagePartitionBackend),
 		Short: "Tests storage backend API",
 		Args:  cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			runTests(
 				c,
 				[]storagePartition{storagePartitionBackend},
@@ -127,7 +127,7 @@ func newStorageTestMiddleendCommand() *cobra.Command {
 		Use:   string(storagePartitionMiddleend),
 		Short: "Tests storage middleend API",
 		Args:  cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			runTests(
 				c,
 				[]storagePartition{storagePartitionMiddleend},

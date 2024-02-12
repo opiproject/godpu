@@ -65,7 +65,7 @@ var _ = Describe("Inventory", func() {
 
 				Context("and the getter is valid", func() {
 					BeforeEach(func() {
-						g = func(c grpc.ClientConnInterface) pb.InventoryServiceClient {
+						g = func(_ grpc.ClientConnInterface) pb.InventoryServiceClient {
 							return &mocks.InventorySvcClient{}
 						}
 						c, err = inventory.NewWithArgs(m, g)
@@ -101,7 +101,7 @@ var _ = Describe("Inventory", func() {
 
 				Context("and the getter is valid", func() {
 					BeforeEach(func() {
-						g = func(c grpc.ClientConnInterface) pb.InventoryServiceClient {
+						g = func(_ grpc.ClientConnInterface) pb.InventoryServiceClient {
 							return &mocks.InventorySvcClient{}
 						}
 						c, err = inventory.NewWithArgs(m, g)
