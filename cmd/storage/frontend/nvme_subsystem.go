@@ -21,7 +21,7 @@ func newCreateNvmeSubsystemCommand() *cobra.Command {
 		Aliases: []string{"s"},
 		Short:   "Creates nvme subsystem",
 		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
 			cobra.CheckErr(err)
 
@@ -58,7 +58,7 @@ func newDeleteNvmeSubsystemCommand() *cobra.Command {
 		Aliases: []string{"s"},
 		Short:   "Deletes nvme subsystem",
 		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
 			cobra.CheckErr(err)
 

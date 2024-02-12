@@ -13,7 +13,7 @@ func NewCreateCommand() *cobra.Command {
 		Aliases: []string{"b"},
 		Short:   "Creates backend resource",
 		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			err := c.Help()
 			cobra.CheckErr(err)
 		},
@@ -30,7 +30,7 @@ func newCreateNvmeCommand() *cobra.Command {
 		Aliases: []string{"n"},
 		Short:   "Creates nvme resource",
 		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			err := c.Help()
 			cobra.CheckErr(err)
 		},
@@ -49,7 +49,7 @@ func NewDeleteCommand() *cobra.Command {
 		Aliases: []string{"b"},
 		Short:   "Deletes backend resource",
 		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			err := c.Help()
 			cobra.CheckErr(err)
 		},
@@ -66,7 +66,7 @@ func newDeleteNvmeCommand() *cobra.Command {
 		Aliases: []string{"n"},
 		Short:   "Deletes nvme resource",
 		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			err := c.Help()
 			cobra.CheckErr(err)
 		},

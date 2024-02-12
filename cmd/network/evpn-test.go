@@ -18,7 +18,7 @@ func NewEvpnCommand() *cobra.Command {
 		Aliases: []string{"g"},
 		Short:   "Tests DPU evpn functionality",
 		Args:    cobra.NoArgs,
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(cmd *cobra.Command, _ []string) {
 			err := cmd.Help()
 			if err != nil {
 				log.Fatalf("[ERROR] %s", err.Error())

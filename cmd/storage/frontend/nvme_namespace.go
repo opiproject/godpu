@@ -21,7 +21,7 @@ func newCreateNvmeNamespaceCommand() *cobra.Command {
 		Aliases: []string{"n"},
 		Short:   "Creates nvme namespace",
 		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
 			cobra.CheckErr(err)
 
@@ -59,7 +59,7 @@ func newDeleteNvmeNamespaceCommand() *cobra.Command {
 		Aliases: []string{"d"},
 		Short:   "Deletes nvme namespace",
 		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
 			cobra.CheckErr(err)
 

@@ -25,7 +25,7 @@ func CreateVRF() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-vrf",
 		Short: "Create a VRF",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			evpnClient, err := network.NewVRF(addr)
 			if err != nil {
@@ -67,7 +67,7 @@ func DeleteVRF() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-vrf",
 		Short: "Delete a VRF",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			evpnClient, err := network.NewVRF(addr)
 			if err != nil {
@@ -99,7 +99,7 @@ func GetVRF() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-vrf",
 		Short: "Show details of a VRF",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			evpnClient, err := network.NewVRF(addr)
 			if err != nil {
@@ -135,7 +135,7 @@ func ListVRFs() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-vrfs",
 		Short: "Show details of all Vrfs",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			evpnClient, err := network.NewVRF(addr)
 			if err != nil {
@@ -179,7 +179,7 @@ func UpdateVRF() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-vrf",
 		Short: "update the VRF",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			evpnClient, err := network.NewVRF(addr)
 			if err != nil {

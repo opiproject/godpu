@@ -20,7 +20,7 @@ func NewStorageCommand() *cobra.Command {
 		Aliases: []string{"g"},
 		Short:   "Tests storage functionality",
 		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			err := c.Help()
 			cobra.CheckErr(err)
 		},
@@ -43,7 +43,7 @@ func newStorageCreateCommand() *cobra.Command {
 		Aliases: []string{"c"},
 		Short:   "Creates resource",
 		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			err := c.Help()
 			cobra.CheckErr(err)
 		},
@@ -61,7 +61,7 @@ func newStorageDeleteCommand() *cobra.Command {
 		Aliases: []string{"d"},
 		Short:   "Deletes resource",
 		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			err := c.Help()
 			cobra.CheckErr(err)
 		},

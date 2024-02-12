@@ -22,7 +22,7 @@ func NewTestCommand() *cobra.Command {
 		Aliases: []string{"c"},
 		Short:   "Test ipsec functionality",
 		Args:    cobra.NoArgs,
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			res := ipsec.TestIpsec(addr, pingaddr)
 			fmt.Println(res)
 		},

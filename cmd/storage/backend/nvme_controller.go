@@ -23,7 +23,7 @@ func newCreateNvmeControllerCommand() *cobra.Command {
 		Aliases: []string{"c"},
 		Short:   "Creates nvme controller representing an external nvme device",
 		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
 			cobra.CheckErr(err)
 
@@ -68,7 +68,7 @@ func newDeleteNvmeControllerCommand() *cobra.Command {
 		Aliases: []string{"c"},
 		Short:   "Deletes nvme controller representing an external nvme device",
 		Args:    cobra.NoArgs,
-		Run: func(c *cobra.Command, args []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
 			cobra.CheckErr(err)
 

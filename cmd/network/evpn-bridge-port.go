@@ -26,7 +26,7 @@ func CreateBridgePort() *cobra.Command {
 		Use:   "create-bp",
 		Short: "Create a bridge port",
 		Long:  "Create a BridgePort with the specified name, MAC address, type, and VLAN IDs",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			evpnClient, err := network.NewBridgePort(addr)
 			if err != nil {
@@ -57,7 +57,7 @@ func CreateBridgePort() *cobra.Command {
 	}
 
 	// Define allowed choices for the "type" Flag
-	err := cmd.RegisterFlagCompletionFunc("type", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	err := cmd.RegisterFlagCompletionFunc("type", func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
 		return []string{"access", "trunk"}, cobra.ShellCompDirectiveNoFileComp
 	})
 	if err != nil {
@@ -76,7 +76,7 @@ func DeleteBridgePort() *cobra.Command {
 		Use:   "delete-bp",
 		Short: "Delete a bridge port",
 		Long:  "Delete a BridgePort with the specified name",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			evpnClient, err := network.NewBridgePort(addr)
 			if err != nil {
@@ -109,7 +109,7 @@ func GetBridgePort() *cobra.Command {
 		Use:   "get-bp",
 		Short: "Show details of a bridge port",
 		Long:  "Show details of a BridgePort with the specified name",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			evpnClient, err := network.NewBridgePort(addr)
 			if err != nil {
@@ -145,7 +145,7 @@ func ListBridgePorts() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-bps",
 		Short: "Show details of all bridge ports",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			evpnClient, err := network.NewBridgePort(addr)
 			if err != nil {
@@ -190,7 +190,7 @@ func UpdateBridgePort() *cobra.Command {
 		Use:   "update-bp",
 		Short: "Update the bridge port",
 		Long:  "updates the Bridge Port with updated mask",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			evpnClient, err := network.NewBridgePort(addr)
 			if err != nil {
