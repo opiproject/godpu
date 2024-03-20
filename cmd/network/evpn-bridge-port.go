@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2022-2023 Intel Corporation, or its subsidiaries.
 // Copyright (c) 2022-2023 Dell Inc, or its subsidiaries.
+// Copyright (c) 2024 Ericsson AB.
 
 // Package network implements the network related CLI commands
 package network
@@ -38,8 +39,9 @@ func CreateBridgePort() *cobra.Command {
 			if err != nil {
 				log.Fatalf("could not create Bridge Port: %v", err)
 			}
-			log.Printf("Created Bridge Port:\n status: %s\n type: %s\n name: %s\n bridges: %s\n mac: %s\n", bridgePort.GetStatus().GetOperStatus(), bridgePort.GetSpec().GetPtype(),
-				bridgePort.GetName(), bridgePort.GetSpec().GetLogicalBridges(), bridgePort.GetSpec().GetMacAddress())
+
+			log.Println("Created Bridge Port:")
+			PrintBP(bridgePort)
 		},
 	}
 
@@ -89,7 +91,7 @@ func DeleteBridgePort() *cobra.Command {
 			if err != nil {
 				log.Fatalf("DeleteBridgePort: Error occurred while deleting Bridge Port: %q", err)
 			}
-			log.Printf("Deleted BridgePort ")
+			log.Printf("Deleted BridgePort: %s\n", name)
 		},
 	}
 
@@ -122,8 +124,8 @@ func GetBridgePort() *cobra.Command {
 			if err != nil {
 				log.Fatalf("GetBridgePort: Error occurred while creating Bridge Port: %q", err)
 			}
-			log.Printf("Bridge Port:\n status: %s\n type: %s\n name: %s\n bridges: %s\n mac: %s\n", bridgePort.GetStatus().GetOperStatus(), bridgePort.GetSpec().GetPtype(),
-				bridgePort.GetName(), bridgePort.GetSpec().GetLogicalBridges(), bridgePort.GetSpec().GetMacAddress())
+			log.Println("Get Bridge Port:")
+			PrintBP(bridgePort)
 		},
 	}
 
@@ -158,9 +160,10 @@ func ListBridgePorts() *cobra.Command {
 					log.Fatalf("Failed to get items: %v", err)
 				}
 				// Process the server response
+				log.Println("List Bridge Ports:")
 				for _, bridgePort := range resp.BridgePorts {
-					log.Printf("Bridge Port:\n status: %s\n type: %s\n name: %s\n bridges: %s\n mac: %s\n", bridgePort.GetStatus().GetOperStatus(), bridgePort.GetSpec().GetPtype(),
-						bridgePort.GetName(), bridgePort.GetSpec().GetLogicalBridges(), bridgePort.GetSpec().GetMacAddress())
+					log.Println("Bridge Port with:")
+					PrintBP(bridgePort)
 				}
 
 				// Check if there are more pages to retrieve
@@ -203,8 +206,9 @@ func UpdateBridgePort() *cobra.Command {
 			if err != nil {
 				log.Fatalf("UpdateBridgePort: Error occurred while creating Bridge Port: %q", err)
 			}
-			log.Printf("Bridge Port:\n status: %s\n type: %s\n name: %s\n bridges: %s\n mac: %s\n", bridgePort.GetStatus().GetOperStatus(), bridgePort.GetSpec().GetPtype(),
-				bridgePort.GetName(), bridgePort.GetSpec().GetLogicalBridges(), bridgePort.GetSpec().GetMacAddress())
+
+			log.Println("Updated Bridge Port:")
+			PrintBP(bridgePort)
 		},
 	}
 	cmd.Flags().StringVar(&name, "name", "", "name of the Bridge Port")

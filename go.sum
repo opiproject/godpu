@@ -1,3 +1,5 @@
+github.com/PraserX/ipconv v1.2.0 h1:3bboP9EDfsuMF5C3qM25OmZA4+cCfk1Ahpx8zn5G2tM=
+github.com/PraserX/ipconv v1.2.0/go.mod h1:aBiLM1bDAjp1++Q0Sp3IrGbPd49b74IUgoRWod6EtPY=
 github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=
 github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
 github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1/go.mod h1:Q3SI9o4m/ZMnBNeIyt5eFwwo7qiLfzFZmjNmxjkiQlU=
@@ -42,6 +44,8 @@ github.com/onsi/gomega v1.30.0 h1:hvMK7xYz4D3HapigLTeGdId/NcfQx1VHMJc60ew99+8=
 github.com/onsi/gomega v1.30.0/go.mod h1:9sxs+SwGrKI0+PWe4Fxa9tFQQBG5xSsSbMXOI8PPpoQ=
 github.com/opiproject/opi-api v0.0.0-20240118183513-e44db269fba4 h1:YBjvYWQQAbNIGsAXvB6FwL9Encr1nzo3/w+bB/tXltM=
 github.com/opiproject/opi-api v0.0.0-20240118183513-e44db269fba4/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
+github.com/opiproject/opi-api v0.0.0-20240304222410-5dba226aaa9e h1:jUa7DmVLjzLKg051y7rYyCD0NAbEHZQMimM1451D74I=
+github.com/opiproject/opi-api v0.0.0-20240304222410-5dba226aaa9e/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/rogpeppe/go-internal v1.9.0 h1:73kH8U+JUqXU8lRuOHeVHaa/SZPifC7BkcraZVejAe8=
