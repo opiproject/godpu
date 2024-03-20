@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2022-2023 Intel Corporation, or its subsidiaries.
 // Copyright (c) 2022-2023 Dell Inc, or its subsidiaries.
+// Copyright (c) 2024 Ericsson AB.
 
 // Package network implements the network related CLI commands
 package network
@@ -11,6 +12,7 @@ import (
 	"time"
 
 	"github.com/opiproject/godpu/network"
+	pb "github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go"
 	"github.com/spf13/cobra"
 )
 
@@ -42,11 +44,12 @@ func CreateSVI() *cobra.Command {
 				log.Fatalf("failed to create logical bridge: %v", err)
 			}
 
-			log.Printf("CreateSVI: Created SVI  \n name: %s\n status: %d\n Vrf: %s\n LogicalBridge: %s\n MacAddress: %s\n EnableBgp: %t\n GwIPs: %s\nremoteAS: %d\n",
-				svi.GetName(), svi.GetStatus().GetOperStatus(), svi.GetSpec().GetVrf(), svi.GetSpec().GetLogicalBridge(), svi.GetSpec().GetMacAddress(),
-				svi.GetSpec().GetEnableBgp(), svi.GetSpec().GetGwIpPrefix(), svi.GetSpec().GetRemoteAs())
+			log.Printf("Created SVI  \nname: %s\nstatus: %s\nVrf: %s\nLogicalBridge: %s\nMacAddress: %s\nEnableBgp: %t\nGwIPs: %s\nremoteAS: %d\nComponent Status:\n%s\n",
+				svi.GetName(), pb.SVIOperStatus_name[int32(svi.GetStatus().GetOperStatus())], svi.GetSpec().GetVrf(), svi.GetSpec().GetLogicalBridge(), svi.GetSpec().GetMacAddress(),
+				svi.GetSpec().GetEnableBgp(), PrintGWIPs(svi.GetSpec().GetGwIpPrefix()), svi.GetSpec().GetRemoteAs(), PrintComponents(svi.GetStatus().GetComponents()))
 		},
 	}
+	cmd.Flags().StringVar(&name, "name", "", "SVI Name")
 	cmd.Flags().StringVar(&vrf, "vrf", "", "Must be unique")
 	cmd.Flags().StringVar(&logicalBridge, "logicalBridge", "", "Pair of vni and vlan_id must be unique")
 	cmd.Flags().StringVar(&mac, "mac", "", "GW MAC address, random MAC assigned if not specified")
@@ -129,9 +132,9 @@ func GetSVI() *cobra.Command {
 			if err != nil {
 				log.Fatalf("GetSVI: Error occurred while creating Bridge Port: %q", err)
 			}
-			log.Printf("GetSVI: Created SVI  \n name: %s\n status: %d\n Vrf: %s\n LogicalBridge: %s\n MacAddress: %s\n EnableBgp: %t\n GwIPs: %s\nremoteAS: %d\n",
-				svi.GetName(), svi.GetStatus().GetOperStatus(), svi.GetSpec().GetVrf(), svi.GetSpec().GetLogicalBridge(), svi.GetSpec().GetMacAddress(),
-				svi.GetSpec().GetEnableBgp(), svi.GetSpec().GetGwIpPrefix(), svi.GetSpec().GetRemoteAs())
+			log.Printf("Get SVI  \nname: %s\nstatus: %s\nVrf: %s\nLogicalBridge: %s\nMacAddress: %s\nEnableBgp: %t\nGwIPs: %s\nremoteAS: %d\nComponent Status:\n%s\n",
+				svi.GetName(), pb.SVIOperStatus_name[int32(svi.GetStatus().GetOperStatus())], svi.GetSpec().GetVrf(), svi.GetSpec().GetLogicalBridge(), svi.GetSpec().GetMacAddress(),
+				svi.GetSpec().GetEnableBgp(), PrintGWIPs(svi.GetSpec().GetGwIpPrefix()), svi.GetSpec().GetRemoteAs(), PrintComponents(svi.GetStatus().GetComponents()))
 		},
 	}
 
@@ -167,9 +170,9 @@ func ListSVIs() *cobra.Command {
 				}
 				// Process the server response
 				for _, svi := range resp.Svis {
-					log.Printf("ListSVIs: SVI  \n name: %s\n status: %d\n Vrf: %s\n LogicalBridge: %s\n MacAddress: %s\n EnableBgp: %t\n GwIPs: %s\nremoteAS: %d\n",
-						svi.GetName(), svi.GetStatus().GetOperStatus(), svi.GetSpec().GetVrf(), svi.GetSpec().GetLogicalBridge(), svi.GetSpec().GetMacAddress(),
-						svi.GetSpec().GetEnableBgp(), svi.GetSpec().GetGwIpPrefix(), svi.GetSpec().GetRemoteAs())
+					log.Printf("SVI with  \nname: %s\nstatus: %s\nVrf: %s\nLogicalBridge: %s\nMacAddress: %s\nEnableBgp: %t\nGwIPs: %s\nremoteAS: %d\nComponent Status:\n%s\n",
+						svi.GetName(), pb.SVIOperStatus_name[int32(svi.GetStatus().GetOperStatus())], svi.GetSpec().GetVrf(), svi.GetSpec().GetLogicalBridge(), svi.GetSpec().GetMacAddress(),
+						svi.GetSpec().GetEnableBgp(), PrintGWIPs(svi.GetSpec().GetGwIpPrefix()), svi.GetSpec().GetRemoteAs(), PrintComponents(svi.GetStatus().GetComponents()))
 				}
 
 				// Check if there are more pages to retrieve
@@ -212,9 +215,9 @@ func UpdateSVI() *cobra.Command {
 			if err != nil {
 				log.Fatalf("GetBridgePort: Error occurred while creating Bridge Port: %q", err)
 			}
-			log.Printf("UpdateSVI: SVI  \n name: %s\n status: %d\n Vrf: %s\n LogicalBridge: %s\n MacAddress: %s\n EnableBgp: %t\n GwIPs: %s\nremoteAS: %d\n",
-				svi.GetName(), svi.GetStatus().GetOperStatus(), svi.GetSpec().GetVrf(), svi.GetSpec().GetLogicalBridge(), svi.GetSpec().GetMacAddress(),
-				svi.GetSpec().GetEnableBgp(), svi.GetSpec().GetGwIpPrefix(), svi.GetSpec().GetRemoteAs())
+			log.Printf("Updated SVI with  \nname: %s\nstatus: %s\nVrf: %s\nLogicalBridge: %s\nMacAddress: %s\nEnableBgp: %t\nGwIPs: %s\nremoteAS: %d\nComponent Status:\n%s\n",
+				svi.GetName(), pb.SVIOperStatus_name[int32(svi.GetStatus().GetOperStatus())], svi.GetSpec().GetVrf(), svi.GetSpec().GetLogicalBridge(), svi.GetSpec().GetMacAddress(),
+				svi.GetSpec().GetEnableBgp(), PrintGWIPs(svi.GetSpec().GetGwIpPrefix()), svi.GetSpec().GetRemoteAs(), PrintComponents(svi.GetStatus().GetComponents()))
 		},
 	}
 	cmd.Flags().StringVar(&addr, "addr", "localhost:50151", "address of OPI gRPC server")

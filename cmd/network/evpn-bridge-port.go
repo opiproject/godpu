@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2022-2023 Intel Corporation, or its subsidiaries.
 // Copyright (c) 2022-2023 Dell Inc, or its subsidiaries.
+// Copyright (c) 2024 Ericsson AB.
 
 // Package network implements the network related CLI commands
 package network
@@ -11,6 +12,7 @@ import (
 	"time"
 
 	"github.com/opiproject/godpu/network"
+	pb "github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go"
 	"github.com/spf13/cobra"
 )
 
@@ -38,8 +40,9 @@ func CreateBridgePort() *cobra.Command {
 			if err != nil {
 				log.Fatalf("could not create Bridge Port: %v", err)
 			}
-			log.Printf("Created Bridge Port:\n status: %s\n type: %s\n name: %s\n bridges: %s\n mac: %s\n", bridgePort.GetStatus().GetOperStatus(), bridgePort.GetSpec().GetPtype(),
-				bridgePort.GetName(), bridgePort.GetSpec().GetLogicalBridges(), bridgePort.GetSpec().GetMacAddress())
+			log.Printf("Created Bridge Port:\nname: %s \nstatus: %s\nptype: %s\nmac: %s\nbridges: %s\nComponent Status:\n%s\n", bridgePort.GetName(),
+				pb.BPOperStatus_name[int32(bridgePort.GetStatus().GetOperStatus())], bridgePort.GetSpec().GetPtype(),
+				bridgePort.GetSpec().GetMacAddress(), bridgePort.GetSpec().GetLogicalBridges(), PrintComponents(bridgePort.GetStatus().GetComponents()))
 		},
 	}
 
@@ -89,7 +92,7 @@ func DeleteBridgePort() *cobra.Command {
 			if err != nil {
 				log.Fatalf("DeleteBridgePort: Error occurred while deleting Bridge Port: %q", err)
 			}
-			log.Printf("Deleted BridgePort ")
+			log.Printf("Deleting BridgePort in process\n")
 		},
 	}
 
@@ -122,8 +125,9 @@ func GetBridgePort() *cobra.Command {
 			if err != nil {
 				log.Fatalf("GetBridgePort: Error occurred while creating Bridge Port: %q", err)
 			}
-			log.Printf("Bridge Port:\n status: %s\n type: %s\n name: %s\n bridges: %s\n mac: %s\n", bridgePort.GetStatus().GetOperStatus(), bridgePort.GetSpec().GetPtype(),
-				bridgePort.GetName(), bridgePort.GetSpec().GetLogicalBridges(), bridgePort.GetSpec().GetMacAddress())
+			log.Printf("Get Bridge Port:\nname: %s \nstatus: %s\nptype: %s\nmac: %s\nbridges: %s\nComponent Status:\n%s\n", bridgePort.GetName(),
+				pb.BPOperStatus_name[int32(bridgePort.GetStatus().GetOperStatus())], bridgePort.GetSpec().GetPtype(), bridgePort.GetSpec().GetMacAddress(),
+				bridgePort.GetSpec().GetLogicalBridges(), PrintComponents(bridgePort.GetStatus().GetComponents()))
 		},
 	}
 
@@ -159,8 +163,9 @@ func ListBridgePorts() *cobra.Command {
 				}
 				// Process the server response
 				for _, bridgePort := range resp.BridgePorts {
-					log.Printf("Bridge Port:\n status: %s\n type: %s\n name: %s\n bridges: %s\n mac: %s\n", bridgePort.GetStatus().GetOperStatus(), bridgePort.GetSpec().GetPtype(),
-						bridgePort.GetName(), bridgePort.GetSpec().GetLogicalBridges(), bridgePort.GetSpec().GetMacAddress())
+					log.Printf(" Bridge Port :\nname: %s \nstatus: %s\nptype: %s\nmac: %s\nbridges: %s\nComponent Status:\n%s\n", bridgePort.GetName(),
+						pb.BPOperStatus_name[int32(bridgePort.GetStatus().GetOperStatus())], bridgePort.GetSpec().GetPtype(), bridgePort.GetSpec().GetMacAddress(),
+						bridgePort.GetSpec().GetLogicalBridges(), PrintComponents(bridgePort.GetStatus().GetComponents()))
 				}
 
 				// Check if there are more pages to retrieve
@@ -203,8 +208,9 @@ func UpdateBridgePort() *cobra.Command {
 			if err != nil {
 				log.Fatalf("UpdateBridgePort: Error occurred while creating Bridge Port: %q", err)
 			}
-			log.Printf("Bridge Port:\n status: %s\n type: %s\n name: %s\n bridges: %s\n mac: %s\n", bridgePort.GetStatus().GetOperStatus(), bridgePort.GetSpec().GetPtype(),
-				bridgePort.GetName(), bridgePort.GetSpec().GetLogicalBridges(), bridgePort.GetSpec().GetMacAddress())
+			log.Printf(" Bridge Port:\nname: %s \nstatus: %s\nptype: %s\nmac: %s\nbridges: %s\nComponent Status:\n%s\n", bridgePort.GetName(),
+				pb.BPOperStatus_name[int32(bridgePort.GetStatus().GetOperStatus())], bridgePort.GetSpec().GetPtype(), bridgePort.GetSpec().GetMacAddress(),
+				bridgePort.GetSpec().GetLogicalBridges(), PrintComponents(bridgePort.GetStatus().GetComponents()))
 		},
 	}
 	cmd.Flags().StringVar(&name, "name", "", "name of the Bridge Port")

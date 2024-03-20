@@ -1,16 +1,20 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2022-2023 Intel Corporation, or its subsidiaries.
 // Copyright (c) 2022-2023 Dell Inc, or its subsidiaries.
+// Copyright (c) 2024 Ericsson AB.
 
 // Package network implements the network related CLI commands
 package network
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
+	"github.com/PraserX/ipconv"
 	"github.com/opiproject/godpu/network"
+	pb "github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go"
 	"github.com/spf13/cobra"
 )
 
@@ -38,9 +42,9 @@ func CreateLogicalBridge() *cobra.Command {
 			if err != nil {
 				log.Fatalf("failed to create logical bridge: %v", err)
 			}
-
-			log.Printf(" Created Logical Bridge \n name: %s\n vlan: %d\n vni: %d\n status: %s\n VtepIpPrefix:%s", resp.GetName(), resp.GetSpec().GetVlanId(),
-				resp.GetSpec().GetVni(), resp.GetStatus(), resp.GetSpec().GetVtepIpPrefix())
+			Vteip := fmt.Sprintf("%+v/%v", ipconv.IntToIPv4(resp.GetSpec().GetVtepIpPrefix().GetAddr().GetV4Addr()), resp.GetSpec().GetVtepIpPrefix().GetLen())
+			log.Printf(" Created Logical Bridge \nname: %s\nstatus: %s\nvlan: %d\nvni: %d\nVtepIpPrefix:%s\nComponent Status:\n%s\n", resp.GetName(),
+				pb.LBOperStatus_name[int32(resp.GetStatus().GetOperStatus())], resp.GetSpec().GetVlanId(), resp.GetSpec().GetVni(), Vteip, PrintComponents(resp.GetStatus().GetComponents()))
 		},
 	}
 	cmd.Flags().StringVar(&addr, "addr", "localhost:50151", "address of OPI gRPC server")
@@ -88,7 +92,7 @@ func DeleteLogicalBridge() *cobra.Command {
 				log.Fatalf("failed to delete logical bridge: %v", err)
 			}
 
-			log.Printf("Deleted Logical Bridge: %s\n", resp)
+			log.Printf("Deleting Logical Bridge in process: %s\n", resp)
 		},
 	}
 
@@ -123,9 +127,9 @@ func GetLogicalBridge() *cobra.Command {
 			if err != nil {
 				log.Fatalf("failed to get logical bridge: %v", err)
 			}
-
-			log.Printf(" Created Logical Bridge \n name: %s\n vlan: %d\n vni: %d\n status: %s\n VtepIpPrefix:%s", resp.GetName(), resp.GetSpec().GetVlanId(),
-				resp.GetSpec().GetVni(), resp.GetStatus(), resp.GetSpec().GetVtepIpPrefix())
+			Vteip := fmt.Sprintf("%+v/%v", ipconv.IntToIPv4(resp.GetSpec().GetVtepIpPrefix().GetAddr().GetV4Addr()), resp.GetSpec().GetVtepIpPrefix().GetLen())
+			log.Printf(" Get Logical Bridge \nname: %s\nstatus: %s\nvlan: %d\nvni: %d\nVtepIpPrefix:%s\nComponent Status:\n%s\n", resp.GetName(),
+				pb.LBOperStatus_name[int32(resp.GetStatus().GetOperStatus())], resp.GetSpec().GetVlanId(), resp.GetSpec().GetVni(), Vteip, PrintComponents(resp.GetStatus().GetComponents()))
 		},
 	}
 
@@ -161,8 +165,9 @@ func ListLogicalBridges() *cobra.Command {
 				}
 				// Process the server response
 				for _, item := range resp.LogicalBridges {
-					log.Printf(" Created Logical Bridge \n name: %s\n vlan: %d\n vni: %d\n status: %s\n VtepIpPrefix:%s", item.GetName(), item.GetSpec().GetVlanId(),
-						item.GetSpec().GetVni(), item.GetStatus(), item.GetSpec().GetVtepIpPrefix())
+					Vteip := fmt.Sprintf("%+v/%v", ipconv.IntToIPv4(item.GetSpec().GetVtepIpPrefix().GetAddr().GetV4Addr()), item.GetSpec().GetVtepIpPrefix().GetLen())
+					log.Printf("Logical Bridge with \nname: %s\nstatus: %s\nvlan: %d\nvni: %d\nVtepIpPrefix:%s\nComponent Status:\n%s\n", item.GetName(),
+						pb.LBOperStatus_name[int32(item.GetStatus().GetOperStatus())], item.GetSpec().GetVlanId(), item.GetSpec().GetVni(), Vteip, PrintComponents(item.GetStatus().GetComponents()))
 				}
 
 				// Check if there are more pages to retrieve
@@ -202,9 +207,9 @@ func UpdateLogicalBridge() *cobra.Command {
 			if err != nil {
 				log.Fatalf("failed to update logical bridge: %v", err)
 			}
-
-			log.Printf(" Updated Logical Bridge \n name: %s\n vlan: %d\n vni: %d\n status: %s\n VtepIpPrefix:%s", resp.GetName(), resp.GetSpec().GetVlanId(),
-				resp.GetSpec().GetVni(), resp.GetStatus(), resp.GetSpec().GetVtepIpPrefix())
+			Vteip := fmt.Sprintf("%+v/%v", ipconv.IntToIPv4(resp.GetSpec().GetVtepIpPrefix().GetAddr().GetV4Addr()), resp.GetSpec().GetVtepIpPrefix().GetLen())
+			log.Printf(" Updated Logical Bridge with \nname: %s\nstatus: %s\nvlan: %d\nvni: %d\nVtepIpPrefix:%s\nComponent Status:\n%s\n", resp.GetName(),
+				pb.LBOperStatus_name[int32(resp.GetStatus().GetOperStatus())], resp.GetSpec().GetVlanId(), resp.GetSpec().GetVni(), Vteip, PrintComponents(resp.GetStatus().GetComponents()))
 		},
 	}
 	cmd.Flags().StringVar(&name, "name", "", "name of the logical bridge")
