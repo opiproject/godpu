@@ -7,6 +7,8 @@ PROJECTNAME=$(shell basename "$(PWD)")
 # Make is verbose in Linux. Make it silent.
 MAKEFLAGS += --silent
 
+GOARCH ?= $(shell go env GOARCH) # detect automatically the underlying arch
+
 go-compile: go-get go-build
 
 tools:
@@ -25,7 +27,7 @@ tools:
 
 go-build:
 	@echo "  >  Building binaries..."
-	@CGO_ENABLED=0 go build -o ${PROJECTNAME} .
+	@CGO_ENABLED=0 GOARCH=$(GOARCH) go build -o ${PROJECTNAME} .
 
 go-get:
 	@echo "  >  Checking if there are any missing dependencies..."
