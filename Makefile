@@ -9,6 +9,7 @@ MAKEFLAGS += --silent
 
 go-compile: go-get go-build
 
+go-compile-arm: go-get go-build-arm
 tools:
 
 	go get golang.org/x/tools/cmd/goimports
@@ -26,6 +27,10 @@ tools:
 go-build:
 	@echo "  >  Building binaries..."
 	@CGO_ENABLED=0 go build -o ${PROJECTNAME} .
+
+go-build-arm:
+	@echo "  >  Building binaries..."
+	@CGO_ENABLED=0 env GOOS=linux GOARCH=arm64 go build -o ${PROJECTNAME} .
 
 go-get:
 	@echo "  >  Checking if there are any missing dependencies..."
