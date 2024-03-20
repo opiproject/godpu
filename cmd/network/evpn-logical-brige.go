@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2022-2023 Intel Corporation, or its subsidiaries.
 // Copyright (c) 2022-2023 Dell Inc, or its subsidiaries.
+// Copyright (c) 2024 Ericsson AB.
 
 // Package network implements the network related CLI commands
 package network
@@ -34,13 +35,13 @@ func CreateLogicalBridge() *cobra.Command {
 			}
 			defer cancel()
 
-			resp, err := evpnClient.CreateLogicalBridge(ctx, name, vlanID, vni, vtep)
+			lb, err := evpnClient.CreateLogicalBridge(ctx, name, vlanID, vni, vtep)
 			if err != nil {
 				log.Fatalf("failed to create logical bridge: %v", err)
 			}
 
-			log.Printf(" Created Logical Bridge \n name: %s\n vlan: %d\n vni: %d\n status: %s\n VtepIpPrefix:%s", resp.GetName(), resp.GetSpec().GetVlanId(),
-				resp.GetSpec().GetVni(), resp.GetStatus(), resp.GetSpec().GetVtepIpPrefix())
+			log.Println("Created Logical Bridge:")
+			PrintLB(lb)
 		},
 	}
 	cmd.Flags().StringVar(&addr, "addr", "localhost:50151", "address of OPI gRPC server")
@@ -83,12 +84,12 @@ func DeleteLogicalBridge() *cobra.Command {
 			}
 			defer cancel()
 
-			resp, err := evpnClient.DeleteLogicalBridge(ctx, name, allowMissing)
+			_, err = evpnClient.DeleteLogicalBridge(ctx, name, allowMissing)
 			if err != nil {
 				log.Fatalf("failed to delete logical bridge: %v", err)
 			}
 
-			log.Printf("Deleted Logical Bridge: %s\n", resp)
+			log.Printf("Deleted Logical Bridge: %s\n", name)
 		},
 	}
 
@@ -119,13 +120,13 @@ func GetLogicalBridge() *cobra.Command {
 			}
 			defer cancel()
 
-			resp, err := evpnClient.GetLogicalBridge(ctx, name)
+			lb, err := evpnClient.GetLogicalBridge(ctx, name)
 			if err != nil {
 				log.Fatalf("failed to get logical bridge: %v", err)
 			}
 
-			log.Printf(" Created Logical Bridge \n name: %s\n vlan: %d\n vni: %d\n status: %s\n VtepIpPrefix:%s", resp.GetName(), resp.GetSpec().GetVlanId(),
-				resp.GetSpec().GetVni(), resp.GetStatus(), resp.GetSpec().GetVtepIpPrefix())
+			log.Println("Get Logical Bridge:")
+			PrintLB(lb)
 		},
 	}
 
@@ -160,9 +161,10 @@ func ListLogicalBridges() *cobra.Command {
 					log.Fatalf("Failed to get items: %v", err)
 				}
 				// Process the server response
-				for _, item := range resp.LogicalBridges {
-					log.Printf(" Created Logical Bridge \n name: %s\n vlan: %d\n vni: %d\n status: %s\n VtepIpPrefix:%s", item.GetName(), item.GetSpec().GetVlanId(),
-						item.GetSpec().GetVni(), item.GetStatus(), item.GetSpec().GetVtepIpPrefix())
+				log.Println("List Logical Bridges:")
+				for _, lb := range resp.LogicalBridges {
+					log.Println("Logical Bridge with: ")
+					PrintLB(lb)
 				}
 
 				// Check if there are more pages to retrieve
@@ -198,13 +200,12 @@ func UpdateLogicalBridge() *cobra.Command {
 			}
 			defer cancel()
 
-			resp, err := evpnClient.UpdateLogicalBridge(ctx, name, updateMask)
+			lb, err := evpnClient.UpdateLogicalBridge(ctx, name, updateMask)
 			if err != nil {
 				log.Fatalf("failed to update logical bridge: %v", err)
 			}
-
-			log.Printf(" Updated Logical Bridge \n name: %s\n vlan: %d\n vni: %d\n status: %s\n VtepIpPrefix:%s", resp.GetName(), resp.GetSpec().GetVlanId(),
-				resp.GetSpec().GetVni(), resp.GetStatus(), resp.GetSpec().GetVtepIpPrefix())
+			log.Println("Updated Logical Bridge:")
+			PrintLB(lb)
 		},
 	}
 	cmd.Flags().StringVar(&name, "name", "", "name of the logical bridge")

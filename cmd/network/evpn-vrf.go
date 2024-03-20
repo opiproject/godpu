@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2022-2023 Intel Corporation, or its subsidiaries.
 // Copyright (c) 2022-2023 Dell Inc, or its subsidiaries.
+// Copyright (c) 2024 Ericsson AB.
 
 // Package network implements the network related CLI commands
 package network
@@ -37,8 +38,8 @@ func CreateVRF() *cobra.Command {
 			if err != nil {
 				log.Fatalf("failed to create vrf: %v", err)
 			}
-			log.Printf("Created VRF with \n name: %s\n operation status: %d\n vni : %d\n vtep ip : %s\n loopback ip: %s\n", vrf.GetName(), vrf.GetStatus().GetOperStatus(),
-				vrf.GetSpec().GetVni(), vrf.GetSpec().GetVtepIpPrefix(), vrf.GetSpec().GetLoopbackIpPrefix())
+			log.Println("Created VRF:")
+			PrintVrf(vrf)
 		},
 	}
 
@@ -80,7 +81,7 @@ func DeleteVRF() *cobra.Command {
 			if err != nil {
 				log.Fatalf("DeleteVRF: Error occurred while creating Bridge Port: %q", err)
 			}
-			log.Printf("Deleted VRF with VPort ID: %s\n", name)
+			log.Printf("Deleted VRF: %s\n", name)
 		},
 	}
 
@@ -112,8 +113,9 @@ func GetVRF() *cobra.Command {
 			if err != nil {
 				log.Fatalf("DeleteVRF: Error occurred while creating Bridge Port: %q", err)
 			}
-			log.Printf("VRF with \n name: %s\n operation status: %d\n vni : %d\n vtep ip : %s\n loopback ip: %s\n", vrf.GetName(), vrf.GetStatus().GetOperStatus(),
-				vrf.GetSpec().GetVni(), vrf.GetSpec().GetVtepIpPrefix(), vrf.GetSpec().GetLoopbackIpPrefix())
+
+			log.Println("Get VRF:")
+			PrintVrf(vrf)
 		},
 	}
 
@@ -148,9 +150,10 @@ func ListVRFs() *cobra.Command {
 					log.Fatalf("Failed to get items: %v", err)
 				}
 				// Process the server response
+				log.Println("list VRFs:")
 				for _, vrf := range resp.Vrfs {
-					log.Printf("VRF with \n name: %s\n operation status: %d\n vni : %d\n vtep ip : %s\n loopback ip: %s\n", vrf.GetName(), vrf.GetStatus().GetOperStatus(),
-						vrf.GetSpec().GetVni(), vrf.GetSpec().GetVtepIpPrefix(), vrf.GetSpec().GetLoopbackIpPrefix())
+					log.Println("VRF with:")
+					PrintVrf(vrf)
 				}
 
 				// Check if there are more pages to retrieve
@@ -192,8 +195,8 @@ func UpdateVRF() *cobra.Command {
 			if err != nil {
 				log.Fatalf("GetBridgePort: Error occurred while creating Bridge Port: %q", err)
 			}
-			log.Printf("Updated VRF with \n name: %s\n operation status: %d\n vni : %d\n vtep ip : %s\n loopback ip: %s\n", vrf.GetName(), vrf.GetStatus().GetOperStatus(),
-				vrf.GetSpec().GetVni(), vrf.GetSpec().GetVtepIpPrefix(), vrf.GetSpec().GetLoopbackIpPrefix())
+			log.Println("Updated VRF:")
+			PrintVrf(vrf)
 		},
 	}
 	cmd.Flags().StringVar(&addr, "addr", "localhost:50151", "address of OPI gRPC server")

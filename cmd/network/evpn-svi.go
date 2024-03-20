@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2022-2023 Intel Corporation, or its subsidiaries.
 // Copyright (c) 2022-2023 Dell Inc, or its subsidiaries.
+// Copyright (c) 2024 Ericsson AB.
 
 // Package network implements the network related CLI commands
 package network
@@ -42,11 +43,11 @@ func CreateSVI() *cobra.Command {
 				log.Fatalf("failed to create logical bridge: %v", err)
 			}
 
-			log.Printf("CreateSVI: Created SVI  \n name: %s\n status: %d\n Vrf: %s\n LogicalBridge: %s\n MacAddress: %s\n EnableBgp: %t\n GwIPs: %s\nremoteAS: %d\n",
-				svi.GetName(), svi.GetStatus().GetOperStatus(), svi.GetSpec().GetVrf(), svi.GetSpec().GetLogicalBridge(), svi.GetSpec().GetMacAddress(),
-				svi.GetSpec().GetEnableBgp(), svi.GetSpec().GetGwIpPrefix(), svi.GetSpec().GetRemoteAs())
+			log.Println("Created SVI:")
+			PrintSvi(svi)
 		},
 	}
+	cmd.Flags().StringVar(&name, "name", "", "SVI Name")
 	cmd.Flags().StringVar(&vrf, "vrf", "", "Must be unique")
 	cmd.Flags().StringVar(&logicalBridge, "logicalBridge", "", "Pair of vni and vlan_id must be unique")
 	cmd.Flags().StringVar(&mac, "mac", "", "GW MAC address, random MAC assigned if not specified")
@@ -95,7 +96,7 @@ func DeleteSVI() *cobra.Command {
 				log.Fatalf("failed to create logical bridge: %v", err)
 			}
 
-			log.Printf("Deleted SVI ")
+			log.Printf("Deleted SVI: %s\n", name)
 		},
 	}
 
@@ -129,9 +130,8 @@ func GetSVI() *cobra.Command {
 			if err != nil {
 				log.Fatalf("GetSVI: Error occurred while creating Bridge Port: %q", err)
 			}
-			log.Printf("GetSVI: Created SVI  \n name: %s\n status: %d\n Vrf: %s\n LogicalBridge: %s\n MacAddress: %s\n EnableBgp: %t\n GwIPs: %s\nremoteAS: %d\n",
-				svi.GetName(), svi.GetStatus().GetOperStatus(), svi.GetSpec().GetVrf(), svi.GetSpec().GetLogicalBridge(), svi.GetSpec().GetMacAddress(),
-				svi.GetSpec().GetEnableBgp(), svi.GetSpec().GetGwIpPrefix(), svi.GetSpec().GetRemoteAs())
+			log.Println("Get SVI:")
+			PrintSvi(svi)
 		},
 	}
 
@@ -166,10 +166,10 @@ func ListSVIs() *cobra.Command {
 					log.Fatalf("Failed to get items: %v", err)
 				}
 				// Process the server response
+				log.Println("List SVIs:")
 				for _, svi := range resp.Svis {
-					log.Printf("ListSVIs: SVI  \n name: %s\n status: %d\n Vrf: %s\n LogicalBridge: %s\n MacAddress: %s\n EnableBgp: %t\n GwIPs: %s\nremoteAS: %d\n",
-						svi.GetName(), svi.GetStatus().GetOperStatus(), svi.GetSpec().GetVrf(), svi.GetSpec().GetLogicalBridge(), svi.GetSpec().GetMacAddress(),
-						svi.GetSpec().GetEnableBgp(), svi.GetSpec().GetGwIpPrefix(), svi.GetSpec().GetRemoteAs())
+					log.Println("SVI with:")
+					PrintSvi(svi)
 				}
 
 				// Check if there are more pages to retrieve
@@ -212,9 +212,8 @@ func UpdateSVI() *cobra.Command {
 			if err != nil {
 				log.Fatalf("GetBridgePort: Error occurred while creating Bridge Port: %q", err)
 			}
-			log.Printf("UpdateSVI: SVI  \n name: %s\n status: %d\n Vrf: %s\n LogicalBridge: %s\n MacAddress: %s\n EnableBgp: %t\n GwIPs: %s\nremoteAS: %d\n",
-				svi.GetName(), svi.GetStatus().GetOperStatus(), svi.GetSpec().GetVrf(), svi.GetSpec().GetLogicalBridge(), svi.GetSpec().GetMacAddress(),
-				svi.GetSpec().GetEnableBgp(), svi.GetSpec().GetGwIpPrefix(), svi.GetSpec().GetRemoteAs())
+			log.Println("Updated SVI:")
+			PrintSvi(svi)
 		},
 	}
 	cmd.Flags().StringVar(&addr, "addr", "localhost:50151", "address of OPI gRPC server")
