@@ -100,7 +100,7 @@ func TestCreateVrf(t *testing.T) {
 				},
 			)
 
-			response, err := c.CreateVrf(context.Background(), "Vrf1", 100, "192.168.1.1/24", "10.0.0.1/32")
+			response, err := c.CreateVrf(context.Background(), "Vrf1", &vni, "192.168.1.1/24", "10.0.0.1/32")
 
 			assert.Equal(t, tt.wantErr, err)
 			assert.True(t, proto.Equal(response, tt.wantResponse))

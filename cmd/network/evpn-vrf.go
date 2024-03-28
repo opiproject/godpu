@@ -27,14 +27,17 @@ func CreateVRF() *cobra.Command {
 		Use:   "create-vrf",
 		Short: "Create a VRF",
 		Run: func(_ *cobra.Command, _ []string) {
+			var vniparam *uint32
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			evpnClient, err := network.NewVRF(addr)
 			if err != nil {
 				log.Fatalf("could not create gRPC client: %v", err)
 			}
 			defer cancel()
-
-			vrf, err := evpnClient.CreateVrf(ctx, name, vni, loopback, vtep)
+			if vni != 0 {
+				vniparam = &vni
+			}
+			vrf, err := evpnClient.CreateVrf(ctx, name, vniparam, loopback, vtep)
 			if err != nil {
 				log.Fatalf("failed to create vrf: %v", err)
 			}
@@ -48,10 +51,6 @@ func CreateVRF() *cobra.Command {
 	cmd.Flags().StringVar(&loopback, "loopback", "", "Loopback IP address")
 	cmd.Flags().StringVar(&vtep, "vtep", "", "VTEP IP address")
 	cmd.Flags().StringVar(&addr, "addr", "localhost:50151", "address of OPI gRPC server")
-
-	if err := cmd.MarkFlagRequired("vni"); err != nil {
-		log.Fatalf("Error marking flag as required: %v", err)
-	}
 
 	if err := cmd.MarkFlagRequired("loopback"); err != nil {
 		log.Fatalf("Error marking flag as required: %v", err)
