@@ -8,6 +8,7 @@ package network
 import (
 	"context"
 	"errors"
+	"net"
 	"testing"
 
 	"github.com/opiproject/godpu/mocks"
@@ -33,11 +34,13 @@ func TestCreateSvi(t *testing.T) {
 			Len: 32,
 		},
 	}
+	macBytes, _ := net.ParseMAC("01:23:45:67:89:ab")
+
 	testSvi := &pb.Svi{
 		Spec: &pb.SviSpec{
 			Vrf:           "vrf1",
 			LogicalBridge: "logical1",
-			MacAddress:    []byte("01:23:45:67:89:ab"),
+			MacAddress:    macBytes,
 			GwIpPrefix:    wantGWPrefixes,
 			EnableBgp:     true,
 			RemoteAs:      65000,
