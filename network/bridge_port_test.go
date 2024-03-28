@@ -8,6 +8,7 @@ package network
 import (
 	"context"
 	"errors"
+	"net"
 	"testing"
 
 	"github.com/opiproject/godpu/mocks"
@@ -22,9 +23,10 @@ import (
 )
 
 func TestCreateBridgePort(t *testing.T) {
+	macBytes, _ := net.ParseMAC("00:11:22:aa:bb:cc")
 	testBridgePort := &pb.BridgePort{
 		Spec: &pb.BridgePortSpec{
-			MacAddress:     []byte("00:11:22:aa:bb:cc"),
+			MacAddress:     macBytes,
 			Ptype:          pb.BridgePortType_BRIDGE_PORT_TYPE_ACCESS,
 			LogicalBridges: []string{"lb1", "lb2"},
 		},

@@ -41,7 +41,7 @@ type evpnClientImpl struct {
 type EvpnClient interface {
 
 	// Logical Bridge interfaces
-	CreateLogicalBridge(ctx context.Context, name string, vlanID uint32, vni uint32, vtepIP string) (*pb.LogicalBridge, error)
+	CreateLogicalBridge(ctx context.Context, name string, vlanID uint32, vni *uint32, vtepIP string) (*pb.LogicalBridge, error)
 	DeleteLogicalBridge(ctx context.Context, name string, allowMissing bool) (*emptypb.Empty, error)
 	GetLogicalBridge(ctx context.Context, name string) (*pb.LogicalBridge, error)
 	ListLogicalBridges(ctx context.Context, pageSize int32, pageToken string) (*pb.ListLogicalBridgesResponse, error)
@@ -55,7 +55,7 @@ type EvpnClient interface {
 	UpdateBridgePort(ctx context.Context, name string, updateMask []string, allowMissing bool) (*pb.BridgePort, error)
 
 	// VRF Interfaces
-	CreateVrf(ctx context.Context, name string, vni uint32, loopback string, vtep string) (*pb.Vrf, error)
+	CreateVrf(ctx context.Context, name string, vni *uint32, loopback string, vtep string) (*pb.Vrf, error)
 	DeleteVrf(ctx context.Context, name string, allowMissing bool) (*emptypb.Empty, error)
 	GetVrf(ctx context.Context, name string) (*pb.Vrf, error)
 	ListVrfs(ctx context.Context, pageSize int32, pageToken string) (*pb.ListVrfsResponse, error)

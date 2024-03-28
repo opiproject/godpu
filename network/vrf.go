@@ -7,16 +7,19 @@ package network
 
 import (
 	"context"
+	"errors"
 	"log"
 
 	pb "github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go"
+	pc "github.com/opiproject/opi-api/network/opinetcommon/v1alpha1/gen/go"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 )
 
 // CreateVrf Create vrf on OPI Server
-func (c evpnClientImpl) CreateVrf(ctx context.Context, name string, vni uint32, loopback string, vtep string) (*pb.Vrf, error) {
+func (c evpnClientImpl) CreateVrf(ctx context.Context, name string, vni *uint32, loopbackIP string, vtepIP string) (*pb.Vrf, error) {
 	conn, closer, err := c.NewConn()
+	var ipVtep *pc.IPPrefix
 	if err != nil {
 		log.Printf("error creating connection: %s\n", err)
 		return nil, err
@@ -24,21 +27,27 @@ func (c evpnClientImpl) CreateVrf(ctx context.Context, name string, vni uint32, 
 	defer closer()
 
 	client := c.getEvpnVRFClient(conn)
-	ipLoopback, err := parseIPAndPrefix(loopback)
+	ipLoopback, err := parseIPAndPrefix(loopbackIP)
 	if err != nil {
 		log.Printf("parseIPAndPrefix: error creating vrf: %s\n", err)
 		return nil, err
 	}
-	ipVtep, err := parseIPAndPrefix(vtep)
-	if err != nil {
-		log.Printf("parseIPAndPrefix: error creating vrf: %s\n", err)
-		return nil, err
+	if (vni == nil && vtepIP != "") || (vni != nil && vtepIP == "") {
+		return nil, errors.New("one of the required together parameter [vni, vtep] wasn't passed ")
+	}
+
+	if vni != nil && vtepIP != "" {
+		ipVtep, err = parseIPAndPrefix(vtepIP)
+		if err != nil {
+			log.Printf("parseIPAndPrefix: error creating vrf: %s\n", err)
+			return nil, err
+		}
 	}
 	data, err := client.CreateVrf(ctx, &pb.CreateVrfRequest{
 		VrfId: name,
 		Vrf: &pb.Vrf{
 			Spec: &pb.VrfSpec{
-				Vni:              &vni,
+				Vni:              vni,
 				LoopbackIpPrefix: ipLoopback,
 				VtepIpPrefix:     ipVtep,
 			},

@@ -7,15 +7,19 @@ package network
 
 import (
 	"context"
+	"errors"
 	"log"
 
 	pb "github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go"
+	pc "github.com/opiproject/opi-api/network/opinetcommon/v1alpha1/gen/go"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 )
 
 // CreateLogicalBridge creates an Logical Bridge an OPI server
-func (c evpnClientImpl) CreateLogicalBridge(ctx context.Context, name string, vlanID uint32, vni uint32, vtepIP string) (*pb.LogicalBridge, error) {
+func (c evpnClientImpl) CreateLogicalBridge(ctx context.Context, name string, vlanID uint32, vni *uint32, vtepIP string) (*pb.LogicalBridge, error) {
+	var ipVtep *pc.IPPrefix
+
 	conn, closer, err := c.NewConn()
 	if err != nil {
 		log.Printf("error creating connection: %s\n", err)
@@ -24,17 +28,24 @@ func (c evpnClientImpl) CreateLogicalBridge(ctx context.Context, name string, vl
 	defer closer()
 
 	client := c.getEvpnLogicalBridgeClient(conn)
-	ipVtep, err := parseIPAndPrefix(vtepIP)
-	if err != nil {
-		log.Printf("parseIPAndPrefix: error creating vrf: %s\n", err)
-		return nil, err
+
+	if (vni == nil && vtepIP != "") || (vni != nil && vtepIP == "") {
+		return nil, errors.New("one of the required together parameter [vni, vtep] wasn't passed ")
+	}
+
+	if vni != nil && vtepIP != "" {
+		ipVtep, err = parseIPAndPrefix(vtepIP)
+		if err != nil {
+			log.Printf("parseIPAndPrefix: error creating Logical Bridge: %s\n", err)
+			return nil, err
+		}
 	}
 	data, err := client.CreateLogicalBridge(ctx, &pb.CreateLogicalBridgeRequest{
 		LogicalBridgeId: name,
 		LogicalBridge: &pb.LogicalBridge{
 			Spec: &pb.LogicalBridgeSpec{
 				VlanId:       vlanID,
-				Vni:          &vni,
+				Vni:          vni,
 				VtepIpPrefix: ipVtep,
 			},
 		},

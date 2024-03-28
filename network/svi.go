@@ -7,7 +7,9 @@ package network
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"net"
 
 	pb "github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -30,13 +32,18 @@ func (c evpnClientImpl) CreateSvi(ctx context.Context, name string, vrf string, 
 		log.Printf("error parsing GwIPs: %s\n", err)
 		return nil, err
 	}
+	macBytes, err := net.ParseMAC(mac)
+	if err != nil {
+		fmt.Println("Error parsing MAC address:", err)
+		return nil, err
+	}
 	data, err := client.CreateSvi(ctx, &pb.CreateSviRequest{
 		SviId: name,
 		Svi: &pb.Svi{
 			Spec: &pb.SviSpec{
 				Vrf:           vrf,
 				LogicalBridge: logicalBridge,
-				MacAddress:    []byte(mac),
+				MacAddress:    macBytes,
 				GwIpPrefix:    gwPrefixes,
 				EnableBgp:     ebgp,
 				RemoteAs:      remoteAS,
