@@ -28,6 +28,7 @@ func CreateLogicalBridge() *cobra.Command {
 		Short: "Create a logical bridge",
 		Long:  "Create a logical bridge with the specified name, VLAN ID, and VNI",
 		Run: func(_ *cobra.Command, _ []string) {
+			var vniparam *uint32
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			evpnClient, err := network.NewLogicalBridge(addr)
 			if err != nil {
@@ -35,7 +36,15 @@ func CreateLogicalBridge() *cobra.Command {
 			}
 			defer cancel()
 
-			lb, err := evpnClient.CreateLogicalBridge(ctx, name, vlanID, vni, vtep)
+			if (vni == 0 && vtep != "") || (vtep == "" && vni != 0) {
+				log.Fatalf("vni or vtep wasn't passed in parameters ")
+			}
+
+			if vni != 0 {
+				vniparam = &vni
+			}
+
+			lb, err := evpnClient.CreateLogicalBridge(ctx, name, vlanID, vniparam, vtep)
 			if err != nil {
 				log.Fatalf("failed to create logical bridge: %v", err)
 			}
@@ -57,9 +66,6 @@ func CreateLogicalBridge() *cobra.Command {
 		log.Fatalf("Error marking flag as required: %v", err)
 	}
 	if err := cmd.MarkFlagRequired("vlan-id"); err != nil {
-		log.Fatalf("Error marking flag as required: %v", err)
-	}
-	if err := cmd.MarkFlagRequired("vni"); err != nil {
 		log.Fatalf("Error marking flag as required: %v", err)
 	}
 

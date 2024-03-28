@@ -23,6 +23,7 @@ import (
 )
 
 func TestCreateLogicalBridge(t *testing.T) {
+	testVni := uint32(500)
 	wantIPPefix := &pc.IPPrefix{
 		Addr: &pc.IPAddress{
 			Af: pc.IpAf_IP_AF_INET,
@@ -106,7 +107,7 @@ func TestCreateLogicalBridge(t *testing.T) {
 
 			response, err := c.CreateLogicalBridge(
 				context.Background(),
-				"lb1", 100, 500, "192.168.1.0/24",
+				"lb1", 100, &testVni, "192.168.1.0/24",
 			)
 
 			assert.Equal(t, tt.wantErr, err)

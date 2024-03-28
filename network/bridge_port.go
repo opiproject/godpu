@@ -7,7 +7,9 @@ package network
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"net"
 
 	pb "github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -25,6 +27,11 @@ func (c evpnClientImpl) CreateBridgePort(ctx context.Context, name string, mac s
 	defer closer()
 
 	client := c.getEvpnBridgePortClient(conn)
+	macBytes, err := net.ParseMAC(mac)
+	if err != nil {
+		fmt.Println("Error parsing MAC address:", err)
+		return nil, err
+	}
 	switch bridgePortType {
 	case "access":
 		typeOfPort = pb.BridgePortType_BRIDGE_PORT_TYPE_ACCESS
@@ -37,7 +44,7 @@ func (c evpnClientImpl) CreateBridgePort(ctx context.Context, name string, mac s
 		BridgePortId: name,
 		BridgePort: &pb.BridgePort{
 			Spec: &pb.BridgePortSpec{
-				MacAddress:     []byte(mac),
+				MacAddress:     macBytes,
 				Ptype:          typeOfPort,
 				LogicalBridges: logicalBridges,
 			},
