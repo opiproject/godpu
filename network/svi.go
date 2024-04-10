@@ -7,6 +7,7 @@ package network
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"net"
@@ -26,6 +27,10 @@ func (c evpnClientImpl) CreateSvi(ctx context.Context, name string, vrf string, 
 	defer closer()
 
 	client := c.getEvpnSVIClient(conn)
+
+	if vrf == "" || mac == "" || len(gwIPs) == 0 {
+		return nil, errors.New("one of the required together parameter [vrf, mac, gwIPs] wasn't passed ")
+	}
 
 	gwPrefixes, err := parseIPPrefixes(gwIPs)
 	if err != nil {
@@ -66,6 +71,11 @@ func (c evpnClientImpl) DeleteSvi(ctx context.Context, name string, allowMissing
 		return nil, err
 	}
 	defer closer()
+
+	if name == "" {
+		return nil, errors.New("required parameter [name] wasn't passed ")
+	}
+
 	client := c.getEvpnSVIClient(conn)
 	data, err := client.DeleteSvi(ctx, &pb.DeleteSviRequest{
 		Name:         resourceIDToFullName("svis", name),
@@ -87,6 +97,11 @@ func (c evpnClientImpl) GetSvi(ctx context.Context, name string) (*pb.Svi, error
 		return nil, err
 	}
 	defer closer()
+
+	if name == "" {
+		return nil, errors.New("required parameter [name] wasn't passed ")
+	}
+
 	client := c.getEvpnSVIClient(conn)
 	data, err := client.GetSvi(ctx, &pb.GetSviRequest{
 		Name: resourceIDToFullName("svis", name),
