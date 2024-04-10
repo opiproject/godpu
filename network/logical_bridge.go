@@ -67,6 +67,9 @@ func (c evpnClientImpl) DeleteLogicalBridge(ctx context.Context, name string, al
 	}
 	defer closer()
 
+	if name == "" {
+		return nil, errors.New("required parameter [name] wasn't passed ")
+	}
 	client := c.getEvpnLogicalBridgeClient(conn)
 
 	data, err := client.DeleteLogicalBridge(ctx, &pb.DeleteLogicalBridgeRequest{
@@ -90,6 +93,9 @@ func (c evpnClientImpl) GetLogicalBridge(ctx context.Context, name string) (*pb.
 	}
 	defer closer()
 
+	if name == "" {
+		return nil, errors.New("required parameter [name] wasn't passed ")
+	}
 	client := c.getEvpnLogicalBridgeClient(conn)
 
 	data, err := client.GetLogicalBridge(ctx, &pb.GetLogicalBridgeRequest{
@@ -127,7 +133,7 @@ func (c evpnClientImpl) ListLogicalBridges(ctx context.Context, pageSize int32, 
 }
 
 // UpdateLogicalBridge update Logical Bridge on OPI server
-func (c evpnClientImpl) UpdateLogicalBridge(ctx context.Context, name string, updateMask []string) (*pb.LogicalBridge, error) {
+func (c evpnClientImpl) UpdateLogicalBridge(ctx context.Context, name string, updateMask []string, allowMissing bool) (*pb.LogicalBridge, error) {
 	conn, closer, err := c.NewConn()
 	if err != nil {
 		log.Printf("error creating connection: %s\n", err)
@@ -142,6 +148,7 @@ func (c evpnClientImpl) UpdateLogicalBridge(ctx context.Context, name string, up
 	data, err := client.UpdateLogicalBridge(ctx, &pb.UpdateLogicalBridgeRequest{
 		LogicalBridge: Bridge,
 		UpdateMask:    &fieldmaskpb.FieldMask{Paths: updateMask},
+		AllowMissing:  allowMissing,
 	})
 	if err != nil {
 		log.Printf("error Update logical bridge: %s\n", err)

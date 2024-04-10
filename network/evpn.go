@@ -45,7 +45,7 @@ type EvpnClient interface {
 	DeleteLogicalBridge(ctx context.Context, name string, allowMissing bool) (*emptypb.Empty, error)
 	GetLogicalBridge(ctx context.Context, name string) (*pb.LogicalBridge, error)
 	ListLogicalBridges(ctx context.Context, pageSize int32, pageToken string) (*pb.ListLogicalBridgesResponse, error)
-	UpdateLogicalBridge(ctx context.Context, name string, updateMask []string) (*pb.LogicalBridge, error)
+	UpdateLogicalBridge(ctx context.Context, name string, updateMask []string, allowMissing bool) (*pb.LogicalBridge, error)
 
 	// Bridge Port Interfaces
 	CreateBridgePort(ctx context.Context, name string, mac string, bridgePortType string, logicalBridges []string) (*pb.BridgePort, error)

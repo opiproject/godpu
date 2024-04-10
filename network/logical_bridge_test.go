@@ -407,7 +407,7 @@ func TestUpdateLogicalBridge(t *testing.T) {
 				},
 			)
 
-			response, err := c.UpdateLogicalBridge(context.Background(), name, updateMask)
+			response, err := c.UpdateLogicalBridge(context.Background(), name, updateMask, allowMissing)
 
 			assert.Equal(t, tt.wantErr, err)
 			assert.Equal(t, tt.wantConnClosed, connClosed)

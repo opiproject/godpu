@@ -7,6 +7,7 @@ package network
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"net"
@@ -25,7 +26,9 @@ func (c evpnClientImpl) CreateBridgePort(ctx context.Context, name string, mac s
 		return nil, err
 	}
 	defer closer()
-
+	if mac == "" || bridgePortType == "" {
+		return nil, errors.New("required parameter [mac, bridgePortType] wasn't passed ")
+	}
 	client := c.getEvpnBridgePortClient(conn)
 	macBytes, err := net.ParseMAC(mac)
 	if err != nil {
@@ -67,6 +70,9 @@ func (c evpnClientImpl) DeleteBridgePort(ctx context.Context, name string, allow
 	}
 	defer closer()
 
+	if name == "" {
+		return nil, errors.New("required parameter [name] wasn't passed ")
+	}
 	client := c.getEvpnBridgePortClient(conn)
 	data, err := client.DeleteBridgePort(ctx, &pb.DeleteBridgePortRequest{
 		Name:         resourceIDToFullName("ports", name),
@@ -88,6 +94,10 @@ func (c evpnClientImpl) GetBridgePort(ctx context.Context, name string) (*pb.Bri
 		return nil, err
 	}
 	defer closer()
+
+	if name == "" {
+		return nil, errors.New("required parameter [name] wasn't passed ")
+	}
 
 	client := c.getEvpnBridgePortClient(conn)
 	data, err := client.GetBridgePort(ctx, &pb.GetBridgePortRequest{

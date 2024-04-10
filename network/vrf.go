@@ -27,15 +27,14 @@ func (c evpnClientImpl) CreateVrf(ctx context.Context, name string, vni *uint32,
 	defer closer()
 
 	client := c.getEvpnVRFClient(conn)
+	if loopbackIP == "" {
+		return nil, errors.New("required together parameter [loopbackIP] wasn't passed ")
+	}
 	ipLoopback, err := parseIPAndPrefix(loopbackIP)
 	if err != nil {
 		log.Printf("parseIPAndPrefix: error creating vrf: %s\n", err)
 		return nil, err
 	}
-	if (vni == nil && vtepIP != "") || (vni != nil && vtepIP == "") {
-		return nil, errors.New("one of the required together parameter [vni, vtep] wasn't passed ")
-	}
-
 	if vni != nil && vtepIP != "" {
 		ipVtep, err = parseIPAndPrefix(vtepIP)
 		if err != nil {
@@ -69,6 +68,11 @@ func (c evpnClientImpl) DeleteVrf(ctx context.Context, name string, allowMissing
 		return nil, err
 	}
 	defer closer()
+
+	if name == "" {
+		return nil, errors.New("required parameter [name] wasn't passed ")
+	}
+
 	client := c.getEvpnVRFClient(conn)
 	data, err := client.DeleteVrf(ctx, &pb.DeleteVrfRequest{
 		Name:         resourceIDToFullName("vrfs", name),
@@ -90,6 +94,11 @@ func (c evpnClientImpl) GetVrf(ctx context.Context, name string) (*pb.Vrf, error
 		return nil, err
 	}
 	defer closer()
+
+	if name == "" {
+		return nil, errors.New("required parameter [name] wasn't passed ")
+	}
+
 	client := c.getEvpnVRFClient(conn)
 	data, err := client.GetVrf(ctx, &pb.GetVrfRequest{
 		Name: resourceIDToFullName("vrfs", name),

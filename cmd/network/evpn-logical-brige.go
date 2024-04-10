@@ -192,6 +192,7 @@ func ListLogicalBridges() *cobra.Command {
 func UpdateLogicalBridge() *cobra.Command {
 	var addr string
 	var name string
+	var allowMissing bool
 	var updateMask []string
 	cmd := &cobra.Command{
 		Use:   "update-lb",
@@ -204,7 +205,7 @@ func UpdateLogicalBridge() *cobra.Command {
 			}
 			defer cancel()
 
-			lb, err := evpnClient.UpdateLogicalBridge(ctx, name, updateMask)
+			lb, err := evpnClient.UpdateLogicalBridge(ctx, name, updateMask, allowMissing)
 			if err != nil {
 				log.Fatalf("failed to update logical bridge: %v", err)
 			}
@@ -215,6 +216,7 @@ func UpdateLogicalBridge() *cobra.Command {
 	cmd.Flags().StringVar(&name, "name", "", "name of the logical bridge")
 	cmd.Flags().StringSliceVar(&updateMask, "update-mask", nil, "update mask")
 	cmd.Flags().StringVar(&addr, "addr", "localhost:50151", "address of OPI gRPC server")
+	cmd.Flags().BoolVarP(&allowMissing, "allowMissing", "a", false, "Specify allow missing")
 
 	return cmd
 }
