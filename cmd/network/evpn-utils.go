@@ -37,12 +37,17 @@ func ComposeGwIps(comp []*pc.IPPrefix) string {
 
 // PrintLB prints the logical bridge fields in human readable format
 func PrintLB(lb *pb.LogicalBridge) {
-	Vteip := fmt.Sprintf("%+v/%v", ipconv.IntToIPv4(lb.GetSpec().GetVtepIpPrefix().GetAddr().GetV4Addr()), lb.GetSpec().GetVtepIpPrefix().GetLen())
 	log.Println("name:", lb.GetName())
 	log.Println("status:", lb.GetStatus().GetOperStatus().String())
 	log.Println("vlan:", lb.GetSpec().GetVlanId())
-	log.Println("vni:", lb.GetSpec().GetVni())
-	log.Println("VtepIpPrefix:", Vteip)
+	if lb.GetSpec().GetVni() != 0 {
+		log.Println("vni:", lb.GetSpec().GetVni())
+	}
+	if lb.GetSpec().GetVtepIpPrefix().GetAddr().GetV4Addr() != 0 {
+		Vteip := fmt.Sprintf("%+v/%v", ipconv.IntToIPv4(lb.GetSpec().GetVtepIpPrefix().GetAddr().GetV4Addr()), lb.GetSpec().GetVtepIpPrefix().GetLen())
+		log.Println("vtep ip:", Vteip)
+	}
+
 	log.Println("Component Status:")
 	log.Println(ComposeComponentsInfo(lb.GetStatus().GetComponents()))
 }
@@ -74,12 +79,17 @@ func PrintSvi(svi *pb.Svi) {
 
 // PrintVrf prints the vrf fields in human readable format
 func PrintVrf(vrf *pb.Vrf) {
-	Vteip := fmt.Sprintf("%+v/%v", ipconv.IntToIPv4(vrf.GetSpec().GetVtepIpPrefix().GetAddr().GetV4Addr()), vrf.GetSpec().GetVtepIpPrefix().GetLen())
 	Loopback := fmt.Sprintf("%+v/%+v", ipconv.IntToIPv4(vrf.GetSpec().GetLoopbackIpPrefix().GetAddr().GetV4Addr()), vrf.GetSpec().GetLoopbackIpPrefix().GetLen())
 	log.Println("name:", vrf.GetName())
 	log.Println("operation status:", vrf.GetStatus().GetOperStatus().String())
-	log.Println("vni:", vrf.GetSpec().GetVni())
-	log.Println("vtep ip:", Vteip)
+
+	if vrf.GetSpec().GetVni() != 0 {
+		log.Println("vni:", vrf.GetSpec().GetVni())
+	}
+	if vrf.GetSpec().GetVtepIpPrefix().GetAddr().GetV4Addr() != 0 {
+		Vteip := fmt.Sprintf("%+v/%v", ipconv.IntToIPv4(vrf.GetSpec().GetVtepIpPrefix().GetAddr().GetV4Addr()), vrf.GetSpec().GetVtepIpPrefix().GetLen())
+		log.Println("vtep ip:", Vteip)
+	}
 	log.Println("loopback ip:", Loopback)
 	log.Println("Component Status:")
 	log.Println(ComposeComponentsInfo(vrf.GetStatus().GetComponents()))
