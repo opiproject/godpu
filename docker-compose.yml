@@ -142,7 +142,7 @@ services:
       - NET_ADMIN
     networks:
       - opi
-    command: /opi-evpn-bridge -grpc_port=50151 -http_port=8082 -redis_addr="redis:6379" -frr_addr="frr"
+    command: /opi-evpn-bridge --grpcport=50151 --httpport=8082 --dbaddress="redis:6379" --database=redis
     healthcheck:
       test: grpcurl -plaintext localhost:50151 list || exit 1
     depends_on:
