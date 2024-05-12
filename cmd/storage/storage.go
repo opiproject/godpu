@@ -7,8 +7,8 @@ package storage
 import (
 	"time"
 
+	"github.com/opiproject/godpu/cmd/common"
 	"github.com/opiproject/godpu/cmd/storage/backend"
-	"github.com/opiproject/godpu/cmd/storage/common"
 	"github.com/opiproject/godpu/cmd/storage/frontend"
 	"github.com/spf13/cobra"
 )
@@ -27,7 +27,6 @@ func NewStorageCommand() *cobra.Command {
 	}
 
 	flags := cmd.PersistentFlags()
-	flags.String(common.AddrCmdLineArg, "localhost:50151", "address of OPI gRPC server")
 	flags.Duration(common.TimeoutCmdLineArg, 10*time.Second, "timeout for a cmd")
 
 	cmd.AddCommand(newStorageCreateCommand())

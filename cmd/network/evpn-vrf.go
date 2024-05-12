@@ -11,25 +11,31 @@ import (
 	"log"
 	"time"
 
+	"github.com/opiproject/godpu/cmd/common"
 	"github.com/opiproject/godpu/network"
 	"github.com/spf13/cobra"
 )
 
 // CreateVRF Create vrf on OPI Server
 func CreateVRF() *cobra.Command {
-	var addr string
 	var name string
 	var vni uint32
 	var loopback string
 	var vtep string
-
 	cmd := &cobra.Command{
 		Use:   "create-vrf",
 		Short: "Create a VRF",
-		Run: func(_ *cobra.Command, _ []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			var vniparam *uint32
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-			evpnClient, err := network.NewVRF(addr)
+
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
+			cobra.CheckErr(err)
+
+			evpnClient, err := network.NewVRF(addr, tlsFiles)
 			if err != nil {
 				log.Fatalf("could not create gRPC client: %v", err)
 			}
@@ -50,7 +56,6 @@ func CreateVRF() *cobra.Command {
 	cmd.Flags().Uint32VarP(&vni, "vni", "v", 0, "Must be unique ")
 	cmd.Flags().StringVar(&loopback, "loopback", "", "Loopback IP address")
 	cmd.Flags().StringVar(&vtep, "vtep", "", "VTEP IP address")
-	cmd.Flags().StringVar(&addr, "addr", "localhost:50151", "address of OPI gRPC server")
 
 	if err := cmd.MarkFlagRequired("loopback"); err != nil {
 		log.Fatalf("Error marking flag as required: %v", err)
@@ -60,16 +65,21 @@ func CreateVRF() *cobra.Command {
 
 // DeleteVRF update the vrf on OPI server
 func DeleteVRF() *cobra.Command {
-	var addr string
 	var name string
 	var allowMissing bool
-
 	cmd := &cobra.Command{
 		Use:   "delete-vrf",
 		Short: "Delete a VRF",
-		Run: func(_ *cobra.Command, _ []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-			evpnClient, err := network.NewVRF(addr)
+
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
+			cobra.CheckErr(err)
+
+			evpnClient, err := network.NewVRF(addr, tlsFiles)
 			if err != nil {
 				log.Fatalf("could not create gRPC client: %v", err)
 			}
@@ -86,22 +96,25 @@ func DeleteVRF() *cobra.Command {
 
 	cmd.Flags().StringVarP(&name, "name", "n", "", "Specify the name of the BridgePort")
 	cmd.Flags().BoolVarP(&allowMissing, "allowMissing", "a", false, "Specify the name of the BridgePort")
-	cmd.Flags().StringVar(&addr, "addr", "localhost:50151", "address of OPI gRPC server")
-
 	return cmd
 }
 
 // GetVRF get vrf details from OPI server
 func GetVRF() *cobra.Command {
-	var addr string
 	var name string
-
 	cmd := &cobra.Command{
 		Use:   "get-vrf",
 		Short: "Show details of a VRF",
-		Run: func(_ *cobra.Command, _ []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-			evpnClient, err := network.NewVRF(addr)
+
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
+			cobra.CheckErr(err)
+
+			evpnClient, err := network.NewVRF(addr, tlsFiles)
 			if err != nil {
 				log.Fatalf("could not create gRPC client: %v", err)
 			}
@@ -119,8 +132,6 @@ func GetVRF() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&name, "name", "n", "", "Specify the name of the vrf")
-	cmd.Flags().StringVar(&addr, "addr", "localhost:50151", "address of OPI gRPC server")
-
 	if err := cmd.MarkFlagRequired("name"); err != nil {
 		log.Fatalf("Error marking flag as required: %v", err)
 	}
@@ -129,16 +140,21 @@ func GetVRF() *cobra.Command {
 
 // ListVRFs list all vrf's with details from OPI server
 func ListVRFs() *cobra.Command {
-	var addr string
 	var pageSize int32
 	var pageToken string
-
 	cmd := &cobra.Command{
 		Use:   "list-vrfs",
 		Short: "Show details of all Vrfs",
-		Run: func(_ *cobra.Command, _ []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-			evpnClient, err := network.NewVRF(addr)
+
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
+			cobra.CheckErr(err)
+
+			evpnClient, err := network.NewVRF(addr, tlsFiles)
 			if err != nil {
 				log.Fatalf("could not create gRPC client: %v", err)
 			}
@@ -167,23 +183,26 @@ func ListVRFs() *cobra.Command {
 	}
 	cmd.Flags().Int32VarP(&pageSize, "pagesize", "s", 0, "Specify page size")
 	cmd.Flags().StringVarP(&pageToken, "pagetoken", "t", "", "Specify the token")
-	cmd.Flags().StringVar(&addr, "addr", "localhost:50151", "address of OPI gRPC server")
 	return cmd
 }
 
 // UpdateVRF update the vrf on OPI server
 func UpdateVRF() *cobra.Command {
-	var addr string
 	var name string
 	var updateMask []string
 	var allowMissing bool
-
 	cmd := &cobra.Command{
 		Use:   "update-vrf",
 		Short: "update the VRF",
-		Run: func(_ *cobra.Command, _ []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-			evpnClient, err := network.NewVRF(addr)
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
+			cobra.CheckErr(err)
+
+			evpnClient, err := network.NewVRF(addr, tlsFiles)
 			if err != nil {
 				log.Fatalf("could not create gRPC client: %v", err)
 			}
@@ -198,10 +217,8 @@ func UpdateVRF() *cobra.Command {
 			PrintVrf(vrf)
 		},
 	}
-	cmd.Flags().StringVar(&addr, "addr", "localhost:50151", "address of OPI gRPC server")
 	cmd.Flags().StringVarP(&name, "name", "n", "", "Specify the name of the vrf")
 	cmd.Flags().StringSliceVar(&updateMask, "update-mask", nil, "update mask")
 	cmd.Flags().BoolVarP(&allowMissing, "allowMissing", "a", false, "allow the missing")
-
 	return cmd
 }

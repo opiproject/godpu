@@ -9,22 +9,25 @@ import (
 	"log"
 	"time"
 
+	"github.com/opiproject/godpu/cmd/common"
 	"github.com/opiproject/godpu/inventory"
 	"github.com/spf13/cobra"
 )
 
 // NewGetCommand returns the inventory get command
 func NewGetCommand() *cobra.Command {
-	var (
-		addr string
-	)
 	cmd := &cobra.Command{
 		Use:     "get",
 		Aliases: []string{"g"},
 		Short:   "Gets DPU inventory information",
 		Args:    cobra.NoArgs,
-		Run: func(_ *cobra.Command, _ []string) {
-			invClient, err := inventory.New(addr)
+		Run: func(c *cobra.Command, _ []string) {
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
+			cobra.CheckErr(err)
+			invClient, err := inventory.New(addr, tlsFiles)
 			if err != nil {
 				log.Fatalf("could create gRPC client: %v", err)
 			}
@@ -39,8 +42,6 @@ func NewGetCommand() *cobra.Command {
 			log.Printf("%s", data)
 		},
 	}
-	flags := cmd.Flags()
-	flags.StringVar(&addr, "addr", "localhost:50151", "address of OPI gRPC server")
 	return cmd
 }
 

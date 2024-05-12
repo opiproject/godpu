@@ -77,8 +77,8 @@ func resourceIDToFullName(container string, resourceID string) string {
 }
 
 // NewLogicalBridge creates an evpn Logical Bridge client for use with OPI server at the given address
-func NewLogicalBridge(addr string) (EvpnClient, error) {
-	c, err := grpcOpi.New(addr)
+func NewLogicalBridge(addr string, tls string) (EvpnClient, error) {
+	c, err := grpcOpi.New(addr, tls)
 	if err != nil {
 		return nil, err
 	}
@@ -106,8 +106,8 @@ func NewLogicalBridgeWithArgs(c grpcOpi.Connector, getter PbEvpnLogicalBridgeCli
 }
 
 // NewBridgePort creates an evpn Bridge Port client for use with OPI server at the given address
-func NewBridgePort(addr string) (EvpnClient, error) {
-	c, err := grpcOpi.New(addr)
+func NewBridgePort(addr string, tls string) (EvpnClient, error) {
+	c, err := grpcOpi.New(addr, tls)
 	if err != nil {
 		return nil, err
 	}
@@ -135,8 +135,8 @@ func NewBridgePortWithArgs(c grpcOpi.Connector, getter PbEvpnBridgePortClientGet
 }
 
 // NewVRF creates an evpn VRF client for use with OPI server at the given address
-func NewVRF(addr string) (EvpnClient, error) {
-	c, err := grpcOpi.New(addr)
+func NewVRF(addr string, tls string) (EvpnClient, error) {
+	c, err := grpcOpi.New(addr, tls)
 	if err != nil {
 		return nil, err
 	}
@@ -164,8 +164,8 @@ func NewVRFWithArgs(c grpcOpi.Connector, getter PbEvpnVRFClientGetter) (EvpnClie
 }
 
 // NewSVI creates an evpn SVI client for use with OPI server at the given address
-func NewSVI(addr string) (EvpnClient, error) {
-	c, err := grpcOpi.New(addr)
+func NewSVI(addr string, tls string) (EvpnClient, error) {
+	c, err := grpcOpi.New(addr, tls)
 	if err != nil {
 		return nil, err
 	}

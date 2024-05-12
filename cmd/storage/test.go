@@ -9,7 +9,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/opiproject/godpu/cmd/storage/common"
+	"github.com/opiproject/godpu/cmd/common"
 	"github.com/opiproject/godpu/grpc"
 	"github.com/opiproject/godpu/storage/test"
 	"github.com/spf13/cobra"
@@ -155,7 +155,7 @@ func runTests(
 	}
 
 	// Set up a connection to the server.
-	client, err := grpc.New(addr)
+	client, err := grpc.New(addr, "")
 	if err != nil {
 		log.Fatalf("error creating new client: %v", err)
 	}

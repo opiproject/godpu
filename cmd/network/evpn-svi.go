@@ -11,13 +11,13 @@ import (
 	"log"
 	"time"
 
+	"github.com/opiproject/godpu/cmd/common"
 	"github.com/opiproject/godpu/network"
 	"github.com/spf13/cobra"
 )
 
 // CreateSVI create svi on OPI server
 func CreateSVI() *cobra.Command {
-	var addr string
 	var name string
 	var vrf string
 	var logicalBridge string
@@ -30,9 +30,16 @@ func CreateSVI() *cobra.Command {
 		Use:   "create-svi",
 		Short: "Create a SVI",
 		Long:  "Create an  using name, vrf,logical bridges, mac, gateway ip's and enable bgp ",
-		Run: func(_ *cobra.Command, _ []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-			evpnClient, err := network.NewSVI(addr)
+
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
+			cobra.CheckErr(err)
+
+			evpnClient, err := network.NewSVI(addr, tlsFiles)
 			if err != nil {
 				log.Fatalf("could not create gRPC client: %v", err)
 			}
@@ -54,7 +61,6 @@ func CreateSVI() *cobra.Command {
 	cmd.Flags().StringSliceVar(&gwIPs, "gw-ips", nil, "List of GW IP addresses")
 	cmd.Flags().BoolVar(&ebgp, "ebgp", false, "Enable eBGP in VRF for tenants connected through this SVI")
 	cmd.Flags().Uint32VarP(&remoteAS, "remote-as", "", 0, "The remote AS")
-	cmd.Flags().StringVar(&addr, "addr", "localhost:50151", "address of OPI gRPC server")
 
 	if err := cmd.MarkFlagRequired("vrf"); err != nil {
 		log.Fatalf("Error marking flag as required: %v", err)
@@ -76,16 +82,22 @@ func CreateSVI() *cobra.Command {
 
 // DeleteSVI delete the svi on OPI server
 func DeleteSVI() *cobra.Command {
-	var addr string
 	var name string
 	var allowMissing bool
 
 	cmd := &cobra.Command{
 		Use:   "delete-svi",
 		Short: "Delete a SVI",
-		Run: func(_ *cobra.Command, _ []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-			evpnClient, err := network.NewSVI(addr)
+
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
+			cobra.CheckErr(err)
+
+			evpnClient, err := network.NewSVI(addr, tlsFiles)
 			if err != nil {
 				log.Fatalf("could not create gRPC client: %v", err)
 			}
@@ -102,7 +114,6 @@ func DeleteSVI() *cobra.Command {
 
 	cmd.Flags().StringVarP(&name, "name", "n", "", "Specify the name of the BridgePort")
 	cmd.Flags().BoolVarP(&allowMissing, "allowMissing", "a", false, "Specify the name of the BridgePort")
-	cmd.Flags().StringVar(&addr, "addr", "localhost:50151", "address of OPI gRPC server")
 
 	if err := cmd.MarkFlagRequired("name"); err != nil {
 		log.Fatalf("Error marking flag as required: %v", err)
@@ -112,15 +123,21 @@ func DeleteSVI() *cobra.Command {
 
 // GetSVI get svi details from OPI server
 func GetSVI() *cobra.Command {
-	var addr string
 	var name string
 
 	cmd := &cobra.Command{
 		Use:   "get-svi",
 		Short: "Show details of a SVI",
-		Run: func(_ *cobra.Command, _ []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-			evpnClient, err := network.NewSVI(addr)
+
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
+			cobra.CheckErr(err)
+
+			evpnClient, err := network.NewSVI(addr, tlsFiles)
 			if err != nil {
 				log.Fatalf("could not create gRPC client: %v", err)
 			}
@@ -136,7 +153,6 @@ func GetSVI() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&name, "name", "n", "", "Specify the name of the BridgePort")
-	cmd.Flags().StringVar(&addr, "addr", "localhost:50151", "address of OPI gRPC server")
 
 	if err := cmd.MarkFlagRequired("name"); err != nil {
 		log.Fatalf("Error marking flag as required: %v", err)
@@ -146,16 +162,22 @@ func GetSVI() *cobra.Command {
 
 // ListSVIs get all the svi's from OPI server
 func ListSVIs() *cobra.Command {
-	var addr string
 	var pageSize int32
 	var pageToken string
 
 	cmd := &cobra.Command{
 		Use:   "list-svis",
 		Short: "Show details of all SVIs",
-		Run: func(_ *cobra.Command, _ []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-			evpnClient, err := network.NewSVI(addr)
+
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
+			cobra.CheckErr(err)
+
+			evpnClient, err := network.NewSVI(addr, tlsFiles)
 			if err != nil {
 				log.Fatalf("could not create gRPC client: %v", err)
 			}
@@ -185,13 +207,12 @@ func ListSVIs() *cobra.Command {
 
 	cmd.Flags().Int32VarP(&pageSize, "pageSize", "s", 0, "Specify the name of the BridgePort")
 	cmd.Flags().StringVarP(&pageToken, "pageToken", "p", "", "Specify the page token")
-	cmd.Flags().StringVar(&addr, "addr", "localhost:50151", "address of OPI gRPC server")
+
 	return cmd
 }
 
 // UpdateSVI update the svi on OPI server
 func UpdateSVI() *cobra.Command {
-	var addr string
 	var name string
 	var updateMask []string
 	var allowMissing bool
@@ -199,9 +220,16 @@ func UpdateSVI() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-svi",
 		Short: "update the SVI",
-		Run: func(_ *cobra.Command, _ []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-			evpnClient, err := network.NewSVI(addr)
+
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
+			cobra.CheckErr(err)
+
+			evpnClient, err := network.NewSVI(addr, tlsFiles)
 			if err != nil {
 				log.Fatalf("could not create gRPC client: %v", err)
 			}
@@ -216,8 +244,8 @@ func UpdateSVI() *cobra.Command {
 			PrintSvi(svi)
 		},
 	}
-	cmd.Flags().StringVar(&addr, "addr", "localhost:50151", "address of OPI gRPC server")
 	cmd.Flags().StringSliceVar(&updateMask, "update-mask", nil, "update mask")
 	cmd.Flags().BoolVarP(&allowMissing, "allowMissing", "a", false, "allow the missing")
+
 	return cmd
 }

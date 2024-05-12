@@ -31,7 +31,7 @@ var _ = Describe("Inventory", func() {
 		Context("using a non-empty address", func() {
 			BeforeEach(func() {
 				addr = "localhost:1234"
-				c, err = inventory.New(addr)
+				c, err = inventory.New(addr, "")
 			})
 
 			It("should return a client", func() {
@@ -45,7 +45,7 @@ var _ = Describe("Inventory", func() {
 		Context("using an empty address", func() {
 			BeforeEach(func() {
 				addr = ""
-				c, err = inventory.New(addr)
+				c, err = inventory.New(addr, "")
 			})
 
 			It("should not return a client", func() {

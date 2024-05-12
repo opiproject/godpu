@@ -7,7 +7,7 @@ package frontend
 import (
 	"context"
 
-	"github.com/opiproject/godpu/cmd/storage/common"
+	"github.com/opiproject/godpu/cmd/common"
 	frontendclient "github.com/opiproject/godpu/storage/frontend"
 	"github.com/spf13/cobra"
 )
@@ -16,6 +16,7 @@ func newCreateNvmeNamespaceCommand() *cobra.Command {
 	id := ""
 	subsystem := ""
 	volume := ""
+
 	cmd := &cobra.Command{
 		Use:     "namespace",
 		Aliases: []string{"n"},
@@ -28,7 +29,10 @@ func newCreateNvmeNamespaceCommand() *cobra.Command {
 			timeout, err := c.Flags().GetDuration(common.TimeoutCmdLineArg)
 			cobra.CheckErr(err)
 
-			client, err := frontendclient.New(addr)
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			client, err := frontendclient.New(addr, tlsFiles)
 			cobra.CheckErr(err)
 
 			ctx, cancel := context.WithTimeout(context.Background(), timeout)
@@ -54,6 +58,7 @@ func newCreateNvmeNamespaceCommand() *cobra.Command {
 func newDeleteNvmeNamespaceCommand() *cobra.Command {
 	name := ""
 	allowMissing := false
+
 	cmd := &cobra.Command{
 		Use:     "namespace",
 		Aliases: []string{"d"},
@@ -66,7 +71,10 @@ func newDeleteNvmeNamespaceCommand() *cobra.Command {
 			timeout, err := c.Flags().GetDuration(common.TimeoutCmdLineArg)
 			cobra.CheckErr(err)
 
-			client, err := frontendclient.New(addr)
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			client, err := frontendclient.New(addr, tlsFiles)
 			cobra.CheckErr(err)
 
 			ctx, cancel := context.WithTimeout(context.Background(), timeout)

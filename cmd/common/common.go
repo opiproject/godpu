@@ -15,6 +15,9 @@ const AddrCmdLineArg = "addr"
 // TimeoutCmdLineArg cmdline arg name for timeout
 const TimeoutCmdLineArg = "timeout"
 
+// TLSFiles cmdline arg name for tls files
+const TLSFiles = "tlsfiles"
+
 // PrintResponse prints only response string into stdout without any
 // additional information
 func PrintResponse(response string) {

@@ -29,7 +29,7 @@ func TestNewLogicalBridge(t *testing.T) {
 
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			client, err := NewLogicalBridge(tt.address)
+			client, err := NewLogicalBridge(tt.address, "")
 			if (err != nil) == !tt.wantErr {
 				t.Errorf("expected err: %v, received: %v", tt.wantErr, err)
 			}
@@ -60,7 +60,7 @@ func TestNewBridgePort(t *testing.T) {
 
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			client, err := NewBridgePort(tt.address)
+			client, err := NewBridgePort(tt.address, "")
 			if (err != nil) == !tt.wantErr {
 				t.Errorf("expected err: %v, received: %v", tt.wantErr, err)
 			}
@@ -91,7 +91,7 @@ func TestNewVRF(t *testing.T) {
 
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			client, err := NewVRF(tt.address)
+			client, err := NewVRF(tt.address, "")
 			if (err != nil) == !tt.wantErr {
 				t.Errorf("expected err: %v, received: %v", tt.wantErr, err)
 			}
@@ -122,7 +122,7 @@ func TestNewSVI(t *testing.T) {
 
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			client, err := NewSVI(tt.address)
+			client, err := NewSVI(tt.address, "")
 			if (err != nil) == !tt.wantErr {
 				t.Errorf("expected err: %v, received: %v", tt.wantErr, err)
 			}

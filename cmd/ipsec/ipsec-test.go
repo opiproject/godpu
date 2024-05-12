@@ -7,6 +7,7 @@ package ipsec
 import (
 	"fmt"
 
+	"github.com/opiproject/godpu/cmd/common"
 	"github.com/opiproject/godpu/ipsec"
 	"github.com/spf13/cobra"
 )
@@ -14,7 +15,6 @@ import (
 // NewTestCommand returns the ipsec tests command
 func NewTestCommand() *cobra.Command {
 	var (
-		addr     string
 		pingaddr string
 	)
 	cmd := &cobra.Command{
@@ -22,13 +22,15 @@ func NewTestCommand() *cobra.Command {
 		Aliases: []string{"c"},
 		Short:   "Test ipsec functionality",
 		Args:    cobra.NoArgs,
-		Run: func(_ *cobra.Command, _ []string) {
+		Run: func(c *cobra.Command, _ []string) {
+			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
+			cobra.CheckErr(err)
+
 			res := ipsec.TestIpsec(addr, pingaddr)
 			fmt.Println(res)
 		},
 	}
 	flags := cmd.Flags()
-	flags.StringVar(&addr, "addr", "localhost:50151", "address or OPI gRPC server")
 	flags.StringVar(&pingaddr, "pingaddr", "localhost", "address of other tunnel end to Ping")
 	return cmd
 }

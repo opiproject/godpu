@@ -28,7 +28,7 @@ func TestNewClient(t *testing.T) {
 
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			client, err := New(tt.address)
+			client, err := New(tt.address, "")
 			if (err != nil) == !tt.wantErr {
 				t.Errorf("expected err: %v, received: %v", tt.wantErr, err)
 			}

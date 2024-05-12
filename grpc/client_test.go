@@ -23,7 +23,7 @@ var _ = Describe("gRPC", func() {
 		Context("using a non-empty address", func() {
 			BeforeEach(func() {
 				addr = "localhost:1234"
-				c, err = grpcOpi.New(addr)
+				c, err = grpcOpi.New(addr, "")
 			})
 
 			It("should return a client", func() {
@@ -36,7 +36,7 @@ var _ = Describe("gRPC", func() {
 			Context("and specifying a valid dialler", func() {
 				BeforeEach(func() {
 					dialler = diallerNoError
-					c, err = grpcOpi.NewWithDialler(addr, dialler)
+					c, err = grpcOpi.NewWithDialler(addr, dialler, "")
 				})
 
 				It("should return a client", func() {
@@ -49,7 +49,7 @@ var _ = Describe("gRPC", func() {
 			Context("and specifying an invalid dialler", func() {
 				BeforeEach(func() {
 					dialler = nil
-					c, err = grpcOpi.NewWithDialler(addr, dialler)
+					c, err = grpcOpi.NewWithDialler(addr, dialler, "")
 				})
 
 				It("should not return a client", func() {
@@ -64,7 +64,7 @@ var _ = Describe("gRPC", func() {
 		Context("using an empty address", func() {
 			BeforeEach(func() {
 				addr = ""
-				c, err = grpcOpi.New(addr)
+				c, err = grpcOpi.New(addr, "")
 			})
 
 			It("should not return a client", func() {
@@ -77,7 +77,7 @@ var _ = Describe("gRPC", func() {
 			Context("and specifying a valid dialler", func() {
 				BeforeEach(func() {
 					dialler = diallerNoError
-					c, err = grpcOpi.NewWithDialler(addr, dialler)
+					c, err = grpcOpi.NewWithDialler(addr, dialler, "")
 				})
 
 				It("should not return a client", func() {
@@ -91,7 +91,7 @@ var _ = Describe("gRPC", func() {
 			Context("and specifying an invalid dialler", func() {
 				BeforeEach(func() {
 					dialler = nil
-					c, err = grpcOpi.NewWithDialler(addr, dialler)
+					c, err = grpcOpi.NewWithDialler(addr, dialler, "")
 				})
 
 				It("should not return a client", func() {
@@ -116,7 +116,7 @@ var _ = Describe("gRPC", func() {
 		Context("and a connection can be created", func() {
 			BeforeEach(func() {
 				dialler = diallerNoError
-				c, _ := grpcOpi.NewWithDialler(addr, dialler)
+				c, _ := grpcOpi.NewWithDialler(addr, dialler, "")
 				conn, closer, err = c.NewConn()
 			})
 
@@ -136,7 +136,7 @@ var _ = Describe("gRPC", func() {
 		Context("and a connection cannot be created", func() {
 			BeforeEach(func() {
 				dialler = diallerWithError
-				c, _ := grpcOpi.NewWithDialler(addr, dialler)
+				c, _ := grpcOpi.NewWithDialler(addr, dialler, "")
 				conn, closer, err = c.NewConn()
 			})
 
