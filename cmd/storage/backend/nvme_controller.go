@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/opiproject/godpu/cmd/storage/common"
+	"github.com/opiproject/godpu/cmd/common"
 	backendclient "github.com/opiproject/godpu/storage/backend"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 	"github.com/spf13/cobra"
@@ -31,7 +31,10 @@ func newCreateNvmeControllerCommand() *cobra.Command {
 			timeout, err := c.Flags().GetDuration(common.TimeoutCmdLineArg)
 			cobra.CheckErr(err)
 
-			client, err := backendclient.New(addr)
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			client, err := backendclient.New(addr, tlsFiles)
 			cobra.CheckErr(err)
 
 			ctx, cancel := context.WithTimeout(context.Background(), timeout)
@@ -64,6 +67,7 @@ func newCreateNvmeControllerCommand() *cobra.Command {
 func newDeleteNvmeControllerCommand() *cobra.Command {
 	name := ""
 	allowMissing := false
+
 	cmd := &cobra.Command{
 		Use:     "controller",
 		Aliases: []string{"c"},
@@ -76,7 +80,10 @@ func newDeleteNvmeControllerCommand() *cobra.Command {
 			timeout, err := c.Flags().GetDuration(common.TimeoutCmdLineArg)
 			cobra.CheckErr(err)
 
-			client, err := backendclient.New(addr)
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			client, err := backendclient.New(addr, tlsFiles)
 			cobra.CheckErr(err)
 
 			ctx, cancel := context.WithTimeout(context.Background(), timeout)
@@ -97,6 +104,7 @@ func newDeleteNvmeControllerCommand() *cobra.Command {
 
 func newGetNvmeControllerCommand() *cobra.Command {
 	name := ""
+
 	cmd := &cobra.Command{
 		Use:     "controller",
 		Aliases: []string{"c"},
@@ -109,7 +117,10 @@ func newGetNvmeControllerCommand() *cobra.Command {
 			timeout, err := c.Flags().GetDuration(common.TimeoutCmdLineArg)
 			cobra.CheckErr(err)
 
-			client, err := backendclient.New(addr)
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			client, err := backendclient.New(addr, tlsFiles)
 			cobra.CheckErr(err)
 
 			ctx, cancel := context.WithTimeout(context.Background(), timeout)

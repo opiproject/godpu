@@ -11,13 +11,13 @@ import (
 	"log"
 	"time"
 
+	"github.com/opiproject/godpu/cmd/common"
 	"github.com/opiproject/godpu/network"
 	"github.com/spf13/cobra"
 )
 
 // CreateBridgePort creates an Bridge Port an OPI server
 func CreateBridgePort() *cobra.Command {
-	var addr string
 	var name string
 	var mac string
 	var bridgePortType string
@@ -27,9 +27,15 @@ func CreateBridgePort() *cobra.Command {
 		Use:   "create-bp",
 		Short: "Create a bridge port",
 		Long:  "Create a BridgePort with the specified name, MAC address, type, and VLAN IDs",
-		Run: func(_ *cobra.Command, _ []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-			evpnClient, err := network.NewBridgePort(addr)
+
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
+			cobra.CheckErr(err)
+			evpnClient, err := network.NewBridgePort(addr, tlsFiles)
 			if err != nil {
 				log.Fatalf("could not create gRPC client: %v", err)
 			}
@@ -49,7 +55,6 @@ func CreateBridgePort() *cobra.Command {
 	cmd.Flags().StringVar(&mac, "mac", "", "Specify the MAC address")
 	cmd.Flags().StringVarP(&bridgePortType, "type", "t", "", "Specify the type (access or trunk)")
 	cmd.Flags().StringSliceVar(&logicalBridges, "logicalBridges", []string{}, "Specify VLAN IDs (multiple values supported)")
-	cmd.Flags().StringVar(&addr, "addr", "localhost:50151", "address of OPI gRPC server")
 
 	if err := cmd.MarkFlagRequired("mac"); err != nil {
 		log.Fatalf("Error marking flag as required: %v", err)
@@ -70,7 +75,6 @@ func CreateBridgePort() *cobra.Command {
 
 // DeleteBridgePort delete an Bridge Port an OPI server
 func DeleteBridgePort() *cobra.Command {
-	var addr string
 	var name string
 	var allowMissing bool
 
@@ -78,9 +82,16 @@ func DeleteBridgePort() *cobra.Command {
 		Use:   "delete-bp",
 		Short: "Delete a bridge port",
 		Long:  "Delete a BridgePort with the specified name",
-		Run: func(_ *cobra.Command, _ []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-			evpnClient, err := network.NewBridgePort(addr)
+
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
+			cobra.CheckErr(err)
+
+			evpnClient, err := network.NewBridgePort(addr, tlsFiles)
 			if err != nil {
 				log.Fatalf("could not create gRPC client: %v", err)
 			}
@@ -97,23 +108,28 @@ func DeleteBridgePort() *cobra.Command {
 
 	cmd.Flags().StringVarP(&name, "name", "n", "", "Specify the name of the BridgePort")
 	cmd.Flags().BoolVarP(&allowMissing, "allowMissing", "a", false, "Specify if missing allowed")
-	cmd.Flags().StringVar(&addr, "addr", "localhost:50151", "address of OPI gRPC server")
 
 	return cmd
 }
 
 // GetBridgePort Get Bridge Port details
 func GetBridgePort() *cobra.Command {
-	var addr string
 	var name string
 
 	cmd := &cobra.Command{
 		Use:   "get-bp",
 		Short: "Show details of a bridge port",
 		Long:  "Show details of a BridgePort with the specified name",
-		Run: func(_ *cobra.Command, _ []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-			evpnClient, err := network.NewBridgePort(addr)
+
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
+			cobra.CheckErr(err)
+
+			evpnClient, err := network.NewBridgePort(addr, tlsFiles)
 			if err != nil {
 				log.Fatalf("could not create gRPC client: %v", err)
 			}
@@ -130,7 +146,6 @@ func GetBridgePort() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&name, "name", "n", "", "Specify the name of the BridgePort")
-	cmd.Flags().StringVar(&addr, "addr", "localhost:50151", "address of OPI gRPC server")
 
 	if err := cmd.MarkFlagRequired("name"); err != nil {
 		log.Fatalf("Error marking flag as required: %v", err)
@@ -140,16 +155,22 @@ func GetBridgePort() *cobra.Command {
 
 // ListBridgePorts list all the Bridge Port an OPI server
 func ListBridgePorts() *cobra.Command {
-	var addr string
 	var pageSize int32
 	var pageToken string
 
 	cmd := &cobra.Command{
 		Use:   "list-bps",
 		Short: "Show details of all bridge ports",
-		Run: func(_ *cobra.Command, _ []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-			evpnClient, err := network.NewBridgePort(addr)
+
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
+			cobra.CheckErr(err)
+
+			evpnClient, err := network.NewBridgePort(addr, tlsFiles)
 			if err != nil {
 				log.Fatalf("could not create gRPC client: %v", err)
 			}
@@ -178,13 +199,12 @@ func ListBridgePorts() *cobra.Command {
 	}
 	cmd.Flags().Int32VarP(&pageSize, "pagesize", "s", 0, "Specify page size")
 	cmd.Flags().StringVarP(&pageToken, "pagetoken", "t", "", "Specify the token")
-	cmd.Flags().StringVar(&addr, "addr", "localhost:50151", "address of OPI gRPC server")
+
 	return cmd
 }
 
 // UpdateBridgePort update the Bridge Port on OPI server
 func UpdateBridgePort() *cobra.Command {
-	var addr string
 	var name string
 	var updateMask []string
 	var allowMissing bool
@@ -193,9 +213,16 @@ func UpdateBridgePort() *cobra.Command {
 		Use:   "update-bp",
 		Short: "Update the bridge port",
 		Long:  "updates the Bridge Port with updated mask",
-		Run: func(_ *cobra.Command, _ []string) {
+		Run: func(c *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-			evpnClient, err := network.NewBridgePort(addr)
+
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
+			cobra.CheckErr(err)
+
+			evpnClient, err := network.NewBridgePort(addr, tlsFiles)
 			if err != nil {
 				log.Fatalf("could not create gRPC client: %v", err)
 			}
@@ -214,6 +241,6 @@ func UpdateBridgePort() *cobra.Command {
 	cmd.Flags().StringVar(&name, "name", "", "name of the Bridge Port")
 	cmd.Flags().StringSliceVar(&updateMask, "update-mask", nil, "update mask")
 	cmd.Flags().BoolVarP(&allowMissing, "allowMissing", "a", false, "allow the missing")
-	cmd.Flags().StringVar(&addr, "addr", "localhost:50151", "address of OPI gRPC server")
+
 	return cmd
 }

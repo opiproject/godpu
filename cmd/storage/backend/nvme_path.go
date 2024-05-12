@@ -8,7 +8,7 @@ import (
 	"context"
 	"net"
 
-	"github.com/opiproject/godpu/cmd/storage/common"
+	"github.com/opiproject/godpu/cmd/common"
 	backendclient "github.com/opiproject/godpu/storage/backend"
 	"github.com/spf13/cobra"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -39,6 +39,7 @@ func newCreateNvmePathTCPCommand() *cobra.Command {
 	controller := ""
 	var ip net.IP
 	var port uint16
+
 	cmd := &cobra.Command{
 		Use:     "tcp",
 		Aliases: []string{"t"},
@@ -51,7 +52,10 @@ func newCreateNvmePathTCPCommand() *cobra.Command {
 			timeout, err := c.Flags().GetDuration(common.TimeoutCmdLineArg)
 			cobra.CheckErr(err)
 
-			client, err := backendclient.New(addr)
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			client, err := backendclient.New(addr, tlsFiles)
 			cobra.CheckErr(err)
 
 			ctx, cancel := context.WithTimeout(context.Background(), timeout)
@@ -83,6 +87,7 @@ func newCreateNvmePathPcieCommand() *cobra.Command {
 	id := ""
 	controller := ""
 	bdf := ""
+
 	cmd := &cobra.Command{
 		Use:     "pcie",
 		Aliases: []string{"p"},
@@ -95,7 +100,10 @@ func newCreateNvmePathPcieCommand() *cobra.Command {
 			timeout, err := c.Flags().GetDuration(common.TimeoutCmdLineArg)
 			cobra.CheckErr(err)
 
-			client, err := backendclient.New(addr)
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			client, err := backendclient.New(addr, tlsFiles)
 			cobra.CheckErr(err)
 
 			ctx, cancel := context.WithTimeout(context.Background(), timeout)
@@ -120,6 +128,7 @@ func newCreateNvmePathPcieCommand() *cobra.Command {
 
 func newDeleteNvmePathCommand() *cobra.Command {
 	name := ""
+
 	allowMissing := false
 	cmd := &cobra.Command{
 		Use:     "path",
@@ -133,7 +142,10 @@ func newDeleteNvmePathCommand() *cobra.Command {
 			timeout, err := c.Flags().GetDuration(common.TimeoutCmdLineArg)
 			cobra.CheckErr(err)
 
-			client, err := backendclient.New(addr)
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			client, err := backendclient.New(addr, tlsFiles)
 			cobra.CheckErr(err)
 
 			ctx, cancel := context.WithTimeout(context.Background(), timeout)
@@ -154,6 +166,7 @@ func newDeleteNvmePathCommand() *cobra.Command {
 
 func newGetNvmePathCommand() *cobra.Command {
 	name := ""
+
 	cmd := &cobra.Command{
 		Use:     "path",
 		Aliases: []string{"p"},
@@ -166,7 +179,10 @@ func newGetNvmePathCommand() *cobra.Command {
 			timeout, err := c.Flags().GetDuration(common.TimeoutCmdLineArg)
 			cobra.CheckErr(err)
 
-			client, err := backendclient.New(addr)
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			client, err := backendclient.New(addr, tlsFiles)
 			cobra.CheckErr(err)
 
 			ctx, cancel := context.WithTimeout(context.Background(), timeout)
@@ -180,7 +196,6 @@ func newGetNvmePathCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&name, "name", "", "name of path to get")
-
 	cobra.CheckErr(cmd.MarkFlagRequired("name"))
 
 	return cmd

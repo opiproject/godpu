@@ -24,8 +24,8 @@ type Client struct {
 }
 
 // New creates a new instance of Client
-func New(addr string) (*Client, error) {
-	connector, err := grpcOpi.New(addr)
+func New(addr string, tls string) (*Client, error) {
+	connector, err := grpcOpi.New(addr, tls)
 	if err != nil {
 		return nil, err
 	}

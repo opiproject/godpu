@@ -7,7 +7,7 @@ package frontend
 import (
 	"context"
 
-	"github.com/opiproject/godpu/cmd/storage/common"
+	"github.com/opiproject/godpu/cmd/common"
 	frontendclient "github.com/opiproject/godpu/storage/frontend"
 	"github.com/spf13/cobra"
 )
@@ -19,6 +19,7 @@ func newCreateVirtioBlkCommand() *cobra.Command {
 	var pf uint
 	var vf uint
 	var maxIoQPS uint
+
 	cmd := &cobra.Command{
 		Use:     "blk",
 		Aliases: []string{"b"},
@@ -31,7 +32,10 @@ func newCreateVirtioBlkCommand() *cobra.Command {
 			timeout, err := c.Flags().GetDuration(common.TimeoutCmdLineArg)
 			cobra.CheckErr(err)
 
-			client, err := frontendclient.New(addr)
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			client, err := frontendclient.New(addr, tlsFiles)
 			cobra.CheckErr(err)
 
 			ctx, cancel := context.WithTimeout(context.Background(), timeout)
@@ -61,6 +65,7 @@ func newCreateVirtioBlkCommand() *cobra.Command {
 func newDeleteVirtioBlkCommand() *cobra.Command {
 	name := ""
 	allowMissing := false
+
 	cmd := &cobra.Command{
 		Use:     "blk",
 		Aliases: []string{"b"},
@@ -73,7 +78,10 @@ func newDeleteVirtioBlkCommand() *cobra.Command {
 			timeout, err := c.Flags().GetDuration(common.TimeoutCmdLineArg)
 			cobra.CheckErr(err)
 
-			client, err := frontendclient.New(addr)
+			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
+			cobra.CheckErr(err)
+
+			client, err := frontendclient.New(addr, tlsFiles)
 			cobra.CheckErr(err)
 
 			ctx, cancel := context.WithTimeout(context.Background(), timeout)

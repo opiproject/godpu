@@ -28,8 +28,8 @@ type InvClient interface {
 }
 
 // New creates an inventory client for use with OPI server at the given address
-func New(addr string) (InvClient, error) {
-	c, err := grpcOpi.New(addr)
+func New(addr string, tls string) (InvClient, error) {
+	c, err := grpcOpi.New(addr, tls)
 	if err != nil {
 		return nil, err
 	}

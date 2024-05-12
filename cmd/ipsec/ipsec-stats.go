@@ -8,27 +8,26 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/opiproject/godpu/cmd/common"
 	"github.com/opiproject/godpu/ipsec"
 	"github.com/spf13/cobra"
 )
 
 // NewStatsCommand returns the ipsec stats command
 func NewStatsCommand() *cobra.Command {
-	var (
-		addr string
-	)
 	cmd := &cobra.Command{
 		Use:     "stats",
 		Aliases: []string{"c"},
 		Short:   "Queries ipsec statistics",
 		Args:    cobra.NoArgs,
-		Run: func(_ *cobra.Command, _ []string) {
+		Run: func(c *cobra.Command, _ []string) {
+			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
+			cobra.CheckErr(err)
+
 			res := ipsec.Stats(addr)
 			fmt.Println(res)
 		},
 	}
-	flags := cmd.Flags()
-	flags.StringVar(&addr, "addr", "localhost:50151", "address or OPI gRPC server")
 	return cmd
 }
 
