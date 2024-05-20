@@ -9,6 +9,7 @@ package network
 import (
 	"fmt"
 	"log"
+	"net"
 
 	"github.com/PraserX/ipconv"
 	pb "github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go"
@@ -57,7 +58,7 @@ func PrintBP(bp *pb.BridgePort) {
 	log.Println("name:", bp.GetName())
 	log.Println("status:", bp.GetStatus().GetOperStatus().String())
 	log.Println("ptype:", bp.GetSpec().GetPtype())
-	log.Println("mac:", bp.GetSpec().GetMacAddress())
+	log.Println("MacAddress:", net.HardwareAddr(bp.GetSpec().GetMacAddress()).String())
 	log.Println("bridges:", bp.GetSpec().GetLogicalBridges())
 	log.Println("Component Status:")
 	log.Println(ComposeComponentsInfo(bp.GetStatus().GetComponents()))
@@ -69,7 +70,7 @@ func PrintSvi(svi *pb.Svi) {
 	log.Println("status:", svi.GetStatus().GetOperStatus().String())
 	log.Println("Vrf:", svi.GetSpec().GetVrf())
 	log.Println("LogicalBridge:", svi.GetSpec().GetLogicalBridge())
-	log.Println("MacAddress:", svi.GetSpec().GetMacAddress())
+	log.Println("MacAddress:", net.HardwareAddr(svi.GetSpec().GetMacAddress()).String())
 	log.Println("EnableBgp:", svi.GetSpec().GetEnableBgp())
 	log.Println("GwIPs:", ComposeGwIps(svi.GetSpec().GetGwIpPrefix()))
 	log.Println("remoteAS:", svi.GetSpec().GetRemoteAs())
