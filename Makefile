@@ -56,22 +56,4 @@ go-fmt:
 mock-generate:
 	@echo "  >  Starting mock code generation..."
 	# Generate mocks for exported interfaces
-	mockery --config=mocks/.mockery.yaml --name=Connector --dir=grpc
-	mockery --config=mocks/.mockery.yaml --name=InvClient --dir=inventory
-	mockery --config=mocks/.mockery.yaml --name=EvpnClient --dir=network
-
-	# Generate mocks for imported protobuf clients too
-	mockery --config=mocks/.mockery.yaml --name=IPsecServiceClient --srcpkg=github.com/opiproject/opi-api/security/v1/gen/go
-	mockery --config=mocks/.mockery.yaml --name=InventorySvcClient --srcpkg=github.com/opiproject/opi-api/inventory/v1/gen/go
-	mockery --config=mocks/.mockery.yaml --name=SviServiceClient --srcpkg=github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go
-	mockery --config=mocks/.mockery.yaml --name=VrfServiceClient --srcpkg=github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go
-	mockery --config=mocks/.mockery.yaml --name=BridgePortServiceClient --srcpkg=github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go
-	mockery --config=mocks/.mockery.yaml --name=LogicalBridgeServiceClient --srcpkg=github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go
-	mockery --config=mocks/.mockery.yaml --name=MiddleendEncryptionServiceClient --srcpkg=github.com/opiproject/opi-api/storage/v1alpha1/gen/go
-	mockery --config=mocks/.mockery.yaml --name=MiddleendQosVolumeServiceClient --srcpkg=github.com/opiproject/opi-api/storage/v1alpha1/gen/go
-	mockery --config=mocks/.mockery.yaml --name=NvmeRemoteControllerServiceClient --srcpkg=github.com/opiproject/opi-api/storage/v1alpha1/gen/go
-	mockery --config=mocks/.mockery.yaml --name=NullVolumeServiceClient --srcpkg=github.com/opiproject/opi-api/storage/v1alpha1/gen/go
-	mockery --config=mocks/.mockery.yaml --name=AioVolumeServiceClient --srcpkg=github.com/opiproject/opi-api/storage/v1alpha1/gen/go
-	mockery --config=mocks/.mockery.yaml --name=FrontendNvmeServiceClient --srcpkg=github.com/opiproject/opi-api/storage/v1alpha1/gen/go
-	mockery --config=mocks/.mockery.yaml --name=FrontendVirtioBlkServiceClient --srcpkg=github.com/opiproject/opi-api/storage/v1alpha1/gen/go
-	mockery --config=mocks/.mockery.yaml --name=FrontendVirtioScsiServiceClient --srcpkg=github.com/opiproject/opi-api/storage/v1alpha1/gen/go
+	mockery --config=mocks/.mockery.yaml
