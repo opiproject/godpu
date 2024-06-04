@@ -56,7 +56,7 @@ func CreateSVI() *cobra.Command {
 	}
 	cmd.Flags().StringVar(&name, "name", "", "SVI Name")
 	cmd.Flags().StringVar(&vrf, "vrf", "", "Must be unique")
-	cmd.Flags().StringVar(&logicalBridge, "logicalBridge", "", "Pair of vni and vlan_id must be unique")
+	cmd.Flags().StringVar(&logicalBridge, "logical-bridge", "", "Pair of vni and vlan_id must be unique")
 	cmd.Flags().StringVar(&mac, "mac", "", "GW MAC address, random MAC assigned if not specified")
 	cmd.Flags().StringSliceVar(&gwIPs, "gw-ips", nil, "List of GW IP addresses")
 	cmd.Flags().BoolVar(&ebgp, "ebgp", false, "Enable eBGP in VRF for tenants connected through this SVI")
@@ -66,7 +66,7 @@ func CreateSVI() *cobra.Command {
 		log.Fatalf("Error marking flag as required: %v", err)
 	}
 
-	if err := cmd.MarkFlagRequired("logicalBridge"); err != nil {
+	if err := cmd.MarkFlagRequired("logical-bridge"); err != nil {
 		log.Fatalf("Error marking flag as required: %v", err)
 	}
 
@@ -113,7 +113,7 @@ func DeleteSVI() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&name, "name", "n", "", "Specify the name of the BridgePort")
-	cmd.Flags().BoolVarP(&allowMissing, "allowMissing", "a", false, "Specify the name of the BridgePort")
+	cmd.Flags().BoolVarP(&allowMissing, "allow-missing", "a", false, "Specify the name of the BridgePort")
 
 	if err := cmd.MarkFlagRequired("name"); err != nil {
 		log.Fatalf("Error marking flag as required: %v", err)
@@ -245,7 +245,7 @@ func UpdateSVI() *cobra.Command {
 		},
 	}
 	cmd.Flags().StringSliceVar(&updateMask, "update-mask", nil, "update mask")
-	cmd.Flags().BoolVarP(&allowMissing, "allowMissing", "a", false, "allow the missing")
+	cmd.Flags().BoolVarP(&allowMissing, "allow-missing", "a", false, "allow the missing")
 
 	return cmd
 }
