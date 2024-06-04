@@ -28,7 +28,7 @@ func TestCreateBridgePort(t *testing.T) {
 		Spec: &pb.BridgePortSpec{
 			MacAddress:     macBytes,
 			Ptype:          pb.BridgePortType_BRIDGE_PORT_TYPE_ACCESS,
-			LogicalBridges: []string{"lb1", "lb2"},
+			LogicalBridges: []string{"//network.opiproject.org/bridges/lb1", "//network.opiproject.org/bridges/lb2"},
 		},
 	}
 

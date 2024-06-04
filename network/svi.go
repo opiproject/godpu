@@ -31,6 +31,9 @@ func (c evpnClientImpl) CreateSvi(ctx context.Context, name string, vrf string, 
 	if vrf == "" || mac == "" || len(gwIPs) == 0 {
 		return nil, errors.New("one of the required together parameter [vrf, mac, gwIPs] wasn't passed ")
 	}
+	vrfName := resourceIDToFullName("vrfs", vrf)
+
+	lBridge := resourceIDToFullName("bridges", logicalBridge)
 
 	gwPrefixes, err := parseIPPrefixes(gwIPs)
 	if err != nil {
@@ -46,8 +49,8 @@ func (c evpnClientImpl) CreateSvi(ctx context.Context, name string, vrf string, 
 		SviId: name,
 		Svi: &pb.Svi{
 			Spec: &pb.SviSpec{
-				Vrf:           vrf,
-				LogicalBridge: logicalBridge,
+				Vrf:           vrfName,
+				LogicalBridge: lBridge,
 				MacAddress:    macBytes,
 				GwIpPrefix:    gwPrefixes,
 				EnableBgp:     ebgp,
