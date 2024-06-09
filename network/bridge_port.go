@@ -20,21 +20,32 @@ import (
 // CreateBridgePort creates an Bridge Port an OPI server
 func (c evpnClientImpl) CreateBridgePort(ctx context.Context, name string, mac string, bridgePortType string, logicalBridges []string) (*pb.BridgePort, error) {
 	var typeOfPort pb.BridgePortType
+
 	conn, closer, err := c.NewConn()
 	if err != nil {
 		log.Printf("error creating connection: %s\n", err)
 		return nil, err
 	}
 	defer closer()
+
 	if mac == "" || bridgePortType == "" {
 		return nil, errors.New("required parameter [mac, bridgePortType] wasn't passed ")
 	}
+
+	var lBridges = make([]string, 0)
+	for _, lb := range logicalBridges {
+		str := resourceIDToFullName("bridges", lb)
+		lBridges = append(lBridges, str)
+	}
+
 	client := c.getEvpnBridgePortClient(conn)
+
 	macBytes, err := net.ParseMAC(mac)
 	if err != nil {
 		fmt.Println("Error parsing MAC address:", err)
 		return nil, err
 	}
+
 	switch bridgePortType {
 	case "access":
 		typeOfPort = pb.BridgePortType_BRIDGE_PORT_TYPE_ACCESS
@@ -49,7 +60,7 @@ func (c evpnClientImpl) CreateBridgePort(ctx context.Context, name string, mac s
 			Spec: &pb.BridgePortSpec{
 				MacAddress:     macBytes,
 				Ptype:          typeOfPort,
-				LogicalBridges: logicalBridges,
+				LogicalBridges: lBridges,
 			},
 		},
 	})

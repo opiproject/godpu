@@ -21,5 +21,7 @@ const TLSFiles = "tlsfiles"
 // PrintResponse prints only response string into stdout without any
 // additional information
 func PrintResponse(response string) {
-	fmt.Fprintln(os.Stdout, response)
+	if _, err := fmt.Fprintln(os.Stdout, response); err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to write to stdout: %v\n", err)
+	}
 }

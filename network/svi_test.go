@@ -38,8 +38,8 @@ func TestCreateSvi(t *testing.T) {
 
 	testSvi := &pb.Svi{
 		Spec: &pb.SviSpec{
-			Vrf:           "vrf1",
-			LogicalBridge: "logical1",
+			Vrf:           "//network.opiproject.org/vrfs/vrf1",
+			LogicalBridge: "//network.opiproject.org/bridges/logical1",
 			MacAddress:    macBytes,
 			GwIpPrefix:    wantGWPrefixes,
 			EnableBgp:     true,
