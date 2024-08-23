@@ -1,0 +1,40 @@
+with-expecter: True
+boilerplate-file: mocks/boilerplate.txt
+packages:
+  github.com/opiproject/godpu/grpc:
+    interfaces:
+      Connector:
+        config:
+          dir: grpc
+  github.com/opiproject/godpu/inventory:
+    interfaces:
+      InvClient:
+        config:
+          dir: inventory
+  github.com/opiproject/godpu/network:
+    interfaces:
+      EvpnClient:
+        config:
+          dir: network
+  github.com/opiproject/godpu/ipsec:
+    interfaces:
+      IPsecClient:
+        config:
+          SrcPkg: github.com/opiproject/opi-api/security/v1/gen/go
+  github.com/opiproject/godpu/mocks:
+    interfaces:
+      InventorySvcClient:
+        config:
+          SrcPkg: github.com/opiproject/opi-api/common/v1/gen/go
+      SviServiceClient:
+        config:
+          SrcPkg: github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go
+      VrfServiceClient:
+        config:
+          SrcPkg: github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go
+      BridgePortServiceClient:
+        config:
+          SrcPkg: github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go
+      LogicalBridgeServiceClient:
+        config:
+          SrcPkg: github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go
