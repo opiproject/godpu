@@ -86,7 +86,7 @@ func newDeleteNvmeNamespaceCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&name, "name", "", "name of deleted namespace")
-	cmd.Flags().BoolVar(&allowMissing, "allowMissing", false, "cmd succeeds if attempts to delete a resource that is not present")
+	cmd.Flags().BoolVar(&allowMissing, "allow-missing", false, "cmd succeeds if attempts to delete a resource that is not present")
 
 	cobra.CheckErr(cmd.MarkFlagRequired("name"))
 
