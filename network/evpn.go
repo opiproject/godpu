@@ -10,7 +10,9 @@ import (
 	"errors"
 
 	grpcOpi "github.com/opiproject/godpu/grpc"
+
 	pb "github.com/opiproject/opi-api/network/evpn-gw/v1alpha1/gen/go"
+	pm "github.com/opiproject/opi-evpn-bridge/pkg/netlink/proto/gen/go"
 	"go.einride.tech/aip/resourcename"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -28,12 +30,16 @@ type PbEvpnVRFClientGetter func(c grpc.ClientConnInterface) pb.VrfServiceClient
 // PbEvpnSVIClientGetter defines the function type used to retrieve an evpn protobuf SviServiceClient
 type PbEvpnSVIClientGetter func(c grpc.ClientConnInterface) pb.SviServiceClient
 
+// PbEvpnMgmt defines the function type used to retrieve an evpn protobuf ManagementServiceClient
+type PbEvpnMgmt func(c grpc.ClientConnInterface) pm.ManagementServiceClient
+
 type evpnClientImpl struct {
 	// getEvpnClient PbEvpnClientGetter
 	getEvpnLogicalBridgeClient PbEvpnLogicalBridgeClientGetter
 	getEvpnBridgePortClient    PbEvpnBridgePortClientGetter
 	getEvpnVRFClient           PbEvpnVRFClientGetter
 	getEvpnSVIClient           PbEvpnSVIClientGetter
+	getEvpnMgmtClient          PbEvpnMgmt
 	grpcOpi.Connector
 }
 
@@ -67,6 +73,9 @@ type EvpnClient interface {
 	GetSvi(ctx context.Context, name string) (*pb.Svi, error)
 	ListSvis(ctx context.Context, pageSize int32, pageToken string) (*pb.ListSvisResponse, error)
 	UpdateSvi(ctx context.Context, name string, updateMask []string, allowMissing bool) (*pb.Svi, error)
+
+	// Management Interface
+	DumpNetlinkDB(ctx context.Context, details bool) (*pm.DumpNetlinkDbResult, error)
 }
 
 func resourceIDToFullName(container string, resourceID string) string {
@@ -102,6 +111,35 @@ func NewLogicalBridgeWithArgs(c grpcOpi.Connector, getter PbEvpnLogicalBridgeCli
 	return evpnClientImpl{
 		getEvpnLogicalBridgeClient: getter,
 		Connector:                  c,
+	}, nil
+}
+
+// NewManagement creates an evpn Logical Bridge client for use with OPI server at the given address
+func NewManagement(addr string, tls string) (EvpnClient, error) {
+	c, err := grpcOpi.New(addr, tls)
+	if err != nil {
+		return nil, err
+	}
+
+	// Default is to use the OPI grpc client and the pb client generated from the protobuf spec
+
+	return NewManagementWithArgs(c, pm.NewManagementServiceClient)
+}
+
+// NewManagementWithArgs creates an evpn Mgmt client for use with OPI server using the given gRPC client and the given function for
+// retrieving an evpn protobuf client
+func NewManagementWithArgs(c grpcOpi.Connector, getter PbEvpnMgmt) (EvpnClient, error) {
+	if c == nil {
+		return nil, errors.New("grpc connector is nil")
+	}
+
+	if getter == nil {
+		return nil, errors.New("protobuf client getter is nil")
+	}
+
+	return evpnClientImpl{
+		getEvpnMgmtClient: getter,
+		Connector:         c,
 	}, nil
 }
 
