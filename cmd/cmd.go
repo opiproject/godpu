@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"github.com/opiproject/godpu/cmd/common"
+	"github.com/opiproject/godpu/cmd/evpnipsec"
 	"github.com/opiproject/godpu/cmd/inventory"
 	"github.com/opiproject/godpu/cmd/ipsec"
 	"github.com/opiproject/godpu/cmd/network"
@@ -37,7 +38,7 @@ func NewCommand() *cobra.Command {
 	c.AddCommand(ipsec.NewIPSecCommand())
 	c.AddCommand(storage.NewStorageCommand())
 	c.AddCommand(network.NewEvpnCommand())
-
+	c.AddCommand(evpnipsec.NewEvpnIPSecCommand())
 	flags := c.PersistentFlags()
 	flags.String(common.AddrCmdLineArg, "localhost:50151", "address of OPI gRPC server")
 	flags.String(common.TLSFiles, "", "TLS files in client_cert:client_key:ca_cert format.")
