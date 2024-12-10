@@ -49,6 +49,8 @@ func NewEvpnCommand() *cobra.Command {
 	cmd.AddCommand(GetSVI())
 	cmd.AddCommand(ListSVIs())
 	cmd.AddCommand(UpdateSVI())
+	// Mgmt cli's
+	cmd.AddCommand(DumpNetlinkDatabase())
 
 	return cmd
 }
