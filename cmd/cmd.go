@@ -16,7 +16,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// NewCommand handles the cli for evpn, ipsec, invetory and storage
+// NewCommand handles the cli for network, ipsec, invetory and storage
 func NewCommand() *cobra.Command {
 	//
 	// This is the root command for the CLI
@@ -36,7 +36,7 @@ func NewCommand() *cobra.Command {
 	c.AddCommand(inventory.NewInventoryCommand())
 	c.AddCommand(ipsec.NewIPSecCommand())
 	c.AddCommand(storage.NewStorageCommand())
-	c.AddCommand(network.NewEvpnCommand())
+	c.AddCommand(network.NewNetworkCommand())
 
 	flags := c.PersistentFlags()
 	flags.String(common.AddrCmdLineArg, "localhost:50151", "address of OPI gRPC server")

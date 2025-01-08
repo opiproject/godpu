@@ -3,8 +3,8 @@
 // Copyright (c) 2022-2023 Dell Inc, or its subsidiaries.
 // Copyright (c) 2024 Ericsson AB.
 
-// Package network implements the network related CLI commands
-package network
+// Package evpn implements the evpn network related CLI commands
+package evpn
 
 import (
 	"context"
@@ -16,21 +16,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// CreateSVI create svi on OPI server
-func CreateSVI() *cobra.Command {
+// CreateVRF Create vrf on OPI Server
+func CreateVRF() *cobra.Command {
 	var name string
-	var vrf string
-	var logicalBridge string
-	var mac string
-	var gwIPs []string
-	var ebgp bool
-	var remoteAS uint32
-
+	var vni uint32
+	var loopback string
+	var vtep string
 	cmd := &cobra.Command{
-		Use:   "create-svi",
-		Short: "Create a SVI",
-		Long:  "Create an  using name, vrf,logical bridges, mac, gateway ip's and enable bgp ",
+		Use:   "create-vrf",
+		Short: "Create a VRF",
 		Run: func(c *cobra.Command, _ []string) {
+			var vniparam *uint32
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 
 			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
@@ -39,55 +35,41 @@ func CreateSVI() *cobra.Command {
 			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
 			cobra.CheckErr(err)
 
-			evpnClient, err := network.NewSVI(addr, tlsFiles)
+			evpnClient, err := network.NewVRF(addr, tlsFiles)
 			if err != nil {
 				log.Fatalf("could not create gRPC client: %v", err)
 			}
 			defer cancel()
-
-			svi, err := evpnClient.CreateSvi(ctx, name, vrf, logicalBridge, mac, gwIPs, ebgp, remoteAS)
-			if err != nil {
-				log.Fatalf("failed to create logical bridge: %v", err)
+			if vni != 0 {
+				vniparam = &vni
 			}
-
-			log.Println("Created SVI:")
-			PrintSvi(svi)
+			vrf, err := evpnClient.CreateVrf(ctx, name, vniparam, loopback, vtep)
+			if err != nil {
+				log.Fatalf("failed to create vrf: %v", err)
+			}
+			log.Println("Created VRF:")
+			PrintVrf(vrf)
 		},
 	}
-	cmd.Flags().StringVar(&name, "name", "", "SVI Name")
-	cmd.Flags().StringVar(&vrf, "vrf", "", "Must be unique")
-	cmd.Flags().StringVar(&logicalBridge, "logicalBridge", "", "Pair of vni and vlan_id must be unique")
-	cmd.Flags().StringVar(&mac, "mac", "", "GW MAC address, random MAC assigned if not specified")
-	cmd.Flags().StringSliceVar(&gwIPs, "gw-ips", nil, "List of GW IP addresses")
-	cmd.Flags().BoolVar(&ebgp, "ebgp", false, "Enable eBGP in VRF for tenants connected through this SVI")
-	cmd.Flags().Uint32VarP(&remoteAS, "remote-as", "", 0, "The remote AS")
 
-	if err := cmd.MarkFlagRequired("vrf"); err != nil {
-		log.Fatalf("Error marking flag as required: %v", err)
-	}
+	cmd.Flags().StringVarP(&name, "name", "n", "", "Descriptive name")
+	cmd.Flags().Uint32VarP(&vni, "vni", "v", 0, "Must be unique ")
+	cmd.Flags().StringVar(&loopback, "loopback", "", "Loopback IP address")
+	cmd.Flags().StringVar(&vtep, "vtep", "", "VTEP IP address")
 
-	if err := cmd.MarkFlagRequired("logicalBridge"); err != nil {
-		log.Fatalf("Error marking flag as required: %v", err)
-	}
-
-	if err := cmd.MarkFlagRequired("mac"); err != nil {
-		log.Fatalf("Error marking flag as required: %v", err)
-	}
-
-	if err := cmd.MarkFlagRequired("gw-ips"); err != nil {
+	if err := cmd.MarkFlagRequired("loopback"); err != nil {
 		log.Fatalf("Error marking flag as required: %v", err)
 	}
 	return cmd
 }
 
-// DeleteSVI delete the svi on OPI server
-func DeleteSVI() *cobra.Command {
+// DeleteVRF update the vrf on OPI server
+func DeleteVRF() *cobra.Command {
 	var name string
 	var allowMissing bool
-
 	cmd := &cobra.Command{
-		Use:   "delete-svi",
-		Short: "Delete a SVI",
+		Use:   "delete-vrf",
+		Short: "Delete a VRF",
 		Run: func(c *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 
@@ -97,37 +79,32 @@ func DeleteSVI() *cobra.Command {
 			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
 			cobra.CheckErr(err)
 
-			evpnClient, err := network.NewSVI(addr, tlsFiles)
+			evpnClient, err := network.NewVRF(addr, tlsFiles)
 			if err != nil {
 				log.Fatalf("could not create gRPC client: %v", err)
 			}
 			defer cancel()
 
-			_, err = evpnClient.DeleteSvi(ctx, name, allowMissing)
+			// grpc call to create the bridge port
+			_, err = evpnClient.DeleteVrf(ctx, name, allowMissing)
 			if err != nil {
-				log.Fatalf("failed to create logical bridge: %v", err)
+				log.Fatalf("DeleteVRF: Error occurred while creating Bridge Port: %q", err)
 			}
-
-			log.Printf("Deleted SVI: %s\n", name)
+			log.Printf("Deleted VRF: %s\n", name)
 		},
 	}
 
 	cmd.Flags().StringVarP(&name, "name", "n", "", "Specify the name of the BridgePort")
 	cmd.Flags().BoolVarP(&allowMissing, "allowMissing", "a", false, "Specify the name of the BridgePort")
-
-	if err := cmd.MarkFlagRequired("name"); err != nil {
-		log.Fatalf("Error marking flag as required: %v", err)
-	}
 	return cmd
 }
 
-// GetSVI get svi details from OPI server
-func GetSVI() *cobra.Command {
+// GetVRF get vrf details from OPI server
+func GetVRF() *cobra.Command {
 	var name string
-
 	cmd := &cobra.Command{
-		Use:   "get-svi",
-		Short: "Show details of a SVI",
+		Use:   "get-vrf",
+		Short: "Show details of a VRF",
 		Run: func(c *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 
@@ -137,37 +114,37 @@ func GetSVI() *cobra.Command {
 			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
 			cobra.CheckErr(err)
 
-			evpnClient, err := network.NewSVI(addr, tlsFiles)
+			evpnClient, err := network.NewVRF(addr, tlsFiles)
 			if err != nil {
 				log.Fatalf("could not create gRPC client: %v", err)
 			}
 			defer cancel()
 
-			svi, err := evpnClient.GetSvi(ctx, name)
+			// grpc call to create the bridge port
+			vrf, err := evpnClient.GetVrf(ctx, name)
 			if err != nil {
-				log.Fatalf("GetSVI: Error occurred while creating Bridge Port: %q", err)
+				log.Fatalf("DeleteVRF: Error occurred while creating Bridge Port: %q", err)
 			}
-			log.Println("Get SVI:")
-			PrintSvi(svi)
+
+			log.Println("Get VRF:")
+			PrintVrf(vrf)
 		},
 	}
 
-	cmd.Flags().StringVarP(&name, "name", "n", "", "Specify the name of the BridgePort")
-
+	cmd.Flags().StringVarP(&name, "name", "n", "", "Specify the name of the vrf")
 	if err := cmd.MarkFlagRequired("name"); err != nil {
 		log.Fatalf("Error marking flag as required: %v", err)
 	}
 	return cmd
 }
 
-// ListSVIs get all the svi's from OPI server
-func ListSVIs() *cobra.Command {
+// ListVRFs list all vrf's with details from OPI server
+func ListVRFs() *cobra.Command {
 	var pageSize int32
 	var pageToken string
-
 	cmd := &cobra.Command{
-		Use:   "list-svis",
-		Short: "Show details of all SVIs",
+		Use:   "list-vrfs",
+		Short: "Show details of all Vrfs",
 		Run: func(c *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 
@@ -177,21 +154,21 @@ func ListSVIs() *cobra.Command {
 			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
 			cobra.CheckErr(err)
 
-			evpnClient, err := network.NewSVI(addr, tlsFiles)
+			evpnClient, err := network.NewVRF(addr, tlsFiles)
 			if err != nil {
 				log.Fatalf("could not create gRPC client: %v", err)
 			}
 			defer cancel()
 			for {
-				resp, err := evpnClient.ListSvis(ctx, pageSize, pageToken)
+				resp, err := evpnClient.ListVrfs(ctx, pageSize, pageToken)
 				if err != nil {
 					log.Fatalf("Failed to get items: %v", err)
 				}
 				// Process the server response
-				log.Println("List SVIs:")
-				for _, svi := range resp.Svis {
-					log.Println("SVI with:")
-					PrintSvi(svi)
+				log.Println("list VRFs:")
+				for _, vrf := range resp.Vrfs {
+					log.Println("VRF with:")
+					PrintVrf(vrf)
 				}
 
 				// Check if there are more pages to retrieve
@@ -204,48 +181,44 @@ func ListSVIs() *cobra.Command {
 			}
 		},
 	}
-
-	cmd.Flags().Int32VarP(&pageSize, "pageSize", "s", 0, "Specify the name of the BridgePort")
-	cmd.Flags().StringVarP(&pageToken, "pageToken", "p", "", "Specify the page token")
-
+	cmd.Flags().Int32VarP(&pageSize, "pagesize", "s", 0, "Specify page size")
+	cmd.Flags().StringVarP(&pageToken, "pagetoken", "t", "", "Specify the token")
 	return cmd
 }
 
-// UpdateSVI update the svi on OPI server
-func UpdateSVI() *cobra.Command {
+// UpdateVRF update the vrf on OPI server
+func UpdateVRF() *cobra.Command {
 	var name string
 	var updateMask []string
 	var allowMissing bool
-
 	cmd := &cobra.Command{
-		Use:   "update-svi",
-		Short: "update the SVI",
+		Use:   "update-vrf",
+		Short: "update the VRF",
 		Run: func(c *cobra.Command, _ []string) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-
 			tlsFiles, err := c.Flags().GetString(common.TLSFiles)
 			cobra.CheckErr(err)
 
 			addr, err := c.Flags().GetString(common.AddrCmdLineArg)
 			cobra.CheckErr(err)
 
-			evpnClient, err := network.NewSVI(addr, tlsFiles)
+			evpnClient, err := network.NewVRF(addr, tlsFiles)
 			if err != nil {
 				log.Fatalf("could not create gRPC client: %v", err)
 			}
 			defer cancel()
 
 			// grpc call to create the bridge port
-			svi, err := evpnClient.UpdateSvi(ctx, name, updateMask, allowMissing)
+			vrf, err := evpnClient.UpdateVrf(ctx, name, updateMask, allowMissing)
 			if err != nil {
 				log.Fatalf("GetBridgePort: Error occurred while creating Bridge Port: %q", err)
 			}
-			log.Println("Updated SVI:")
-			PrintSvi(svi)
+			log.Println("Updated VRF:")
+			PrintVrf(vrf)
 		},
 	}
+	cmd.Flags().StringVarP(&name, "name", "n", "", "Specify the name of the vrf")
 	cmd.Flags().StringSliceVar(&updateMask, "update-mask", nil, "update mask")
 	cmd.Flags().BoolVarP(&allowMissing, "allowMissing", "a", false, "allow the missing")
-
 	return cmd
 }
