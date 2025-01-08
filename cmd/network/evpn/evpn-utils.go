@@ -4,7 +4,7 @@
 // Copyright (c) 2024 Ericsson AB.
 
 // Package network implements the network related CLI commands
-package network
+package evpn
 
 import (
 	"fmt"

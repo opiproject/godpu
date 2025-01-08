@@ -31,7 +31,7 @@ go-build:
 
 go-get:
 	@echo "  >  Checking if there are any missing dependencies..."
-	@CGO_ENABLED=0 go get .
+	@CGO_ENABLED=0 go get ./...
 
 go-test:
 	@echo "  >  Running ginkgo test suites..."
