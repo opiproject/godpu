@@ -2,7 +2,7 @@
 # Copyright (c) 2022-2023 Dell Inc, or its subsidiaries.
 # Copyright (C) 2023 Intel Corporation
 ---
-version: "3.7"
+# version: "3.7" - version is obsolete and can be removed/commented out
 services:
   spdk:
     image: docker.io/opiproject/spdk:v24.01
@@ -161,7 +161,7 @@ services:
     depends_on:
       opi-evpn-server:
         condition: service_healthy
-    command: evpn create-vrf --name blue --vni 100 --vtep 10.0.0.100/24 --loopback 10.100.0.1/24 --addr opi-evpn-server:50151
+    command: network evpn create-vrf --name blue --vni 100 --vtep 10.0.0.100/24 --loopback 10.100.0.1/24 --addr opi-evpn-server:50151
 
   opi-smbios-test:
     build:
