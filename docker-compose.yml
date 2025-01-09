@@ -209,7 +209,7 @@ services:
       opi-storage-test:
         condition: service_completed_successfully
     command: |
-      sh -c 'exit 0'
+      sh -c 'sleep 60 && exit 0'
 
 networks:
   opi:
