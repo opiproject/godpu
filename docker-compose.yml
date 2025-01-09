@@ -96,7 +96,7 @@ services:
             sleep infinity'
 
   redis:
-    image: redis:7.2.3-alpine3.18
+    image: redis:7.2.7-alpine3.21
     networks:
       - opi
     healthcheck:
@@ -198,7 +198,7 @@ services:
         /dpu storage delete backend nvme controller --addr=opi-spdk-server:50051 --name "$$nvmf0" && \
 
   opi-test:
-    image: docker.io/library/alpine:3.19
+    image: docker.io/library/alpine:3.21
     networks:
       - opi
     depends_on:
