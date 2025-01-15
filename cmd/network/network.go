@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/opiproject/godpu/cmd/common"
-	"github.com/opiproject/godpu/cmd/network/netintf"
 	"github.com/opiproject/godpu/cmd/network/evpn"
+	"github.com/opiproject/godpu/cmd/network/netintf"
 	"github.com/spf13/cobra"
 )
 
@@ -39,7 +39,7 @@ func NewNetworkCommand() *cobra.Command {
 	return cmd
 }
 
-// NewNetworkCommand tests the Network functionality command
+// NewNetIntfCommand tests the Network functionality command
 func NewNetIntfCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "intf",
@@ -57,7 +57,7 @@ func NewNetIntfCommand() *cobra.Command {
 	flags := cmd.PersistentFlags()
 	flags.Duration(common.TimeoutCmdLineArg, 10*time.Second, "timeout for a cmd")
 
-	cmd.AddCommand(netintf.ListNetInterfaces())
+	cmd.AddCommand(netintf.ListNetworkInterfaces())
 
 	return cmd
 }

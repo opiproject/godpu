@@ -340,7 +340,7 @@ func GenerateHostNQN() string {
 
 func dialConnection() error {
 	var err error
-	conn, err = grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err = grpc.NewClient(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Printf("Failed to connect: %v", err)
 		return err

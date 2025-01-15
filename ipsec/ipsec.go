@@ -9,8 +9,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/go-ping/ping"
 	pb "github.com/opiproject/opi-api/security/v1/gen/go"
+	probing "github.com/prometheus-community/pro-bing"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -175,7 +175,7 @@ func getVersion(ctx context.Context, client pb.IPsecServiceClient) {
 func doPing(a string) {
 	// .NOTE: The container this test runs in is linked to the appropriate
 	//        strongSwan container.
-	pinger, err := ping.NewPinger(a)
+	pinger, err := probing.NewPinger(a)
 	if err != nil {
 		log.Fatalf("Cannot create Pinger")
 	}
@@ -236,7 +236,7 @@ func loadConnections(ctx context.Context, client pb.IPsecServiceClient) {
 
 func dialConnection(address string) error {
 	var err error
-	conn, err = grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err = grpc.NewClient(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Printf("Failed to connect: %v", err)
 		return err
