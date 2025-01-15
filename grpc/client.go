@@ -32,7 +32,7 @@ type Connector interface {
 
 // New returns a new gRPC connector for the server at the given address
 func New(address string, tlsfile string) (Connector, error) {
-	return NewWithDialler(address, grpc.Dial, tlsfile)
+	return NewWithDialler(address, grpc.NewClient, tlsfile)
 }
 
 // NewWithDialler returns a new gRPC client for the server at the given address using the gRPC dialler provided

@@ -7,7 +7,7 @@ run:
 # output configuration options
 output:
   # colored-line-number|line-number|json|tab|checkstyle|code-climate, default is "colored-line-number"
-  format: colored-line-number
+  formats: colored-line-number
 
 linters-settings:
   funlen:
@@ -17,13 +17,18 @@ linters-settings:
     threshold: 200
   gocognit:
     min-complexity: 32
+  gosec:
+    excludes:
+      # TODO: Re-enable the checks when fixes to gosec for false positives are done.
+      #       The issue began in gosec 2.21.0 and its inclusion in golangci-lint
+      - G115  # Potential integer overflow when converting between integer types
 
 linters:
   enable:
     - bodyclose
     - dogsled
     - errcheck
-    - exportloopref
+    - copyloopvar
     - funlen
     - gochecknoinits
     - gocognit

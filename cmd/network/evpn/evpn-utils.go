@@ -3,7 +3,7 @@
 // Copyright (c) 2022-2023 Dell Inc, or its subsidiaries.
 // Copyright (c) 2024 Ericsson AB.
 
-// Package network implements the network related CLI commands
+// Package evpn implements the evpn related CLI commands
 package evpn
 
 import (
