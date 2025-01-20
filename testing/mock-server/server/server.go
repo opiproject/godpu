@@ -9,6 +9,7 @@ import (
 	"bytes"
 	context2 "context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -314,7 +315,7 @@ func FindStub(service, method string, in, out interface{}) error {
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
-		return fmt.Errorf("%s", string(body))
+		return errors.New(string(body))
 	}
 
 	respRPC := new(response)
@@ -324,7 +325,7 @@ func FindStub(service, method string, in, out interface{}) error {
 	}
 
 	if respRPC.Error != "" {
-		return fmt.Errorf("%s", respRPC.Error)
+		return errors.New(respRPC.Error)
 	}
 
 	data, _ := json.Marshal(respRPC.Data)
